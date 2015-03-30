@@ -1,0 +1,9 @@
+﻿Build started 07/06/2011 12:19:47.
+     1>Project "C:\MARIVA_SVN_EDF\external_libs\blitz-0.9\Blitz-Testsuite\contiguous\contiguous.vcxproj" on node 3 (clean target(s)).
+     1>_PrepareForClean:
+         Deleting file "Win32\Release\contiguous.lastbuildstate".
+     1>Done Building Project "C:\MARIVA_SVN_EDF\external_libs\blitz-0.9\Blitz-Testsuite\contiguous\contiguous.vcxproj" (clean target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.03

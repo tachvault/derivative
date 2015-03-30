@@ -1,0 +1,19 @@
+﻿Build started 16/12/2014 1:23:46 AM.
+     1>Project "C:\work\derivative\common\glog-0.3.3\vsprojects\libglog_static\libglog_static.vcxproj" on node 3 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I..\..\src\windows /ZI /nologo /W3 /WX- /Od /Oy- /D GOOGLE_GLOG_DLL_DECL= /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ..\..\src\logging.cc
+         logging.cc
+     1>c:\work\derivative\common\glog-0.3.3\src\windows\port.h(117): warning C4005: 'va_copy' : macro redefinition
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdarg.h(37) : see previous definition of 'va_copy'
+       Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\Lib.exe /OUT:"C:\work\derivative\common\glog-0.3.3\Debug\libglog_static.lib" /NOLOGO Debug\logging.obj
+         Debug\port.obj
+         Debug\raw_logging.obj
+         Debug\utilities.obj
+         Debug\vlog_is_on.obj
+         libglog_static.vcxproj -> C:\work\derivative\common\glog-0.3.3\Debug\libglog_static.lib
+     1>Done Building Project "C:\work\derivative\common\glog-0.3.3\vsprojects\libglog_static\libglog_static.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:01.02

@@ -1,0 +1,93 @@
+﻿Build started 16/12/2014 1:24:43 AM.
+     1>Project "C:\work\derivative\common\gflags-2.0\vsprojects\libgflags\libgflags.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I..\..\src\windows /I..\..\src /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _USRDLL /D LIBGFLAGS_EXPORTS /D _WINDLL /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ..\..\src\gflags.cc ..\..\src\gflags_reporting.cc ..\..\src\gflags_completions.cc ..\..\src\windows\port.cc
+         port.cc
+     1>c:\work\derivative\common\gflags-2.0\src\windows\port.h(65): warning C4005: 'va_copy' : macro redefinition
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdarg.h(37) : see previous definition of 'va_copy'
+     1>c:\work\derivative\common\gflags-2.0\src\windows\port.h(85): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdlib.h(462) : see declaration of 'getenv'
+     1>c:\work\derivative\common\gflags-2.0\src\windows\port.h(86): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdlib.h(462) : see declaration of 'getenv'
+     1>c:\work\derivative\common\gflags-2.0\src\windows\port.cc(51): warning C4996: '_vsnprintf': This function or variable may be unsafe. Consider using _vsnprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(346) : see declaration of '_vsnprintf'
+         gflags_completions.cc
+     1>c:\work\derivative\common\gflags-2.0\src\windows\port.h(65): warning C4005: 'va_copy' : macro redefinition
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdarg.h(37) : see previous definition of 'va_copy'
+     1>c:\work\derivative\common\gflags-2.0\src\windows\port.h(85): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdlib.h(462) : see declaration of 'getenv'
+     1>c:\work\derivative\common\gflags-2.0\src\windows\port.h(86): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdlib.h(462) : see declaration of 'getenv'
+     1>c:\work\derivative\common\gflags-2.0\src\windows\gflags\gflags.h(155): warning C4251: 'google::CommandLineFlagInfo::name' : class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of struct 'google::CommandLineFlagInfo'
+     1>c:\work\derivative\common\gflags-2.0\src\windows\gflags\gflags.h(156): warning C4251: 'google::CommandLineFlagInfo::type' : class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of struct 'google::CommandLineFlagInfo'
+     1>c:\work\derivative\common\gflags-2.0\src\windows\gflags\gflags.h(157): warning C4251: 'google::CommandLineFlagInfo::description' : class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of struct 'google::CommandLineFlagInfo'
+     1>c:\work\derivative\common\gflags-2.0\src\windows\gflags\gflags.h(158): warning C4251: 'google::CommandLineFlagInfo::current_value' : class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of struct 'google::CommandLineFlagInfo'
+     1>c:\work\derivative\common\gflags-2.0\src\windows\gflags\gflags.h(159): warning C4251: 'google::CommandLineFlagInfo::default_value' : class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of struct 'google::CommandLineFlagInfo'
+     1>c:\work\derivative\common\gflags-2.0\src\windows\gflags\gflags.h(160): warning C4251: 'google::CommandLineFlagInfo::filename' : class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of struct 'google::CommandLineFlagInfo'
+         gflags_reporting.cc
+     1>c:\work\derivative\common\gflags-2.0\src\windows\port.h(65): warning C4005: 'va_copy' : macro redefinition
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdarg.h(37) : see previous definition of 'va_copy'
+     1>c:\work\derivative\common\gflags-2.0\src\windows\port.h(85): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdlib.h(462) : see declaration of 'getenv'
+     1>c:\work\derivative\common\gflags-2.0\src\windows\port.h(86): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdlib.h(462) : see declaration of 'getenv'
+     1>c:\work\derivative\common\gflags-2.0\src\windows\gflags\gflags.h(155): warning C4251: 'google::CommandLineFlagInfo::name' : class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of struct 'google::CommandLineFlagInfo'
+     1>c:\work\derivative\common\gflags-2.0\src\windows\gflags\gflags.h(156): warning C4251: 'google::CommandLineFlagInfo::type' : class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of struct 'google::CommandLineFlagInfo'
+     1>c:\work\derivative\common\gflags-2.0\src\windows\gflags\gflags.h(157): warning C4251: 'google::CommandLineFlagInfo::description' : class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of struct 'google::CommandLineFlagInfo'
+     1>c:\work\derivative\common\gflags-2.0\src\windows\gflags\gflags.h(158): warning C4251: 'google::CommandLineFlagInfo::current_value' : class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of struct 'google::CommandLineFlagInfo'
+     1>c:\work\derivative\common\gflags-2.0\src\windows\gflags\gflags.h(159): warning C4251: 'google::CommandLineFlagInfo::default_value' : class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of struct 'google::CommandLineFlagInfo'
+     1>c:\work\derivative\common\gflags-2.0\src\windows\gflags\gflags.h(160): warning C4251: 'google::CommandLineFlagInfo::filename' : class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of struct 'google::CommandLineFlagInfo'
+         gflags.cc
+     1>c:\work\derivative\common\gflags-2.0\src\windows\port.h(65): warning C4005: 'va_copy' : macro redefinition
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdarg.h(37) : see previous definition of 'va_copy'
+     1>c:\work\derivative\common\gflags-2.0\src\windows\port.h(85): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdlib.h(462) : see declaration of 'getenv'
+     1>c:\work\derivative\common\gflags-2.0\src\windows\port.h(86): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdlib.h(462) : see declaration of 'getenv'
+     1>c:\work\derivative\common\gflags-2.0\src\windows\gflags\gflags.h(155): warning C4251: 'google::CommandLineFlagInfo::name' : class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of struct 'google::CommandLineFlagInfo'
+     1>c:\work\derivative\common\gflags-2.0\src\windows\gflags\gflags.h(156): warning C4251: 'google::CommandLineFlagInfo::type' : class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of struct 'google::CommandLineFlagInfo'
+     1>c:\work\derivative\common\gflags-2.0\src\windows\gflags\gflags.h(157): warning C4251: 'google::CommandLineFlagInfo::description' : class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of struct 'google::CommandLineFlagInfo'
+     1>c:\work\derivative\common\gflags-2.0\src\windows\gflags\gflags.h(158): warning C4251: 'google::CommandLineFlagInfo::current_value' : class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of struct 'google::CommandLineFlagInfo'
+     1>c:\work\derivative\common\gflags-2.0\src\windows\gflags\gflags.h(159): warning C4251: 'google::CommandLineFlagInfo::default_value' : class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of struct 'google::CommandLineFlagInfo'
+     1>c:\work\derivative\common\gflags-2.0\src\windows\gflags\gflags.h(160): warning C4251: 'google::CommandLineFlagInfo::filename' : class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of struct 'google::CommandLineFlagInfo'
+     1>c:\work\derivative\common\gflags-2.0\src\gflags.cc(1006): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(211) : see declaration of 'fopen'
+     1>c:\work\derivative\common\gflags-2.0\src\gflags.cc(1151): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdlib.h(462) : see declaration of 'getenv'
+     1>c:\work\derivative\common\gflags-2.0\src\gflags.cc(1480): warning C4996: 'strdup': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _strdup. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\string.h(245) : see declaration of 'strdup'
+     1>c:\work\derivative\common\gflags-2.0\src\gflags.cc(1491): warning C4996: 'strdup': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _strdup. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\string.h(245) : see declaration of 'strdup'
+     1>c:\work\derivative\common\gflags-2.0\src\gflags.cc(1517): warning C4996: 'strdup': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _strdup. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\string.h(245) : see declaration of 'strdup'
+     1>c:\work\derivative\common\gflags-2.0\src\gflags.cc(1537): warning C4996: 'strdup': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _strdup. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\string.h(245) : see declaration of 'strdup'
+     1>c:\work\derivative\common\gflags-2.0\src\gflags.cc(1768): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(211) : see declaration of 'fopen'
+     1>c:\work\derivative\common\gflags-2.0\src\gflags.cc(1828): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdlib.h(462) : see declaration of 'getenv'
+     1>c:\work\derivative\common\gflags-2.0\src\gflags.cc(1947): warning C4996: 'strdup': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _strdup. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\string.h(245) : see declaration of 'strdup'
+     1>c:\work\derivative\common\gflags-2.0\src\gflags.cc(1349): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdlib.h(462) : see declaration of 'getenv'
+                 c:\work\derivative\common\gflags-2.0\src\gflags.cc(1813) : see reference to function template instantiation 'T google::`anonymous-namespace'::GetFromEnv<bool>(const char *,const char *,T)' being compiled
+                 with
+                 [
+                     T=bool
+                 ]
+         Generating Code...
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\Microsoft.CppBuild.targets(1193,5): warning MSB8012: TargetPath(C:\work\derivative\common\gflags-2.0\Debug\libgflags.dll) does not match the Linker's OutputFile property value (C:\work\derivative\common\gflags-2.0\Debug\libgflags-debug.dll). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Link.OutputFile).
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\Microsoft.CppBuild.targets(1195,5): warning MSB8012: TargetName(libgflags) does not match the Linker's OutputFile property value (libgflags-debug). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Link.OutputFile).
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\work\derivative\common\gflags-2.0\Debug\libgflags-debug.dll" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\work\derivative\common\gflags-2.0\Debug\libgflags-debug.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\work\derivative\common\gflags-2.0\Debug\libgflags-debug.lib" /MACHINE:X86 /SAFESEH /DLL Debug\gflags.obj
+         Debug\gflags_reporting.obj
+         Debug\gflags_completions.obj
+         Debug\port.obj
+     1>gflags.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/SAFESEH' specification
+            Creating library C:\work\derivative\common\gflags-2.0\Debug\libgflags-debug.lib and object C:\work\derivative\common\gflags-2.0\Debug\libgflags-debug.exp
+         libgflags.vcxproj -> C:\work\derivative\common\gflags-2.0\Debug\libgflags.dll
+     1>Done Building Project "C:\work\derivative\common\gflags-2.0\vsprojects\libgflags\libgflags.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:03.23

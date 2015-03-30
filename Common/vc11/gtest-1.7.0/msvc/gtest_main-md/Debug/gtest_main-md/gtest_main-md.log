@@ -1,0 +1,10 @@
+﻿Build started 15/12/2014 9:19:24 PM.
+     1>Project "C:\work\derivative\common\gtest-1.7.0\msvc\gtest_main-md.vcxproj" on node 2 (Build target(s)).
+     1>Project "C:\work\derivative\common\gtest-1.7.0\msvc\gtest_main-md.vcxproj" (1) is building "C:\work\derivative\common\gtest-1.7.0\msvc\gtest-md.vcxproj" (2) on node 2 (GetTargetPath target(s)).
+     2>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\Microsoft.Cpp.InvalidPlatform.Targets(21,7): error MSB8006: The Platform for project 'gtest-md.vcxproj' is invalid.  Platform='MCD'. This error may also appear if some other project is trying to follow a project-to-project reference to this project, this project has been unloaded or is not included in the solution, and the referencing project does not build using the same or an equivalent Platform.
+     2>Done Building Project "C:\work\derivative\common\gtest-1.7.0\msvc\gtest-md.vcxproj" (GetTargetPath target(s)) -- FAILED.
+     1>Done Building Project "C:\work\derivative\common\gtest-1.7.0\msvc\gtest_main-md.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:00.03

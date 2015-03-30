@@ -1,0 +1,26 @@
+Feedback to graeme@finmod.co.za
+
+
+Code supplements to "Better approximations to cumulative normal functions" by Graeme West.
+
+Bivarcumnorms.xls is a stand alone spreadsheet which can be used to generate option pricing graphs/surfaces as 
+in the paper for the three pricing methods discussed in the paper. One can choose which univariate and which 
+bivariate method to use, and see what impact this has on the results.
+
+Normal.cls is a Visual Basic 6 class file of the 'best' univariate, bivariate and trivariate cumulative normal 
+functions. It does not include the functions 'rejected' in the article - essentially only translations of the 
+Hart algorithm and the Genz algorithms are included. It can be used by adding to a vba window, or better, 
+by including in a project for making into a dll.
+
+cumnormsi.cpp, and cumnormsi.h for i = 1,2,3 are the uni-, bi- and tri- variate cumulative normals in c++. There 
+are also a utilities.cpp and utilities.h files. A test harness is in 3main.cpp.
+
+When compiling, the compiler may complain about undefined variables like M_PI. To define these, in
+Project Properties > Configuration Properties > C/C++ > Preprocessor > Preprocessor definitions 
+add the word _USE_MATH_DEFINES
+
+My sincere thanks to James Jardine and Axel Vogt for finding some errors and suggesting corrections.
+ 
+Graeme West
+Financial Modelling Agency
+June 2006

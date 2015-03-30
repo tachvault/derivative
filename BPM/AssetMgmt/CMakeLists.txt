@@ -1,0 +1,11 @@
+# Recurse into the "AssetMgmt" directory.
+add_subdirectory (FINUTILITY) 
+add_subdirectory (PRIMARYASSET)
+add_subdirectory (ASSET_PROPERTIES)
+add_subdirectory (MYSQLDATAACCESS)
+add_subdirectory (YAHOODATAACCESS)
+add_subdirectory (XIGNITEDATAACCESS)
+add_subdirectory (PRIMARYASSET_EXT)
+add_subdirectory (DERIVATIVEASSET)
+add_subdirectory (XIGNITEOPTIONFILELOADER)
+add_subdirectory (CMEFILELOADER)

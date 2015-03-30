@@ -1,0 +1,39 @@
+﻿Build started 15/12/2014 3:00:20 PM.
+     1>Project "C:\work\derivative\common\blitz-0.10\Blitz-Testsuite\newet\newet.vcxproj" on node 7 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\work\derivative\common\blitz-0.10\\" /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D BZ_DEBUG /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo"Win32\Debug\\" /Fd"Win32\Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ..\..\testsuite\newet.cpp
+         newet.cpp
+     1>c:\work\derivative\common\blitz-0.10\blitz\update.h(65): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+                 c:\work\derivative\common\blitz-0.10\blitz\update.h(65) : while compiling class template member function 'void blitz::_bz_update<int,double>::update(T_dest &,T_source)'
+                 with
+                 [
+                     T_dest=int
+         ,            T_source=double
+                 ]
+                 c:\work\derivative\common\blitz-0.10\blitz\globeval.cc(896) : see reference to function template instantiation 'void blitz::_bz_update<int,double>::update(T_dest &,T_source)' being compiled
+                 with
+                 [
+                     T_dest=int
+         ,            T_source=double
+                 ]
+                 c:\work\derivative\common\blitz-0.10\blitz\array\ops.cc(69) : see reference to class template instantiation 'blitz::_bz_update<int,double>' being compiled
+                 c:\work\derivative\common\blitz-0.10\testsuite\newet.cpp(54) : see reference to function template instantiation 'blitz::Array<int,1> &blitz::Array<int,1>::operator =<blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprBinaryOp<blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprConstant<T>>,blitz::_bz_ArrayExpr<blitz::IndexPlaceholder<0>>,blitz::Multiply<double,int>>>>(const blitz::ETBase<blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprBinaryOp<blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprConstant<T>>,blitz::_bz_ArrayExpr<blitz::IndexPlaceholder<0>>,blitz::Multiply<double,int>>>> &)' being compiled
+                 with
+                 [
+                     T=double
+                 ]
+                 c:\work\derivative\common\blitz-0.10\testsuite\newet.cpp(54) : see reference to function template instantiation 'blitz::Array<int,1> &blitz::Array<int,1>::operator =<blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprBinaryOp<blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprConstant<T>>,blitz::_bz_ArrayExpr<blitz::IndexPlaceholder<0>>,blitz::Multiply<double,int>>>>(const blitz::ETBase<blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprBinaryOp<blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprConstant<T>>,blitz::_bz_ArrayExpr<blitz::IndexPlaceholder<0>>,blitz::Multiply<double,int>>>> &)' being compiled
+                 with
+                 [
+                     T=double
+                 ]
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"Win32\Debug\newet.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\work\derivative\common\blitz-0.10\\lib\Win32\\" blitz_d.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"Win32\Debug\newet.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"Win32\Debug\newet.lib" /MACHINE:X86 /SAFESEH Win32\Debug\newet.obj
+         "C:\work\derivative\common\blitz-0.10\blitz\Win32\Debug\blitz.lib"
+     1>newet.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/SAFESEH' specification
+         newet.vcxproj -> C:\work\derivative\common\blitz-0.10\Blitz-Testsuite\newet\Win32\Debug\newet.exe
+     1>Done Building Project "C:\work\derivative\common\blitz-0.10\Blitz-Testsuite\newet\newet.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:12.18

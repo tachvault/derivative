@@ -1,0 +1,15 @@
+﻿Build started 15/12/2014 3:00:25 PM.
+     1>Project "C:\work\derivative\common\blitz-0.10\Blitz-Testsuite\PB4\PB4.vcxproj" on node 4 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\work\derivative\common\blitz-0.10\\" /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D BZ_DEBUG /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo"Win32\Debug\\" /Fd"Win32\Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt "..\..\testsuite\peter-bienstman-4.cpp"
+         peter-bienstman-4.cpp
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"Win32\Debug\PB4.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\work\derivative\common\blitz-0.10\\lib\Win32\\" blitz_d.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"Win32\Debug\PB4.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"Win32\Debug\PB4.lib" /MACHINE:X86 /SAFESEH "Win32\Debug\peter-bienstman-4.obj"
+         "C:\work\derivative\common\blitz-0.10\blitz\Win32\Debug\blitz.lib"
+     1>peter-bienstman-4.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/SAFESEH' specification
+         PB4.vcxproj -> C:\work\derivative\common\blitz-0.10\Blitz-Testsuite\PB4\Win32\Debug\PB4.exe
+     1>Done Building Project "C:\work\derivative\common\blitz-0.10\Blitz-Testsuite\PB4\PB4.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:05.50

@@ -1,0 +1,5 @@
+Number of economies,2
+CSV file for economy 0,DomesticEconomy.csv
+CSV file for economy 1,ForeignEconomy.csv
+Initial exchange rate 1,1.5
+CSV file for FX volatility 1,ConstVol35pc.csv

@@ -1,0 +1,124 @@
+﻿Build started 15/12/2014 3:00:29 PM.
+     1>Project "C:\work\derivative\common\blitz-0.10\Blitz-Testsuite\reduce\reduce.vcxproj" on node 3 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\work\derivative\common\blitz-0.10\\" /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D BZ_DEBUG /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo"Win32\Debug\\" /Fd"Win32\Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ..\..\testsuite\reduce.cpp
+         reduce.cpp
+     1>c:\work\derivative\common\blitz-0.10\blitz\update.h(65): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+                 c:\work\derivative\common\blitz-0.10\blitz\update.h(65) : while compiling class template member function 'void blitz::_bz_update<float,double>::update(T_dest &,T_source)'
+                 with
+                 [
+                     T_dest=float
+         ,            T_source=double
+                 ]
+                 c:\work\derivative\common\blitz-0.10\blitz\globeval.cc(963) : see reference to function template instantiation 'void blitz::_bz_update<float,double>::update(T_dest &,T_source)' being compiled
+                 with
+                 [
+                     T_dest=float
+         ,            T_source=double
+                 ]
+                 c:\work\derivative\common\blitz-0.10\blitz\array\ops.cc(69) : see reference to class template instantiation 'blitz::_bz_update<float,double>' being compiled
+                 c:\work\derivative\common\blitz-0.10\testsuite\reduce.cpp(75) : see reference to function template instantiation 'blitz::Array<float,2> &blitz::Array<float,2>::operator =<blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprReduce<blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprReduce<blitz::_bz_ArrayExpr<blitz::FastArrayIterator<float,4>>,3,blitz::ReduceSum<P_numtype,double>>>,2,blitz::ReduceSum<double,double>>>>(const blitz::ETBase<blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprReduce<blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprReduce<blitz::_bz_ArrayExpr<blitz::FastArrayIterator<P_numtype,4>>,3,blitz::ReduceSum<P_numtype,double>>>,2,blitz::ReduceSum<double,double>>>> &)' being compiled
+                 with
+                 [
+                     P_numtype=float
+                 ]
+                 c:\work\derivative\common\blitz-0.10\testsuite\reduce.cpp(75) : see reference to function template instantiation 'blitz::Array<float,2> &blitz::Array<float,2>::operator =<blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprReduce<blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprReduce<blitz::_bz_ArrayExpr<blitz::FastArrayIterator<float,4>>,3,blitz::ReduceSum<P_numtype,double>>>,2,blitz::ReduceSum<double,double>>>>(const blitz::ETBase<blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprReduce<blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprReduce<blitz::_bz_ArrayExpr<blitz::FastArrayIterator<P_numtype,4>>,3,blitz::ReduceSum<P_numtype,double>>>,2,blitz::ReduceSum<double,double>>>> &)' being compiled
+                 with
+                 [
+                     P_numtype=float
+                 ]
+     1>c:\work\derivative\common\blitz-0.10\blitz\funcs.h(316): warning C4244: 'return' : conversion from 'double' to 'float', possible loss of data
+                 c:\work\derivative\common\blitz-0.10\blitz\funcs.h(316) : while compiling class template member function 'float blitz::Fn_pow<int,float>::apply(T_numtype1,T_numtype2)'
+                 with
+                 [
+                     T_numtype1=int
+         ,            T_numtype2=float
+                 ]
+                 c:\work\derivative\common\blitz-0.10\blitz\array\expr.h(847) : see reference to function template instantiation 'float blitz::Fn_pow<int,float>::apply(T_numtype1,T_numtype2)' being compiled
+                 with
+                 [
+                     T_numtype1=int
+         ,            T_numtype2=float
+                 ]
+                 c:\work\derivative\common\blitz-0.10\blitz\array\expr.h(782) : see reference to class template instantiation 'blitz::Fn_pow<int,float>' being compiled
+                 c:\work\derivative\common\blitz-0.10\blitz\array\expr.h(111) : see reference to class template instantiation 'blitz::_bz_ArrayExprBinaryOp<blitz::_bz_ArrayExpr<blitz::FastArrayIterator<int,1>>,blitz::_bz_ArrayExpr<blitz::FastArrayIterator<float,1>>,blitz::Fn_pow<int,float>>' being compiled
+                 c:\work\derivative\common\blitz-0.10\testsuite\reduce.cpp(158) : see reference to class template instantiation 'blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprBinaryOp<blitz::_bz_ArrayExpr<blitz::FastArrayIterator<int,1>>,blitz::_bz_ArrayExpr<blitz::FastArrayIterator<float,1>>,blitz::Fn_pow<int,float>>>' being compiled
+     1>c:\work\derivative\common\blitz-0.10\blitz\array\functorexpr.h(179): warning C4244: 'return' : conversion from 'double' to 'int', possible loss of data
+                 c:\work\derivative\common\blitz-0.10\blitz\array\functorexpr.h(178) : while compiling class template member function 'int blitz::_bz_FunctorExpr<crap,blitz::_bz_ArrayExpr<blitz::FastArrayIterator<int,1>>,int>::readHelper<int>::first_value(const crap &,const blitz::_bz_ArrayExpr<blitz::FastArrayIterator<int,1>> &)'
+                 c:\work\derivative\common\blitz-0.10\blitz\array\functorexpr.h(247) : see reference to function template instantiation 'int blitz::_bz_FunctorExpr<crap,blitz::_bz_ArrayExpr<blitz::FastArrayIterator<int,1>>,int>::readHelper<int>::first_value(const crap &,const blitz::_bz_ArrayExpr<blitz::FastArrayIterator<int,1>> &)' being compiled
+                 c:\work\derivative\common\blitz-0.10\blitz\array\functorexpr.h(247) : see reference to class template instantiation 'blitz::_bz_FunctorExpr<crap,blitz::_bz_ArrayExpr<blitz::FastArrayIterator<int,1>>,int>::readHelper<int>' being compiled
+                 c:\work\derivative\common\blitz-0.10\blitz\array\functorexpr.h(246) : while compiling class template member function 'int blitz::_bz_FunctorExpr<crap,blitz::_bz_ArrayExpr<blitz::FastArrayIterator<int,1>>,int>::first_value(void) const'
+                 c:\work\derivative\common\blitz-0.10\blitz\array\expr.h(186) : see reference to function template instantiation 'int blitz::_bz_FunctorExpr<crap,blitz::_bz_ArrayExpr<blitz::FastArrayIterator<int,1>>,int>::first_value(void) const' being compiled
+                 c:\work\derivative\common\blitz-0.10\blitz\array\expr.h(111) : see reference to class template instantiation 'blitz::_bz_FunctorExpr<crap,blitz::_bz_ArrayExpr<blitz::FastArrayIterator<int,1>>,int>' being compiled
+                 c:\work\derivative\common\blitz-0.10\testsuite\reduce.cpp(167) : see reference to class template instantiation 'blitz::_bz_ArrayExpr<blitz::_bz_FunctorExpr<crap,blitz::_bz_ArrayExpr<blitz::FastArrayIterator<int,1>>,int>>' being compiled
+     1>c:\work\derivative\common\blitz-0.10\blitz\array\functorexpr.h(194): warning C4244: 'return' : conversion from 'double' to 'int', possible loss of data
+                 c:\work\derivative\common\blitz-0.10\blitz\array\functorexpr.h(241) : see reference to function template instantiation 'int blitz::_bz_FunctorExpr<crap,blitz::_bz_ArrayExpr<blitz::FastArrayIterator<int,1>>,int>::readHelper<int>::indexop<1>(const crap &,const blitz::_bz_ArrayExpr<blitz::FastArrayIterator<int,1>> &,const blitz::TinyVector<int,1> &)' being compiled
+                 c:\work\derivative\common\blitz-0.10\blitz\array\functorexpr.h(241) : see reference to function template instantiation 'int blitz::_bz_FunctorExpr<crap,blitz::_bz_ArrayExpr<blitz::FastArrayIterator<int,1>>,int>::readHelper<int>::indexop<1>(const crap &,const blitz::_bz_ArrayExpr<blitz::FastArrayIterator<int,1>> &,const blitz::TinyVector<int,1> &)' being compiled
+                 c:\work\derivative\common\blitz-0.10\blitz\array\expr.h(193) : see reference to function template instantiation 'int blitz::_bz_FunctorExpr<crap,blitz::_bz_ArrayExpr<blitz::FastArrayIterator<int,1>>,int>::operator ()<1>(const blitz::TinyVector<int,1> &) const' being compiled
+                 c:\work\derivative\common\blitz-0.10\blitz\array\expr.h(193) : see reference to function template instantiation 'int blitz::_bz_FunctorExpr<crap,blitz::_bz_ArrayExpr<blitz::FastArrayIterator<int,1>>,int>::operator ()<1>(const blitz::TinyVector<int,1> &) const' being compiled
+                 c:\work\derivative\common\blitz-0.10\blitz\array\expr.h(863) : see reference to function template instantiation 'int blitz::_bz_ArrayExpr<blitz::_bz_FunctorExpr<crap,blitz::_bz_ArrayExpr<blitz::FastArrayIterator<int,1>>,int>>::operator ()<1>(const blitz::TinyVector<int,1> &) const' being compiled
+                 c:\work\derivative\common\blitz-0.10\blitz\array\expr.h(863) : see reference to function template instantiation 'int blitz::_bz_ArrayExpr<blitz::_bz_FunctorExpr<crap,blitz::_bz_ArrayExpr<blitz::FastArrayIterator<int,1>>,int>>::operator ()<1>(const blitz::TinyVector<int,1> &) const' being compiled
+                 c:\work\derivative\common\blitz-0.10\blitz\array\expr.h(912) : see reference to function template instantiation 'int blitz::_bz_ArrayExprBinaryOp<blitz::_bz_ArrayExpr<blitz::_bz_FunctorExpr<crap,blitz::_bz_ArrayExpr<blitz::FastArrayIterator<int,1>>,int>>,blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprConstant<T>>,blitz::Subtract<int,int>>::readHelper<T>::indexop<1>(const blitz::_bz_ArrayExpr<blitz::_bz_FunctorExpr<crap,blitz::_bz_ArrayExpr<blitz::FastArrayIterator<int,1>>,int>> &,const blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprConstant<T>> &,const blitz::TinyVector<int,1> &)' being compiled
+                 with
+                 [
+                     T=int
+                 ]
+                 c:\work\derivative\common\blitz-0.10\blitz\array\expr.h(912) : see reference to function template instantiation 'int blitz::_bz_ArrayExprBinaryOp<blitz::_bz_ArrayExpr<blitz::_bz_FunctorExpr<crap,blitz::_bz_ArrayExpr<blitz::FastArrayIterator<int,1>>,int>>,blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprConstant<T>>,blitz::Subtract<int,int>>::readHelper<T>::indexop<1>(const blitz::_bz_ArrayExpr<blitz::_bz_FunctorExpr<crap,blitz::_bz_ArrayExpr<blitz::FastArrayIterator<int,1>>,int>> &,const blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprConstant<T>> &,const blitz::TinyVector<int,1> &)' being compiled
+                 with
+                 [
+                     T=int
+                 ]
+                 c:\work\derivative\common\blitz-0.10\blitz\array\expr.h(193) : see reference to function template instantiation 'int blitz::_bz_ArrayExprBinaryOp<blitz::_bz_ArrayExpr<blitz::_bz_FunctorExpr<crap,blitz::_bz_ArrayExpr<blitz::FastArrayIterator<int,1>>,int>>,blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprConstant<T>>,blitz::Subtract<int,int>>::operator ()<1>(const blitz::TinyVector<int,1> &) const' being compiled
+                 with
+                 [
+                     T=int
+                 ]
+                 c:\work\derivative\common\blitz-0.10\blitz\array\expr.h(193) : see reference to function template instantiation 'int blitz::_bz_ArrayExprBinaryOp<blitz::_bz_ArrayExpr<blitz::_bz_FunctorExpr<crap,blitz::_bz_ArrayExpr<blitz::FastArrayIterator<int,1>>,int>>,blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprConstant<T>>,blitz::Subtract<int,int>>::operator ()<1>(const blitz::TinyVector<int,1> &) const' being compiled
+                 with
+                 [
+                     T=int
+                 ]
+                 c:\work\derivative\common\blitz-0.10\blitz\array\reduce.cc(120) : see reference to function template instantiation 'int blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprBinaryOp<blitz::_bz_ArrayExpr<blitz::_bz_FunctorExpr<crap,blitz::_bz_ArrayExpr<blitz::FastArrayIterator<int,1>>,int>>,blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprConstant<T>>,blitz::Subtract<int,int>>>::operator ()<1>(const blitz::TinyVector<int,1> &) const' being compiled
+                 with
+                 [
+                     T=int
+                 ]
+                 c:\work\derivative\common\blitz-0.10\blitz\array\reduce.cc(120) : see reference to function template instantiation 'int blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprBinaryOp<blitz::_bz_ArrayExpr<blitz::_bz_FunctorExpr<crap,blitz::_bz_ArrayExpr<blitz::FastArrayIterator<int,1>>,int>>,blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprConstant<T>>,blitz::Subtract<int,int>>>::operator ()<1>(const blitz::TinyVector<int,1> &) const' being compiled
+                 with
+                 [
+                     T=int
+                 ]
+                 c:\work\derivative\common\blitz-0.10\blitz\array\reduce.cc(150) : see reference to function template instantiation 'blitz::TinyVector<int,1> blitz::_bz_reduceWithIndexTraversalGeneric<blitz::TinyVector<int,1>,T_expr,T_reduction>(T_expr,T_reduction)' being compiled
+                 with
+                 [
+                     T_expr=blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprBinaryOp<blitz::_bz_ArrayExpr<blitz::_bz_FunctorExpr<crap,blitz::_bz_ArrayExpr<blitz::FastArrayIterator<int,1>>,int>>,blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprConstant<int>>,blitz::Subtract<int,int>>>
+         ,            T_reduction=blitz::ReduceMaxIndexVector<int,1>
+                 ]
+                 c:\work\derivative\common\blitz-0.10\blitz\array\reduce.h(396) : see reference to function template instantiation 'blitz::TinyVector<int,1> blitz::_bz_reduceWithIndexVectorTraversal<blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprBinaryOp<blitz::_bz_ArrayExpr<blitz::_bz_FunctorExpr<crap,blitz::_bz_ArrayExpr<blitz::FastArrayIterator<int,1>>,int>>,blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprConstant<T>>,blitz::Subtract<int,int>>>,blitz::ReduceMaxIndexVector<P_numtype,1>>(T_expr,T_reduction)' being compiled
+                 with
+                 [
+                     T=int
+         ,            P_numtype=int
+         ,            T_expr=blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprBinaryOp<blitz::_bz_ArrayExpr<blitz::_bz_FunctorExpr<crap,blitz::_bz_ArrayExpr<blitz::FastArrayIterator<int,1>>,int>>,blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprConstant<int>>,blitz::Subtract<int,int>>>
+         ,            T_reduction=blitz::ReduceMaxIndexVector<int,1>
+                 ]
+                 c:\work\derivative\common\blitz-0.10\testsuite\reduce.cpp(57) : see reference to function template instantiation 'blitz::TinyVector<int,1> blitz::maxIndex<blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprBinaryOp<blitz::_bz_ArrayExpr<blitz::_bz_FunctorExpr<crap,blitz::_bz_ArrayExpr<blitz::FastArrayIterator<int,1>>,int>>,blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprConstant<T>>,blitz::Subtract<int,int>>>>(const blitz::ETBase<blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprBinaryOp<blitz::_bz_ArrayExpr<blitz::_bz_FunctorExpr<crap,blitz::_bz_ArrayExpr<blitz::FastArrayIterator<int,1>>,int>>,blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprConstant<T>>,blitz::Subtract<int,int>>>> &)' being compiled
+                 with
+                 [
+                     T=int
+                 ]
+                 c:\work\derivative\common\blitz-0.10\testsuite\reduce.cpp(167) : see reference to function template instantiation 'void test_1dexpr<blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprBinaryOp<blitz::_bz_ArrayExpr<blitz::_bz_FunctorExpr<crap,blitz::_bz_ArrayExpr<blitz::FastArrayIterator<int,1>>,int>>,blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprConstant<T>>,blitz::Subtract<int,int>>>>(const blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprBinaryOp<blitz::_bz_ArrayExpr<blitz::_bz_FunctorExpr<crap,blitz::_bz_ArrayExpr<blitz::FastArrayIterator<int,1>>,int>>,blitz::_bz_ArrayExpr<blitz::_bz_ArrayExprConstant<T>>,blitz::Subtract<int,int>>> &)' being compiled
+                 with
+                 [
+                     T=int
+                 ]
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"Win32\Debug\reduce.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\work\derivative\common\blitz-0.10\\lib\Win32\\" blitz_d.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"Win32\Debug\reduce.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"Win32\Debug\reduce.lib" /MACHINE:X86 /SAFESEH Win32\Debug\reduce.obj
+         "C:\work\derivative\common\blitz-0.10\blitz\Win32\Debug\blitz.lib"
+     1>reduce.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/SAFESEH' specification
+         reduce.vcxproj -> C:\work\derivative\common\blitz-0.10\Blitz-Testsuite\reduce\Win32\Debug\reduce.exe
+     1>Done Building Project "C:\work\derivative\common\blitz-0.10\Blitz-Testsuite\reduce\reduce.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:12.58

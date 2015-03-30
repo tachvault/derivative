@@ -1,0 +1,7 @@
+Strike,110
+Steps,60
+Expiry,10
+Training paths,10000
+Polynomial degree,1
+IR polynomial degree,2
+Cross polynomial degree,2

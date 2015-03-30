@@ -1,0 +1,36 @@
+﻿Build started 16/12/2014 1:24:46 AM.
+     1>Project "C:\work\derivative\common\gflags-2.0\vsprojects\gflags_unittest\gflags_unittest.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I..\..\src\windows /I..\..\src /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ..\..\src\gflags_unittest.cc
+         gflags_unittest.cc
+     1>c:\work\derivative\common\gflags-2.0\src\windows\port.h(65): warning C4005: 'va_copy' : macro redefinition
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdarg.h(37) : see previous definition of 'va_copy'
+     1>c:\work\derivative\common\gflags-2.0\src\windows\port.h(85): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdlib.h(462) : see declaration of 'getenv'
+     1>c:\work\derivative\common\gflags-2.0\src\windows\port.h(86): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdlib.h(462) : see declaration of 'getenv'
+     1>c:\work\derivative\common\gflags-2.0\src\windows\gflags\gflags.h(155): warning C4251: 'google::CommandLineFlagInfo::name' : class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of struct 'google::CommandLineFlagInfo'
+     1>c:\work\derivative\common\gflags-2.0\src\windows\gflags\gflags.h(156): warning C4251: 'google::CommandLineFlagInfo::type' : class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of struct 'google::CommandLineFlagInfo'
+     1>c:\work\derivative\common\gflags-2.0\src\windows\gflags\gflags.h(157): warning C4251: 'google::CommandLineFlagInfo::description' : class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of struct 'google::CommandLineFlagInfo'
+     1>c:\work\derivative\common\gflags-2.0\src\windows\gflags\gflags.h(158): warning C4251: 'google::CommandLineFlagInfo::current_value' : class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of struct 'google::CommandLineFlagInfo'
+     1>c:\work\derivative\common\gflags-2.0\src\windows\gflags\gflags.h(159): warning C4251: 'google::CommandLineFlagInfo::default_value' : class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of struct 'google::CommandLineFlagInfo'
+     1>c:\work\derivative\common\gflags-2.0\src\windows\gflags\gflags.h(160): warning C4251: 'google::CommandLineFlagInfo::filename' : class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of struct 'google::CommandLineFlagInfo'
+     1>c:\work\derivative\common\gflags-2.0\src\gflags_unittest.cc(1108): warning C4996: 'unlink': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _unlink. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(278) : see declaration of 'unlink'
+     1>c:\work\derivative\common\gflags-2.0\src\gflags_unittest.cc(1112): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(211) : see declaration of 'fopen'
+     1>c:\work\derivative\common\gflags-2.0\src\gflags_unittest.cc(1135): warning C4996: 'unlink': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _unlink. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(278) : see declaration of 'unlink'
+     1>c:\work\derivative\common\gflags-2.0\src\gflags_unittest.cc(1148): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(211) : see declaration of 'fopen'
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\work\derivative\common\gflags-2.0\Debug\gflags_unittest.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\work\derivative\common\gflags-2.0\Debug\gflags_unittest.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\work\derivative\common\gflags-2.0\Debug\gflags_unittest.lib" /MACHINE:X86 /SAFESEH Debug\gflags_unittest.obj
+         "C:\work\derivative\common\gflags-2.0\Debug\libgflags-debug.lib"
+     1>gflags_unittest.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/SAFESEH' specification
+            Creating library C:\work\derivative\common\gflags-2.0\Debug\gflags_unittest.lib and object C:\work\derivative\common\gflags-2.0\Debug\gflags_unittest.exp
+         gflags_unittest.vcxproj -> C:\work\derivative\common\gflags-2.0\Debug\gflags_unittest.exe
+     1>Done Building Project "C:\work\derivative\common\gflags-2.0\vsprojects\gflags_unittest\gflags_unittest.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:01.69

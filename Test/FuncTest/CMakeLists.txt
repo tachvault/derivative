@@ -1,0 +1,12 @@
+# Recurse into the "FuncTest" directory.
+add_subdirectory (FINUTILITY_FUNCTEST)
+add_subdirectory (MYSQLDATAACCESS_FUNCTEST)
+add_subdirectory (YAHOODATAACCESS_FUNCTEST)
+add_subdirectory (PRIMARYASSET_EXT_FUNCTEST)
+add_subdirectory (BINOMIAL_FUNCTEST)
+add_subdirectory (FD_FUNCTEST) 
+add_subdirectory (GCEMPIRICAL_FUNCTEST) 
+add_subdirectory (HJM_FUNCTEST) 
+add_subdirectory (MBINARY_FUNCTEST)
+add_subdirectory (MONTECARLO_FUNCTEST)
+add_subdirectory (FACADES_FUNCTEST)

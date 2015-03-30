@@ -1,0 +1,13 @@
+﻿Build started 20/12/2014 3:00:40 AM.
+     1>Project "C:\work\derivative\common\gmock-1.7.0\msvc\2010\gmock_main.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I../../include /I../../include /I../../gtest/include /Zi /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"C:\work\derivative\common\gmock-1.7.0\msvc\2010\Debug\gmock_main\\" /Fd"C:\work\derivative\common\gmock-1.7.0\msvc\2010\Debug\gmock_main\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ..\..\src\gmock_main.cc
+         gmock_main.cc
+       Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\Lib.exe /OUT:"C:\work\derivative\common\gmock-1.7.0\msvc\2010\Debug\gmock_main.lib" /NOLOGO "C:\work\derivative\common\gmock-1.7.0\msvc\2010\Debug\gmock_main\gmock_main.obj"
+         gmock_main.vcxproj -> C:\work\derivative\common\gmock-1.7.0\msvc\2010\Debug\gmock_main.lib
+     1>Done Building Project "C:\work\derivative\common\gmock-1.7.0\msvc\2010\gmock_main.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.86
