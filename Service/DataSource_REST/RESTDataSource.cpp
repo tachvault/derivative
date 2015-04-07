@@ -15,9 +15,8 @@ namespace derivative
 	GROUP_REGISTER(RESTDataSource);
 	ALIAS_REGISTER(RESTDataSource, IDataSource);
 
-	const int RESTDataSource::defaultCntInit = 1;
 	RESTDataSource::RESTDataSource(const Exemplar &ex)
-		:m_name(TYPEID) 
+		:m_name(TYPEID)
 	{
 		LOG(INFO) << " Exemplar id constructed " << endl;
 	}
@@ -26,7 +25,6 @@ namespace derivative
 		: m_name(nm)
 	{
 		m_source = { YAHOO, XIGNITE };
-		m_DAOCount = defaultCntInit;
 		LOG(INFO) << " MySQLDataSource constructed with name " << nm << endl;
 	}
 
@@ -64,11 +62,17 @@ namespace derivative
 		try
 		{
 			std::shared_ptr<IObject>  entity = entityDAO->find(nm);
+			entityDAO->Passivate();
+			std::lock_guard<std::mutex> lock(m_mutex);
+			m_pool.at(dynamic_pointer_cast<IObject>(entityDAO)->GetName().GetGrpId())->push(entityDAO);
 			return entity;
 		}
 		catch (exception& e)
 		{
 			LOG(ERROR) << " Exception thrown " << e.what() << endl;
+			entityDAO->Passivate();
+			std::lock_guard<std::mutex> lock(m_mutex);
+			m_pool.at(dynamic_pointer_cast<IObject>(entityDAO)->GetName().GetGrpId())->push(entityDAO);
 			throw e;
 		}
 	}
@@ -86,10 +90,16 @@ namespace derivative
 		try
 		{
 			entityDAO->find(nm, entities);
+			entityDAO->Passivate();
+			std::lock_guard<std::mutex> lock(m_mutex);
+			m_pool.at(dynamic_pointer_cast<IObject>(entityDAO)->GetName().GetGrpId())->push(entityDAO);
 		}
 		catch (exception& e)
 		{
 			LOG(ERROR) << " Exception thrown " << e.what() << endl;
+			entityDAO->Passivate();
+			std::lock_guard<std::mutex> lock(m_mutex);
+			m_pool.at(dynamic_pointer_cast<IObject>(entityDAO)->GetName().GetGrpId())->push(entityDAO);
 			throw e;
 		}
 	}
@@ -107,11 +117,16 @@ namespace derivative
 		try
 		{
 			bool retStatus = entityDAO->refresh(obj);
+			entityDAO->Passivate();
+			m_pool.at(dynamic_pointer_cast<IObject>(entityDAO)->GetName().GetGrpId())->push(entityDAO);
 			return retStatus;
 		}
 		catch (exception& e)
 		{
 			LOG(ERROR) << " Exception thrown " << e.what() << endl;
+			entityDAO->Passivate();
+			std::lock_guard<std::mutex> lock(m_mutex);
+			m_pool.at(dynamic_pointer_cast<IObject>(entityDAO)->GetName().GetGrpId())->push(entityDAO);
 			throw e;
 		}
 	}
@@ -157,8 +172,28 @@ namespace derivative
 
 	std::shared_ptr<IDAO> RESTDataSource::getDAO(grpType daoGrpId)
 	{
+		/// if no Object pool created for the DAO then insert an ObjectPool
+		/// instance that is associated with the given group ID
+		std::unique_lock<std::mutex> lock(m_mutex);
+		if (m_pool.find(daoGrpId) == m_pool.end())
+		{
+			lock.unlock();
+			std::shared_ptr<ObjectPool<IDAO> > pool = std::make_shared<ObjectPool<IDAO> >(daoGrpId);
+			lock.lock();
+			m_pool.insert(std::pair<grpType, std::shared_ptr<ObjectPool<IDAO> > >(daoGrpId, pool));
+		}
+		lock.unlock();
 
-		/// We need to construct DAO from DAO exemplar; get the examplar object for the DAO
+		/// now check if there is a passive processor in the resource pool
+		std::shared_ptr<IDAO> dao;
+		lock.lock();
+		if (m_pool.at(daoGrpId)->try_pop(dao))
+		{
+			return dao;
+		}
+		lock.unlock();
+
+		/// Otherwise We need to construct DAO from DAO exemplar; get the examplar object for the DAO
 		/// Exemplar objects should be initialized during global initialization time.
 		try
 		{
@@ -172,12 +207,12 @@ namespace derivative
 			/// Now we have the exampler object. 
 			/// Make the exemplar DAO to construct DAO for the given entity
 			/// Remember each Entity object associated with a DAO
-			++m_DAOCount;
-			int max = std::numeric_limits<int>::max();
-			auto exchanged = m_DAOCount.compare_exchange_strong(max, defaultCntInit);
-			std::shared_ptr<IMake> obj = (dynamic_pointer_cast<IMake>(exemplar))->Make(Name(daoGrpId, m_DAOCount));
-
-			std::shared_ptr<IDAO> entityDAO = dynamic_pointer_cast<IDAO>(obj);
+			lock.lock();
+			auto objId = m_pool.at(daoGrpId)->increment();
+			lock.unlock();
+			assert(objId < dynamic_pointer_cast<IDAO>(exemplar)->GetMaxDAOCount());
+			std::shared_ptr<IMake> obj = (dynamic_pointer_cast<IMake>(exemplar))->Make(Name(daoGrpId, objId));
+			std::shared_ptr<IDAO>  entityDAO = dynamic_pointer_cast<IDAO>(obj);
 			return entityDAO;
 		}
 		catch (RegistryException& e)

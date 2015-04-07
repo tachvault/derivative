@@ -95,14 +95,20 @@ namespace derivative
 			throw DataSourceException("IDAO::update(..) not applicable for Stock entity");
 		}
 
+		virtual int GetMaxDAOCount() const
+		{
+			return MaxCount;
+		}
+
+		virtual void Passivate()
+		{
+			m_stock = nullptr;
+		}
+
 	private:
 
 		/// Populate the stock specific attributes
-		void findStock();
-
-		/// Populate the primitive asset specific attributes
-		/// shared by all primitive assets
-		void findExchange();
+		void findStock(const Name& nm);
 
 		Name m_name;
 
@@ -112,6 +118,8 @@ namespace derivative
 
 		// Associated stock entity
 		std::shared_ptr<IStock> m_stock;
+
+		static const int MaxCount;
 	};
 }
 

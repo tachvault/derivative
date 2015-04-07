@@ -96,6 +96,16 @@ namespace derivative
 			throw DataSourceException("IDAO::update(..) not applicable for HistoricStockIOfoDAP entity");
 		}
 
+		virtual int GetMaxDAOCount() const
+		{
+			return MaxCount;
+		}
+
+		virtual void Passivate()
+		{
+			m_stockInfo = nullptr;
+		}
+
 	private:
 
 		/// Populate the stockVal specific attributes
@@ -112,6 +122,8 @@ namespace derivative
 
 		/// Associated stockInfo entity
 		std::shared_ptr<HistoricalStockInfo> m_stockInfo;
+
+		static const int MaxCount;
 	};
 }
 

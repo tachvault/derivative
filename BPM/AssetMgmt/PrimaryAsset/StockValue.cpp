@@ -30,15 +30,15 @@ namespace derivative
 
 	std::shared_ptr<IMake> StockValue::Make(const Name &nm)
 	{
-		/// Construct Stock from given name and register with EntityManager
+		std::lock_guard<SpinLock> lock(m_lock);
+		/// Construct Stock from given name
+		/// The caller required to register the constructed with object with EntityManager
 		std::shared_ptr<StockValue> stockVal = make_shared<StockValue>(nm);
-		EntityMgrUtil::registerObject(nm, stockVal);		
-		LOG(INFO) << " Stock  " << nm << " is constructed and registered with EntityManager" << endl;
-
+		
 		/// return constructed object if no exception is thrown
 		return stockVal;
 	}
-
+	
 	std::shared_ptr<IMake> StockValue::Make(const Name &nm, const std::deque<boost::any>& agrs)
 	{
 		throw std::logic_error("Invalid factory method call");
@@ -46,6 +46,8 @@ namespace derivative
 
 	void StockValue::convert( istringstream  &input)
 	{ 
+		std::lock_guard<SpinLock> lock(m_lock);
+
 		std::string elem;
 		if (std::getline(input, elem,','))  m_priceAsk = atof(elem.c_str()); else throw YahooSrcException("Invalid data");
 		if (std::getline(input, elem,','))  m_priceBid = atof(elem.c_str()); else throw YahooSrcException("Invalid data");

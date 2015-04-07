@@ -150,12 +150,14 @@ namespace derivative
 		//// Return the date this stock was last traded.
 		virtual dd::date   GetTradeDate() const
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_tradeDate;
 		}
 
 		//// Return the time this stock was last traded.
 		virtual pt::ptime  GetTradeTime() const
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_tradeTime;
 		}
 
@@ -172,12 +174,14 @@ namespace derivative
 
 		virtual std::shared_ptr<IAsset> GetAsset() const
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_stock;
 		}
 
 		/// return stock.
 		virtual shared_ptr<IStock> GetStock() const
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_stock;
 		}
 
@@ -263,11 +267,13 @@ namespace derivative
 
 		virtual void SetTradeDate(const dd::date& d)
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			m_tradeDate = d;
 		}
 
 		virtual void SetTradeTime(const pt::ptime& time)
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			m_tradeTime = time;
 		}
 
@@ -283,6 +289,7 @@ namespace derivative
 
 		void SetStock(std::shared_ptr<IStock> stock)
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			m_stock = stock;
 		}
 				
@@ -290,51 +297,51 @@ namespace derivative
 
 		/// ask price of the stock. 
 		/// yahoo symbol 'a'
-		double m_priceAsk;
+		std::atomic<double> m_priceAsk;
 
 		/// bid price of the stock. 
 		/// yahoo symbol 'b'
-		double m_priceBid;
+		std::atomic<double> m_priceBid;
 
 		/// The opening price of the stock.
 		/// yahoo symbol 'o'
-		double   m_priceOpen;
+		std::atomic<double> m_priceOpen;
 
 		/// previous close price of the stock. 
 		/// yahoo symbol 'p'
-		double    m_priceClose;
+		std::atomic<double>  m_priceClose;
 
 		/// The last Traded price of the stock.
 		/// yahoo symbol 'l1'
-		double m_priceTrade;
+		std::atomic<double> m_priceTrade;
 
 		/// price change
 		/// yahoo symbol 'c1'
-		double m_change;
+		std::atomic<double> m_change;
 
 		/// price change percentage
 		/// yahoo symbol 'p2'
-		double m_changePct;
+		std::atomic<double> m_changePct;
 
 		/// dividend yield
 		/// yahoo symbol 'y'
-		double m_divYield;
+		std::atomic<double> m_divYield;
 
 		/// dividend per share
 		/// yahoo symbol 'd'
-		double m_divShare;
+		std::atomic<double> m_divShare;
 
 		/// yahoo symbol 'g'
-		double m_dayLow;
+		std::atomic<double> m_dayLow;
 
 		/// yahoo symbol 'h'
-		double m_dayHigh;
+		std::atomic<double> m_dayHigh;
 
 		/// yahoo symbol 'j'
-		double m_52WkLow;
+		std::atomic<double> m_52WkLow;
 
 		/// yahoo symbol 'k'
-		double m_52WkHigh;
+		std::atomic<double> m_52WkHigh;
 
 		/// The date this stock was last traded.
 		/// yahoo symbol  'd1'
@@ -346,28 +353,30 @@ namespace derivative
 
 		/// The earings per share value of the stock. 
 		/// yahoo symbol 'e'
-		double    m_eps;
+		std::atomic<double>    m_eps;
 
 		/// The price-to-earnings ratio for this stock.
 		/// yahoo symbol 'r'
-		double    m_pe;
+		std::atomic<double>    m_pe;
 
 		/// The number of shares outstanding of this stock.
 		/// yahoo symbol 'j2'
-		int    m_shares;
+		std::atomic<int>    m_shares;
 
 		/// The volume of the stock.
 		/// yahoo symbol 'v'
-		int    m_volume;
+		std::atomic<int>    m_volume;
 
 		/// The beta of the stock
-		double m_beta;
+		std::atomic<double> m_beta;
 
 		/// Name(TYPEID, std::hash<std::string>()(symbol)) 
 		/// Key[0] => "symbol"
 		Name m_name;
 
 		std::shared_ptr<IStock> m_stock;
+
+		mutable SpinLock m_lock;
 	};
 }
 

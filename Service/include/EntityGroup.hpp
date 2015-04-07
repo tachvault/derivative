@@ -26,7 +26,7 @@ namespace derivative
 		typedef std::unordered_map<std::size_t, std::shared_ptr<IObject> > HashObjectType;
 
 		/// Register an object with the entity manager
-		void registerObject(const Name& nm, const std::shared_ptr<IObject> &obj);
+		std::shared_ptr<IObject> registerObject(const Name& nm, const std::shared_ptr<IObject> &obj);
 
 		/// Register multiple objects together.
 		/// This more efficient when streaming data is

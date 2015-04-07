@@ -22,11 +22,12 @@ namespace derivative
 	GROUP_REGISTER(StockMySQLDAO);
 	DAO_REGISTER(IStock, MYSQL, StockMySQLDAO);
 
+	const int StockMySQLDAO::MaxCount = 100;
 	std::shared_ptr<IMake> StockMySQLDAO::Make(const Name &nm)
 	{
 		/// Construct StockMySQLDAO from given name and register with EntityManager
 		std::shared_ptr<StockMySQLDAO> dao = make_shared<StockMySQLDAO>(nm);
-		EntityMgrUtil::registerObject(nm, dao);
+		dao = dynamic_pointer_cast<StockMySQLDAO>(EntityMgrUtil::registerObject(nm, dao));
 		LOG(INFO) << " StockMySQLDAO  " << nm << " is constructed and registered with EntityManager" << endl;
 
 		/// return constructed object if no exception is thrown
@@ -66,13 +67,13 @@ namespace derivative
 		}	
 		
 		/// Populate the stock specific attributes
-		findStock();
+		findStock(nm);
 					
 		/// now return m_stock
 		return m_stock;
 	}
 
-	void StockMySQLDAO::findStock()
+	void StockMySQLDAO::findStock(const Name& nm)
 	{
 		try
 		{
@@ -80,7 +81,7 @@ namespace derivative
 			std::unique_ptr<sql::ResultSet> res;
 
 			pstmt.reset(m_con->prepareStatement ("CALL get_stockByStockId(?, @symName, @exName, @descript, @cntry, @impliedVol, @histVol)"));
-			pstmt->setUInt64(1, m_name.GetObjId());
+			pstmt->setUInt64(1, nm.GetObjId());
 			pstmt->execute();
 
 			pstmt.reset(m_con->prepareStatement("SELECT @symName AS _symbol, @exName AS _exName, @descript AS _description, @cntry AS _cntry, @impliedVol AS _impliedVol, @histVol AS _histVol"));			
@@ -111,7 +112,9 @@ namespace derivative
 				m_stock->SetHistVol(histVol);
 
 				std::string description = res->getString("_description").asStdString();
-				m_stock->SetDescription(description);		
+				m_stock->SetDescription(description);
+				m_stock = dynamic_pointer_cast<IStock>(EntityMgrUtil::registerObject(m_stock->GetName(), m_stock));
+				LOG(INFO) << " Stock  " << m_stock->GetName() << " is constructed and registered with EntityManager" << endl;
 				LOG(INFO) << " Stock object  " << m_stock->GetName() \
 					      << " constructed with " << symbol \
 					      << " " << exchangeName \

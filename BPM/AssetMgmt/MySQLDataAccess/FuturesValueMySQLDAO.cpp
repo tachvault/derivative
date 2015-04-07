@@ -22,11 +22,12 @@ namespace derivative
 	GROUP_REGISTER(FuturesValueMySQLDAO);
 	DAO_REGISTER(IFuturesValue, MYSQL, FuturesValueMySQLDAO);
 
+	const int FuturesValueMySQLDAO::MaxCount = 100;
 	std::shared_ptr<IMake> FuturesValueMySQLDAO::Make(const Name &nm)
 	{
 		/// Construct FuturesValueMySQLDAO from given name and register with EntityManager
 		std::shared_ptr<FuturesValueMySQLDAO> dao = make_shared<FuturesValueMySQLDAO>(nm);
-		EntityMgrUtil::registerObject(nm, dao);
+		dao = std::dynamic_pointer_cast<FuturesValueMySQLDAO>(EntityMgrUtil::registerObject(nm, dao));
 		LOG(INFO) << " FuturesValueMySQLDAO  " << nm << " is constructed and registered with EntityManager" << endl;
 
 		/// return constructed object if no exception is thrown
@@ -131,6 +132,7 @@ namespace derivative
 
 				/// set the settle price as the trade price
 				m_futuresVal->SetTradePrice(res->getDouble("_settle"));
+				m_futuresVal = dynamic_pointer_cast<IFuturesValue>(EntityMgrUtil::registerObject(m_futuresVal->GetName(), m_futuresVal));
 
 				LOG(INFO) << " Futures object  " << m_futuresVal->GetName() << " constructed for " << symbol << endl;
 			}

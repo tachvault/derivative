@@ -12,9 +12,12 @@
 #include <memory>
 #include <string>
 #include <iostream>
+#include <iostream>
+
 #include "IObject.hpp"
 #include "ClassType.hpp"
 #include "Name.hpp"
+#include "SpinLock.hpp"
 #include "Country.hpp"
  
 #if defined _WIN32 || defined __CYGWIN__
@@ -69,14 +72,15 @@ namespace derivative
         Exchange& operator=(const Exchange& rhs);
 
         /// return exchange Name
-        const std::string& GetExchangeName() const;
+        inline const std::string& GetExchangeName() const;
         
 		/// return country used by the exchange
-        const Country& GetCountry() const;
+        inline const Country& GetCountry() const;
 
 		/// get time offset
 		int GetTimeOffSet()
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_timeOffSet;
 		}		
 
@@ -93,6 +97,8 @@ namespace derivative
 
 		/// time offset from GMT
 		int m_timeOffSet;
+
+		mutable SpinLock m_lock;
 			
 		friend std::ostream& operator<<(std::ostream& os, const Exchange& ex);
 

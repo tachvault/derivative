@@ -38,11 +38,9 @@ namespace derivative
 
 	std::shared_ptr<IMake> DailyFuturesOptionValue::Make(const Name &nm)
 	{
-		/// Construct DailyFuturesOptionValue from given name and register with EntityManager
+		/// Construct DailyFuturesOptionValue from given name
+		/// The caller required to register the constructed with object with EntityManager
 		std::shared_ptr<DailyFuturesOptionValue> value = make_shared<DailyFuturesOptionValue>(nm);
-		EntityMgrUtil::registerObject(nm, value);		
-		LOG(INFO) << " DailyFuturesOptionValue  " << nm << " is constructed and registered with EntityManager" << endl;
-
 		/// return constructed object if no exception is thrown
 		return value;
 	}

@@ -96,6 +96,14 @@ namespace derivative
 			throw DataSourceException("IDAO::update(..) not applicable for DailyEquityOptionValue entity");
 		}
 
+		virtual int GetMaxDAOCount() const
+		{
+			return MaxCount;
+		}
+
+		virtual void Passivate()
+		{}
+
 	private:
 
 		/// Populate the options from the database
@@ -109,6 +117,8 @@ namespace derivative
 		sql::Driver *m_driver;
 
 		std::unique_ptr<sql::Connection> m_con;
+
+		static const int MaxCount;
 	};
 }
 

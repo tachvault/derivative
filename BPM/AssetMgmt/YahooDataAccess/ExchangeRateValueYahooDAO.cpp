@@ -31,11 +31,12 @@ namespace derivative
 	GROUP_REGISTER(ExchangeRateValueYahooDAO);
 	DAO_REGISTER(IExchangeRateValue, YAHOO, ExchangeRateValueYahooDAO);
 	
+	const int ExchangeRateValueYahooDAO::MaxCount = 100;
 	std::shared_ptr<IMake> ExchangeRateValueYahooDAO::Make(const Name &nm)
 	{
 		/// Construct ExchangeRateValueYahooDAO from given name and register with EntityManager
 		std::shared_ptr<ExchangeRateValueYahooDAO> dao = make_shared<ExchangeRateValueYahooDAO>(nm);
-		EntityMgrUtil::registerObject(nm, dao);
+		dao = dynamic_pointer_cast<ExchangeRateValueYahooDAO>(EntityMgrUtil::registerObject(nm, dao));
 		LOG(INFO) << " ExchangeRateValueYahooDAO  " << nm << " is constructed and registered with EntityManager" << endl;
 
 		/// return constructed object if no exception is thrown
@@ -121,6 +122,7 @@ namespace derivative
 		}).wait();
 
 		/// now return m_exchangeRateVal
+		m_exchangeRateVal = dynamic_pointer_cast<IExchangeRateValue>(EntityMgrUtil::registerObject(m_exchangeRateVal->GetName(), m_exchangeRateVal));
 		return m_exchangeRateVal;
 	}	
 

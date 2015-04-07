@@ -7,10 +7,13 @@ Copyright (c) 2013 - 2014, Nathan Muruganantha. All rights reserved.
 
 #include <string>
 #include <memory>
+#include <atomic>
+#include <mutex>
 
 #include "IMake.hpp"
 #include "IIRValue.hpp"
 #include "IIRDataSrc.hpp"
+#include "SpinLock.hpp"
 
 namespace derivative
 {
@@ -41,6 +44,7 @@ namespace derivative
 
 		const Name& GetName()
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_name;
 		}
 
@@ -53,32 +57,37 @@ namespace derivative
 		/// Return the date this stock was last traded.
 		virtual dd::date   GetReportedDate() const
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_date;
 		}
 
 		virtual void SetLastRate(double rate)
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			m_rate = rate;
 		}
 
 		virtual void SetReportedDate(const dd::date& d)
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			m_date = d;
 		}
 
 		virtual std::shared_ptr<IIR> GetRate() const
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_IR;
 		}
 
 		virtual void SetRate(const std::shared_ptr<IIR>& ir)
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			m_IR = ir;
 		}
 
 	private:
 
-		double m_rate;
+		std::atomic<double> m_rate;
 
 		dd::date m_date;
 
@@ -89,6 +98,8 @@ namespace derivative
 		Name m_name;
 
 		std::shared_ptr<IIR> m_IR;
+
+		mutable SpinLock m_lock;
 	};
 }
 

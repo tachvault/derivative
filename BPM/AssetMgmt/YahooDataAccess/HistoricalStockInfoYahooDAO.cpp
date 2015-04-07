@@ -38,6 +38,7 @@ namespace derivative
 	GROUP_REGISTER(HistoricalStockInfoYahooDAO);
 	DAO_REGISTER(HistoricalStockInfo, YAHOO, HistoricalStockInfoYahooDAO);
 
+	const int HistoricalStockInfoYahooDAO::MaxCount = 100;
 	std::shared_ptr<IMake> HistoricalStockInfoYahooDAO::ConstructExemplar()
 	{
 		/// First get the StockValue exemplar object from the registry
@@ -84,7 +85,7 @@ namespace derivative
 	{
 		/// Construct HistoricalStockInfoYahooDAO from given name and register with EntityManager
 		std::shared_ptr<HistoricalStockInfoYahooDAO> dao = make_shared<HistoricalStockInfoYahooDAO>(nm);
-		EntityMgrUtil::registerObject(nm, dao);
+		dao = dynamic_pointer_cast<HistoricalStockInfoYahooDAO>(EntityMgrUtil::registerObject(nm, dao));
 		LOG(INFO) << " HistoricalStockInfoYahooDAO  " << nm << " is constructed and registered with EntityManager" << endl;
 
 		/// return constructed object if no exception is thrown
@@ -214,6 +215,7 @@ namespace derivative
 			// Wait for the entire response body to be de-serialized.
 			.wait();
 
+		m_stockInfo = dynamic_pointer_cast<HistoricalStockInfo>(EntityMgrUtil::registerObject(m_stockInfo->GetName(), m_stockInfo));
 		return m_stockInfo;
 	}	
 

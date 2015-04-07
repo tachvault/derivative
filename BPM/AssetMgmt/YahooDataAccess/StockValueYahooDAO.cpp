@@ -31,11 +31,12 @@ namespace derivative
 	GROUP_REGISTER(StockValueYahooDAO);
 	DAO_REGISTER(IStockValue, YAHOO, StockValueYahooDAO);
 
+	const int StockValueYahooDAO::MaxCount = 100;
 	std::shared_ptr<IMake> StockValueYahooDAO::Make(const Name &nm)
 	{
 		/// Construct StockValueYahooDAO from given name and register with EntityManager
 		std::shared_ptr<StockValueYahooDAO> dao = make_shared<StockValueYahooDAO>(nm);
-		EntityMgrUtil::registerObject(nm, dao);
+		dao = dynamic_pointer_cast<StockValueYahooDAO>(EntityMgrUtil::registerObject(nm, dao));
 		LOG(INFO) << " StockValueYahooDAO  " << nm << " is constructed and registered with EntityManager" << endl;
 
 		/// return constructed object if no exception is thrown
@@ -111,6 +112,7 @@ namespace derivative
 		}).wait();
 
 		/// now return m_stockVal
+		m_stockVal = dynamic_pointer_cast<IStockValue>(EntityMgrUtil::registerObject(m_stockVal->GetName(), m_stockVal));
 		return m_stockVal;
 	}
 

@@ -90,6 +90,16 @@ namespace derivative
 			LOG(WARNING) << " IDAO::refresh(..) not applicable for HistoricExchangeRateIOfoDAP entity" << endl;
 			throw DataSourceException("IDAO::update(..) not applicable for HistoricExchangeRateIOfoDAP entity");
 		}
+
+		virtual int GetMaxDAOCount() const
+		{
+			return MaxCount;
+		}
+
+		virtual void Passivate()
+		{
+			m_exchangeRateInfo = nullptr;
+		}
 				
 	private:
 
@@ -114,6 +124,8 @@ namespace derivative
 
 		// Associated HistoricExchangeRateInfo entity
 		std::shared_ptr<HistoricalExchangeRateInfo> m_exchangeRateInfo;
+
+		static const int MaxCount;
 	};
 }
 

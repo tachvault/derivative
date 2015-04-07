@@ -48,17 +48,20 @@ namespace derivative
 
 		const Name& GetName()
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_name;
 		}
 
 		void SetName(const Name& nm)
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			m_name = nm;
 		}
 
 		//// Return the date this exchangeRate was last traded.
 		boost::gregorian::date   GetTradeDate() const
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_tradeDate;
 		}
 
@@ -88,17 +91,20 @@ namespace derivative
 		
 		std::shared_ptr<IAsset> GetAsset() const
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_exchangeRate;
 		}
 
 		/// return exchangeRate.
 		std::shared_ptr<const IExchangeRate> GetExchangeRate() const
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_exchangeRate;
 		}
 
 		void SetTradeDate(const boost::gregorian::date& d)
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			m_tradeDate = d;
 		}
 
@@ -140,22 +146,23 @@ namespace derivative
 
 		virtual void SetExchangeRate(std::shared_ptr<IExchangeRate> exchangeRate)
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			m_exchangeRate = exchangeRate;
 		}
 
 	private:
 
 		/// open price of the exchangeRate. 
-		double m_priceOpen;
+		std::atomic<double> m_priceOpen;
 
 		/// The closing price of the exchangeRate.
-		double   m_priceClose;
+		std::atomic<double>   m_priceClose;
 
 		/// High price on the day. 
-		double    m_priceHigh;
+		std::atomic<double>    m_priceHigh;
 
 		/// Low price on the day. 
-		double    m_priceLow;
+		std::atomic<double>    m_priceLow;
 
 		/// The date this exchangeRate value.
 		dd::date m_tradeDate;
@@ -168,6 +175,8 @@ namespace derivative
 		Name m_name;
 
 		std::shared_ptr<IExchangeRate> m_exchangeRate;
+
+		mutable SpinLock m_lock;
 	};
 }
 

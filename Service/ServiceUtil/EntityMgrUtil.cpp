@@ -13,13 +13,13 @@ Copyright (c) 2013, Nathan Muruganantha. All rights reserved.
 
 namespace derivative
 {
-	void EntityMgrUtil::registerObject(const Name& nm, const std::shared_ptr<IObject> &obj)
+	std::shared_ptr<IObject> EntityMgrUtil::registerObject(const Name& nm, const std::shared_ptr<IObject> &obj)
 	{
 		/// get the EntityManager instance
 		EntityManager& entMgr = EntityManager::getInstance();
 		try
 		{
-			entMgr.registerObject(nm, obj);
+			return entMgr.registerObject(nm, obj);
 		}
 		catch (RegistryException e)
 		{
@@ -173,7 +173,7 @@ namespace derivative
 		/// if source is MYSQL then use 'source' as the object ID
 		/// if the source is RESTful server) then the type ID
 		/// of the entity should be used as the Object ID
-		Name dataSrcInterfaceName = (source == MYSQL) ? Name(IDataSource::TYPEID, source) : Name(IDataSource::TYPEID, nm.GetGrpId());
+		Name dataSrcInterfaceName = Name(IDataSource::TYPEID, source);
 		std::vector<std::shared_ptr<IObject> > objs;
 		try
 		{
@@ -222,9 +222,13 @@ namespace derivative
 				/// Make the exemplar to construct DataSource for the given type
 				std::shared_ptr<IMake>& obj = (dynamic_pointer_cast<IMake>(exemplar))->Make(dataSourceName);
 
+				/// register with EntityManager now
+				std::shared_ptr<IObject>& regObj = (dynamic_pointer_cast<IObject>(obj));
+				regObj = EntityMgrUtil::registerObject(regObj->GetName(), regObj);
+
 				/// cast IDataSource and return if the data source of the object is the same as
 				/// requested parameter
-				std::shared_ptr<IDataSource> dataSrc = dynamic_pointer_cast<IDataSource>(obj);
+				std::shared_ptr<IDataSource> dataSrc = dynamic_pointer_cast<IDataSource>(regObj);
 				if (dataSrc->InSource(source))
 				{
 					return dataSrc;

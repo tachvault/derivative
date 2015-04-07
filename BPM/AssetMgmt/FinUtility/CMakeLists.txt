@@ -18,7 +18,8 @@ include_directories("${PROJECT_SOURCE_DIR}/BPM/AssetMgmt/include")
 add_definitions(-DFINUTILITY_EXPORTS)
 
 SET(FINUTILITY_SOURCE
-    ${PROJECT_SOURCE_DIR}/BPM/assetmgmt/include/Country.hpp
+    ${PROJECT_SOURCE_DIR}/Service/include/SpinLock.hpp
+	${PROJECT_SOURCE_DIR}/BPM/assetmgmt/include/Country.hpp
 	${PROJECT_SOURCE_DIR}/BPM/assetmgmt/include/CountryHolder.hpp
 	${PROJECT_SOURCE_DIR}/BPM/assetmgmt/include/Currency.hpp
 	${PROJECT_SOURCE_DIR}/BPM/assetmgmt/include/Exchange.hpp

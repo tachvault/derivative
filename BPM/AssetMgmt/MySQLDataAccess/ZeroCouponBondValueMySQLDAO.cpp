@@ -19,11 +19,12 @@ namespace derivative
 	GROUP_REGISTER(ZeroCouponBondValueMySQLDAO);
 	DAO_REGISTER(IZeroCouponBondValue, MYSQL, ZeroCouponBondValueMySQLDAO);
 
+	const int ZeroCouponBondValueMySQLDAO::MaxCount = 100;
 	std::shared_ptr<IMake> ZeroCouponBondValueMySQLDAO::Make(const Name &nm)
 	{
 		/// Construct ZeroCouponBondValueMySQLDAO from given name and register with EntityManager
 		std::shared_ptr<ZeroCouponBondValueMySQLDAO> dao = make_shared<ZeroCouponBondValueMySQLDAO>(nm);
-		EntityMgrUtil::registerObject(nm, dao);
+		dao = dynamic_pointer_cast<ZeroCouponBondValueMySQLDAO>(EntityMgrUtil::registerObject(nm, dao));
 		LOG(INFO) << " ZeroCouponBondValueMySQLDAO  " << nm << " is constructed and registered with EntityManager" << endl;
 
 		/// return constructed object if no exception is thrown
@@ -216,6 +217,7 @@ namespace derivative
 				bond->SetYield(yield);
 				bond->SetTradePrice(tPrice);
 				bond->SetQuotedPrice(qPrice);
+				bond = dynamic_pointer_cast<IZeroCouponBondValue>(EntityMgrUtil::registerObject(bond->GetName(), bond));
 			    LOG(INFO) << " ZeroCouponBondValue " << symbol << " with trade date " << tDate << " constructed with " \
 				          << "maturity date" << mDate << "trade date" << tDate << endl;
 				LOG(INFO) << "trade price date" << tPrice << "quoted price date" << qPrice 	<< "yield " << yield <<	endl;

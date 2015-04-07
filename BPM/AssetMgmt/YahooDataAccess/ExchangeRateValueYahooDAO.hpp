@@ -85,6 +85,16 @@ namespace derivative
 			throw DataSourceException("IDAO::update(..) not applicable for ExchangeRateValue entity");
 		}
 
+		virtual int GetMaxDAOCount() const
+		{
+			return MaxCount;
+		}
+
+		virtual void Passivate()
+		{
+			m_exchangeRateVal = nullptr;
+		}
+
 	private:
 
 		/// Populate the exchangeRateVal specific attributes
@@ -94,6 +104,8 @@ namespace derivative
 
 		/// Associated exchangeRateVal entity
 		std::shared_ptr<IExchangeRateValue> m_exchangeRateVal;
+
+		static const int MaxCount;
 	};
 }
 

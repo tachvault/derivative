@@ -26,11 +26,12 @@ namespace derivative
 
 	std::shared_ptr<IMake> LIBORValue::Make(const Name &nm)
 	{
-		/// Construct LIBORValue from given name and register with EntityManager
-		std::shared_ptr<LIBORValue> val = make_shared<LIBORValue>(nm);
-		EntityMgrUtil::registerObject(nm, val);		
-		LOG(INFO) << " LIBOR  " << nm << " is constructed and registered with EntityManager" << endl;
+		std::lock_guard<SpinLock> lock(m_lock);
 
+		/// Construct LIBORValue from given name
+		/// The caller required to register the constructed with object with EntityManager
+		std::shared_ptr<LIBORValue> val = make_shared<LIBORValue>(nm);
+		
 		/// return constructed object if no exception is thrown
 		return val;
 	}
@@ -42,6 +43,7 @@ namespace derivative
 
 	void LIBORValue::convert( istringstream  &input)
 	{ 
+		std::lock_guard<SpinLock> lock(m_lock);
 		std::string elem;
 		if (std::getline(input, elem,','))  m_rate = atof(elem.c_str()); else throw YahooSrcException("Invalid data");
 		if (std::getline(input, elem,','))  m_date = boost::gregorian::from_string(elem); else throw YahooSrcException("Invalid data");	  

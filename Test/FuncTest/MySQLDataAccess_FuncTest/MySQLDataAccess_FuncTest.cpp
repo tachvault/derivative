@@ -129,6 +129,58 @@ TEST_F(MySQLDataAccessTest, FindStockTest) {
 		LOG(WARNING) << " Unknown Exception thrown " << endl;
 		ASSERT_TRUE(false);
 	}
+
+	/// Get the name for S&P 500 index (stored in MySQL database)
+	std::string symbol2("GOOG");
+	std::shared_ptr<IObject> Stock_SP2;
+
+	Name nm_2 = IStock::ConstructName(symbol2);
+	bool foundFlag2 = true;
+
+	/// Now find the registered concerete Names for the
+	/// given alias type
+	std::vector<Name> names2;
+	bool retValue2 = entMgr.findAlias(nm_2, names2);
+
+	ASSERT_EQ(names2.size(), 1);
+
+	try
+	{
+		/// This call should find the named object in
+		/// registry. If not found then it should fetch
+		/// the stock data from database, construct stock
+		/// and register with entity manager.
+		Stock_SP2 = EntityMgrUtil::findObject(nm_2);
+	}
+	catch (RegistryException& e)
+	{
+		LOG(WARNING) << " RegistryException thrown " << e.what() << endl;
+		ASSERT_TRUE(false);
+	}
+	catch (...)
+	{
+		LOG(WARNING) << " Unknown Exception thrown " << endl;
+		ASSERT_TRUE(false);
+	}
+
+	/// if we are here, it means that the given stock object is in memory
+	/// and registered with EntityManager
+	/// find an object that is in the registry
+	std::shared_ptr<IObject> temp_2;
+	try
+	{
+		temp_2 = EntityMgrUtil::findObject(nm_2);
+	}
+	catch (RegistryException& e)
+	{
+		LOG(WARNING) << " RegistryException thrown " << e.what() << endl;
+		ASSERT_TRUE(false);
+	}
+	catch (...)
+	{
+		LOG(WARNING) << " Unknown Exception thrown " << endl;
+		ASSERT_TRUE(false);
+	}
 }
 
 /// Test finding futures objects.

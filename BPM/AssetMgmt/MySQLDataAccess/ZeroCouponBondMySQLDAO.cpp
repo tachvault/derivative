@@ -19,11 +19,12 @@ namespace derivative
 	GROUP_REGISTER(ZeroCouponBondMySQLDAO);
 	DAO_REGISTER(IZeroCouponBond, MYSQL, ZeroCouponBondMySQLDAO);
 
+	const int ZeroCouponBondMySQLDAO::MaxCount = 100;
 	std::shared_ptr<IMake> ZeroCouponBondMySQLDAO::Make(const Name &nm)
 	{
 		/// Construct ZeroCouponBondMySQLDAO from given name and register with EntityManager
 		std::shared_ptr<ZeroCouponBondMySQLDAO> dao = make_shared<ZeroCouponBondMySQLDAO>(nm);
-		EntityMgrUtil::registerObject(nm, dao);
+		dao = dynamic_pointer_cast<ZeroCouponBondMySQLDAO>(EntityMgrUtil::registerObject(nm, dao));
 		LOG(INFO) << " ZeroCouponBondMySQLDAO  " << nm << " is constructed and registered with EntityManager" << endl;
 
 		/// return constructed object if no exception is thrown
@@ -105,6 +106,7 @@ namespace derivative
 					rate->SetDomesticCurrency(curr);
 					rate->SetFaceValue(faceValue);
 					rate->SetCategory(category);
+					rate = dynamic_pointer_cast<IZeroCouponBond>(EntityMgrUtil::registerObject(rate->GetName(), rate));
 
 					LOG(INFO) << " New ZeroCouponBond object created for << description " << endl;
 

@@ -19,11 +19,12 @@ namespace derivative
 	GROUP_REGISTER(ExchangeRateMySQLDAO);
 	DAO_REGISTER(IExchangeRate, MYSQL, ExchangeRateMySQLDAO);
 	
+	const int ExchangeRateMySQLDAO::MaxCount = 100;
 	std::shared_ptr<IMake> ExchangeRateMySQLDAO::Make(const Name &nm)
 	{
 		/// Construct ExchangeRateMySQLDAO from given name and register with EntityManager
 		std::shared_ptr<ExchangeRateMySQLDAO> dao = make_shared<ExchangeRateMySQLDAO>(nm);
-		EntityMgrUtil::registerObject(nm, dao);
+		dao = std::dynamic_pointer_cast<ExchangeRateMySQLDAO>(EntityMgrUtil::registerObject(nm, dao));
 		LOG(INFO) << " ExchangeRateMySQLDAO  " << nm << " is constructed and registered with EntityManager" << endl;
 
 		/// return constructed object if no exception is thrown
@@ -63,13 +64,13 @@ namespace derivative
 		}	
 		
 		/// Populate the exchangeRate specific attributes
-		findExchangeRate();
+		findExchangeRate(nm);
 					
 		/// now return m_exchangeRate
 		return m_exchangeRate;
 	}
 
-	void ExchangeRateMySQLDAO::findExchangeRate()
+	void ExchangeRateMySQLDAO::findExchangeRate(const Name& nm)
 	{
 		try
 		{
@@ -77,7 +78,7 @@ namespace derivative
 			std::unique_ptr<sql::ResultSet> res;
 
 			pstmt.reset(m_con->prepareStatement ("CALL get_forexById(?, @domestic, @foreign)"));
-			pstmt->setUInt64(1, m_name.GetObjId());
+			pstmt->setUInt64(1, nm.GetObjId());
 			pstmt->execute();
 
 			pstmt.reset(m_con->prepareStatement("SELECT @domestic AS _domestic, @foreign AS _foreign"));			
@@ -96,6 +97,7 @@ namespace derivative
 				std::string foreign = res->getString("_foreign").asStdString();
 				const Currency& foreignCurr = currHolder.GetCurrency(foreign);
 				m_exchangeRate->SetForeignCurrency(foreignCurr);
+				m_exchangeRate = std::dynamic_pointer_cast<IExchangeRate>(EntityMgrUtil::registerObject(m_exchangeRate->GetName(), m_exchangeRate));
 
 				LOG(INFO) << " ExchangeRate object  " << m_exchangeRate->GetName() \
 					      << " constructed with " << domestic \

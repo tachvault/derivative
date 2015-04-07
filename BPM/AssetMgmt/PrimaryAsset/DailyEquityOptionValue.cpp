@@ -38,17 +38,17 @@ namespace derivative
 
 	std::shared_ptr<IMake> DailyEquityOptionValue::Make(const Name &nm)
 	{
-		/// Construct DailyEquityOptionValue from given name and register with EntityManager
+		std::lock_guard<SpinLock> lock(m_lock);
+		/// Construct DailyEquityOptionValue from given name
+		/// The caller required to register the constructed with object with EntityManager
 		std::shared_ptr<DailyEquityOptionValue> value = make_shared<DailyEquityOptionValue>(nm);
-		EntityMgrUtil::registerObject(nm, value);		
-		LOG(INFO) << " DailyEquityOptionValue  " << nm << " is constructed and registered with EntityManager" << endl;
-
 		/// return constructed object if no exception is thrown
 		return value;
 	}
 
 	std::shared_ptr<IMake> DailyEquityOptionValue::Make(const Name &nm, const std::deque<boost::any>& agrs)
 	{
+		std::lock_guard<SpinLock> lock(m_lock);
 		/// first validate the input parameters
 		if (!agrs.empty() &&  agrs.size() != 6)
 		{
@@ -76,6 +76,7 @@ namespace derivative
 
 	void DailyEquityOptionValue::convert( istringstream  &input)
 	{ 
+		std::lock_guard<SpinLock> lock(m_lock);
 		std::string elem;
 		if (std::getline(input, elem,','))  m_tradeDate = boost::gregorian::from_simple_string(elem.c_str()); else throw YahooSrcException("Invalid data");
 		if (std::getline(input, elem,','))  m_maturityDate = boost::gregorian::from_simple_string(elem.c_str()); else throw YahooSrcException("Invalid data");

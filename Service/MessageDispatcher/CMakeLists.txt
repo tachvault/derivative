@@ -18,6 +18,7 @@ SET(MESSAGEDISPATCHER_SOURCES
     	${PROJECT_SOURCE_DIR}/Service/include/MsgProcessorManager.hpp
 	    ${PROJECT_SOURCE_DIR}/Service/include/MsgRegister.hpp
 		${PROJECT_SOURCE_DIR}/Service/include/MessageDispatcher.hpp
+		${PROJECT_SOURCE_DIR}/Service/include/ObjectPool.hpp
 	    MsgDispatcherDLLMain.cpp
 	    MsgProcessorManager.cpp
 	    MsgRegister.cpp        

@@ -28,11 +28,11 @@ namespace derivative
 
 	std::shared_ptr<IMake> ExchangeRateValue::Make(const Name &nm)
 	{
-		/// Construct Stock from given name and register with EntityManager
+		std::lock_guard<SpinLock> lock(m_lock);
+		/// Construct ExchangeRateValue from given name
+		/// The caller required to register the constructed with object with EntityManager
 		std::shared_ptr<ExchangeRateValue> exchangeRateVal = make_shared<ExchangeRateValue>(nm);
-		EntityMgrUtil::registerObject(nm, exchangeRateVal);		
-		LOG(INFO) << " Stock  " << nm << " is constructed and registered with EntityManager" << endl;
-
+		
 		/// return constructed object if no exception is thrown
 		return exchangeRateVal;
 	}
@@ -43,7 +43,8 @@ namespace derivative
 	}
 
 	void ExchangeRateValue::convert( istringstream  &input)
-	{ 
+	{
+		std::lock_guard<SpinLock> lock(m_lock);
 		std::string elem;
 		if (std::getline(input, elem,',')) 
 		{

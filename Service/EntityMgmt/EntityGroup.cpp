@@ -11,7 +11,7 @@ Copyright (c) 2013, Nathan Muruganantha. All rights reserved.
 
 namespace derivative
 {
-	void EntityGroup::registerObject(const Name& nm, const std::shared_ptr<IObject> &obj)
+	std::shared_ptr<IObject> EntityGroup::registerObject(const Name& nm, const std::shared_ptr<IObject> &obj)
 	{
 		/// Lock for access to private members 
 		std::lock_guard<std::mutex> guard(m_mutex);
@@ -25,7 +25,7 @@ namespace derivative
 		{
 			m_exemplar = obj;
 			LOG(INFO) << "Set the Exemplar object " << endl;
-			return;
+			return obj;
 		}
 
 		/// Get the iterator for the key nm.ObjId
@@ -37,11 +37,13 @@ namespace derivative
 			/// insert the given Name and IObject
 			m_objRegistry.insert(std::make_pair(nm.GetObjId(), obj));
 			LOG(INFO) << "Added object with Created new EntityGroup for" << nm << endl;
+			return obj;
 		}
 		else
 		{
 			/// an object with the given key (object ID) already bound)
 			LOG(INFO) << "Name already registered for " << nm << endl;
+			return i->second;
 		}
 	}
 

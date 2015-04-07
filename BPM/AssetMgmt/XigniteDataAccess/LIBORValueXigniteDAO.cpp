@@ -33,11 +33,12 @@ namespace derivative
 	GROUP_REGISTER(LIBORValueXigniteDAO);
 	DAO_REGISTER(IIBORValue, XIGNITE, LIBORValueXigniteDAO);
 
+	const int LIBORValueXigniteDAO::MaxCount = 100;
 	std::shared_ptr<IMake> LIBORValueXigniteDAO::Make(const Name &nm)
 	{
 		/// Construct LIBORValueXigniteDAO from given name and register with EntityManager
 		std::shared_ptr<LIBORValueXigniteDAO> dao = make_shared<LIBORValueXigniteDAO>(nm);
-		EntityMgrUtil::registerObject(nm, dao);
+		dao = dynamic_pointer_cast<LIBORValueXigniteDAO>(EntityMgrUtil::registerObject(nm, dao));
 		LOG(INFO) << " LIBORValueXigniteDAO  " << nm << " is constructed and registered with EntityManager" << endl;
 
 		/// return constructed object if no exception is thrown
@@ -65,6 +66,7 @@ namespace derivative
 		{
 			/// get the LIBOR from registry or from data source
 			/// set the LIBOR object with LIBORValue
+		//	std::shared_ptr<IIBOR> lrate = dynamic_pointer_cast<IIBOR>(EntityMgrUtil::findObject(LIBORName));
 			m_value->SetRate(dynamic_pointer_cast<IIBOR>(EntityMgrUtil::findObject(LIBORName)));
 		}
 		catch (RegistryException& e)
@@ -83,7 +85,7 @@ namespace derivative
 
 		/// Populate the interestRate specific attributes
 		findLIBORValue(date);
-
+		m_value = dynamic_pointer_cast<IIBORValue>(EntityMgrUtil::registerObject(m_value->GetName(), m_value));
 		/// now return m_interestRate
 		return m_value;
 	}
@@ -150,7 +152,7 @@ namespace derivative
 				auto rateStr = v.as_object().find(U("Text"))->second.as_string();
 				rateStr.erase(std::remove(rateStr.begin(), rateStr.end(), '%'), rateStr.end());
 				double rate = boost::lexical_cast<double>(rateStr);
-				m_value->SetLastRate(rate/100);
+				m_value->SetLastRate(rate / 100);
 
 				/// set date
 				auto dateIter = v.as_object().find(U("Date"));

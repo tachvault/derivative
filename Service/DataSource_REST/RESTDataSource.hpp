@@ -10,7 +10,8 @@ Copyright (c) 2013, Nathan Muruganantha. All rights reserved.
 #include <set>
 #include <atomic>
 
-#include "ThreadSafeQueue.hpp"
+#include"SpinLock.hpp"
+#include "ObjectPool.hpp"
 #include "IDataSource.hpp"
 #include "Name.hpp"
 
@@ -111,13 +112,14 @@ namespace derivative
 
 		Name m_name;
 
-		/// Indicate the external sounce.
-		/// Initialized with REST.
+		/// Indicate the external sounce. Initialized with REST.
 		std::set<unsigned short> m_source;
- 
-		std::atomic<int>  m_DAOCount;
 
-		const static int defaultCntInit;
+		/// declare the Data access object pool. For each entity type (Ex: IStock) 
+		/// there will be a object pool of DAOs. 
+		std::map<grpType, std::shared_ptr<ObjectPool<IDAO> > > m_pool;
+
+		mutable SpinLock m_lock;
 	};
 }
 

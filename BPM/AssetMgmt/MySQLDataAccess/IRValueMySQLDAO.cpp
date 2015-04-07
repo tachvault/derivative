@@ -19,11 +19,12 @@ namespace derivative
 	GROUP_REGISTER(IRValueMySQLDAO);
 	DAO_REGISTER(IIRValue, MYSQL, IRValueMySQLDAO);
 
+	const int IRValueMySQLDAO::MaxCount = 100;
 	std::shared_ptr<IMake> IRValueMySQLDAO::Make(const Name &nm)
 	{
 		/// Construct IRValueMySQLDAO from given name and register with EntityManager
 		std::shared_ptr<IRValueMySQLDAO> dao = make_shared<IRValueMySQLDAO>(nm);
-		EntityMgrUtil::registerObject(nm, dao);
+		dao = dynamic_pointer_cast<IRValueMySQLDAO>(EntityMgrUtil::registerObject(nm, dao));
 		LOG(INFO) << " IRValueMySQLDAO  " << nm << " is constructed and registered with EntityManager" << endl;
 
 		/// return constructed object if no exception is thrown
@@ -117,8 +118,6 @@ namespace derivative
 		/// Populate the bond value specific attributes
 		findIRValue(nm, entities);
 	}
-
-
 	void IRValueMySQLDAO::findIRValue(const dd::date& issueDate)
 	{
 		std::string date;
@@ -153,6 +152,7 @@ namespace derivative
 				m_value->SetReportedDate(boost::any_cast<dd::date>(dd::from_simple_string(lastDate)));
 				auto rate = res->getDouble("_rate");
 				m_value->SetLastRate(rate);
+				m_value = dynamic_pointer_cast<IIRValue>(EntityMgrUtil::registerObject(m_value->GetName(), m_value));
 
 				LOG(INFO) << " Interest rate value " << m_value->GetName() \
 					<< " constructed with " << rate << endl;

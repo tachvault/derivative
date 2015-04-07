@@ -59,6 +59,7 @@ namespace derivative
 
 		const Name& GetName()
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_name;
 		}
 
@@ -119,12 +120,14 @@ namespace derivative
 		/// Return the date this stock was last traded.
 		dd::date   GetTradeDate() const
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_tradeDate;
 		}
 
 		//// Return the time this stock was last traded.
 		pt::ptime  GetTradeTime() const
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_tradeTime;
 		}
 
@@ -135,12 +138,14 @@ namespace derivative
 
 		std::shared_ptr<IAsset> GetAsset() const
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_exchangeRate;
 		}
 
 		/// return stock.
 		std::shared_ptr<const IExchangeRate> GetExchangeRate() const
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_exchangeRate;
 		}
 
@@ -191,16 +196,19 @@ namespace derivative
 
 		void SetTradeDate(const dd::date& d)
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			m_tradeDate = d;
 		}
 
 		void SetTradeTime(const pt::ptime& time)
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			m_tradeTime = time;
 		}
 
 		void SetExchangeRate(std::shared_ptr<IExchangeRate> exRate)
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			m_exchangeRate = exRate;
 		}		
 
@@ -208,35 +216,35 @@ namespace derivative
 
 		/// ask price of the stock. 
 		/// yahoo symbol 'a'
-		double m_priceAsk;
+		std::atomic<double> m_priceAsk;
 
 		/// bid price of the stock. 
 		/// yahoo symbol 'b'
-		double m_priceBid;
+		std::atomic<double> m_priceBid;
 
 		/// The opening price of the stock.
 		/// yahoo symbol 'o'
-		double   m_priceOpen;
+		std::atomic<double>   m_priceOpen;
 
 		/// previous close price of the stock. 
 		/// yahoo symbol 'p'
-		double    m_priceClose;
+		std::atomic<double>    m_priceClose;
 
 		/// The last Traded price of the stock.
 		/// yahoo symbol 'l1'
-		double m_priceTrade;
+		std::atomic<double> m_priceTrade;
 
 		/// yahoo symbol 'g'
-		double m_dayLow;
+		std::atomic<double> m_dayLow;
 
 		/// yahoo symbol 'h'
-		double m_dayHigh;
+		std::atomic<double> m_dayHigh;
 
 		/// yahoo symbol 'j'
-		double m_52WkLow;
+		std::atomic<double> m_52WkLow;
 
 		/// yahoo symbol 'k'
-		double m_52WkHigh;
+		std::atomic<double> m_52WkHigh;
 
 		/// The date this stock was last traded.
 		/// yahoo symbol  'd1'
@@ -253,6 +261,8 @@ namespace derivative
 		Name m_name;
 
 		std::shared_ptr<IExchangeRate> m_exchangeRate;
+
+		mutable SpinLock m_lock;
 	};
 }
 

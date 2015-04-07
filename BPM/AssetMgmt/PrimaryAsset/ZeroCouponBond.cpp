@@ -47,11 +47,12 @@ namespace derivative
 
 	std::shared_ptr<IMake> ZeroCouponBond::Make(const Name &nm)
 	{
-		/// Construct ZeroCouponBond from given name and register with EntityManager
-		std::shared_ptr<ZeroCouponBond> bond = make_shared<ZeroCouponBond>(nm);
-		EntityMgrUtil::registerObject(nm, bond);		
-		LOG(INFO) << " ZeroCouponBond  " << nm << " is constructed and registered with EntityManager" << endl;
+		std::lock_guard<SpinLock> lock(m_lock);
 
+		/// Construct ZeroCouponBond from given name
+		/// The caller required to register the constructed with object with EntityManager
+		std::shared_ptr<ZeroCouponBond> bond = make_shared<ZeroCouponBond>(nm);
+		
 		/// return constructed object if no exception is thrown
 		return bond;
 	}

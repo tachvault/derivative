@@ -41,16 +41,19 @@ namespace derivative
 
 		const Name& GetName()
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_name;
 		}
 
 		const std::string& GetSymbol() const
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_symbol;
 		}
 
 		virtual CategoryType GetCategory() const
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_category;
 		}
 
@@ -66,11 +69,13 @@ namespace derivative
 
 		virtual void SetCategory(const CategoryType& cat)
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			m_category = cat;
 		}
 
 		virtual const std::string& GetDescription() const
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_description;
 		}
 
@@ -101,6 +106,7 @@ namespace derivative
 
 		void SetSymbol(const std::string& sym)
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			m_symbol = sym;
 		}
 
@@ -111,6 +117,7 @@ namespace derivative
 
 		void SetDescription(const std::string& des)
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			m_description = des;
 		}
 		
@@ -145,9 +152,11 @@ namespace derivative
 		
 		Country m_country;
 
-		double m_faceValue;
+		std::atomic<double> m_faceValue;
 
 		DayCount::DayCountType m_dayCount;
+
+		mutable SpinLock m_lock;
 	};	
 
 } /* namespace derivative */

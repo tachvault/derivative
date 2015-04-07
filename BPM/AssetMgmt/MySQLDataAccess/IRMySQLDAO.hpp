@@ -90,6 +90,16 @@ namespace derivative
 			throw DataSourceException("IDAO::update(..) not applicable for IR entity");
 		}
 
+		virtual int GetMaxDAOCount() const
+		{
+			return MaxCount;
+		}
+
+		virtual void Passivate()
+		{
+			m_rate = nullptr;
+		}
+
 	private:
 
 		/// Populate the interestRate specific attributes
@@ -103,6 +113,8 @@ namespace derivative
 
 		// Associated interestRate entity
 		std::shared_ptr<IIR> m_rate;
+
+		static const int MaxCount;
 	};
 }
 

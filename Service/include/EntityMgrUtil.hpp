@@ -67,7 +67,7 @@ namespace derivative
 		/// register an object that implements IObject pure virtual class.
 		/// if the given object is already registered with the name
 		/// then it will propogate RegistryException
-		static void registerObject(const Name& nm, const std::shared_ptr<IObject> &obj);
+		static std::shared_ptr<IObject> registerObject(const Name& nm, const std::shared_ptr<IObject> &obj);
 
 		/// register a set of objects together.
 		/// Useful routine when registering streaming data

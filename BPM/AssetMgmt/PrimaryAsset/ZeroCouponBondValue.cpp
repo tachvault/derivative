@@ -24,16 +24,18 @@ namespace derivative
 		:m_name(nm),m_quotedPrice(0),m_tradePrice(0),m_yield(0),
 		m_processedDate(dd::day_clock::local_day())
 	{
+		std::lock_guard<SpinLock> lock(m_lock);
 		m_cashFlow = std::make_shared<IIRDataSrc::cashFlowSetType>();
 	}
 
 	std::shared_ptr<IMake> ZeroCouponBondValue::Make(const Name &nm)
 	{
-		/// Construct ZeroCouponBond from given name and register with EntityManager
-		std::shared_ptr<ZeroCouponBondValue> val = make_shared<ZeroCouponBondValue>(nm);
-		EntityMgrUtil::registerObject(nm, val);		
-		LOG(INFO) << " ZeroCouponBond  " << nm << " is constructed and registered with EntityManager" << endl;
+		std::lock_guard<SpinLock> lock(m_lock);
 
+		/// Construct ZeroCouponBond from given name
+		/// The caller required to register the constructed with object with EntityManager
+		std::shared_ptr<ZeroCouponBondValue> val = make_shared<ZeroCouponBondValue>(nm);
+		
 		/// return constructed object if no exception is thrown
 		return val;
 	}
@@ -50,6 +52,7 @@ namespace derivative
 
 	void ZeroCouponBondValue::generateCashFlow()
 	{
+		std::lock_guard<SpinLock> lock(m_lock);
 		dd::date_duration dur = m_maturityDate - m_tradeDate;
 		m_cashFlow->insert(std::make_pair(0, 0.0));
 		m_cashFlow->insert(make_pair(dur.days(), 1.0));
