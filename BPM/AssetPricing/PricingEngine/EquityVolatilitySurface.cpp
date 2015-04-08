@@ -32,7 +32,7 @@ namespace derivative
 	{
 		if (m_vol.empty())
 		{
-			throw std::domain_error("No option data found");
+			throw std::domain_error("No historic option market data found");
 		}
 
 		if (m_vol.find(strike) != m_vol.end())
@@ -49,7 +49,7 @@ namespace derivative
 		{
 			if (m_vol.begin()->second == nullptr)
 			{
-				Build(strike);
+				Build(m_vol.begin()->first);
 			}
 			return m_vol.begin()->second;
 		}
@@ -63,7 +63,7 @@ namespace derivative
 			}
 		}
 
-		/// if strike is greater than max strike then throw exception
+		/// if strike is greater then max strike  return vol for max strike
 		if (it == m_vol.end())
 		{
 			LOG(WARNING) << "Cannot extrapolate but return the vol for largest strike price" << endl;
@@ -207,7 +207,7 @@ namespace derivative
 		{
 			std::shared_ptr<DeterministicAssetVol> assetVol = std::make_shared<PiecewiseConstVol>(timeline, vols);
 			m_vol.at(strike) = assetVol;
-			LOG(INFO) << " K = " << strike << ", Timeline " << timeline << ", vol " << vols << endl;
+			cout << " K = " << strike << ", Timeline " << timeline << ", vol " << vols << endl;
 		}
 	}
 
