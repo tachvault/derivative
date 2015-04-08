@@ -39,6 +39,7 @@ SET(SERVICE_UTIL_SOURCES
 	${PROJECT_SOURCE_DIR}/Service/include/ThreadSafeQueue.hpp
 	${PROJECT_SOURCE_DIR}/Service/include/utilities.h
 	${PROJECT_SOURCE_DIR}/Service/include/SystemUtil.hpp
+	${PROJECT_SOURCE_DIR}/Service/include/RootFinder.h
 	CSV2Array.cpp
 	cubature.c
 	cumnorm1.cpp
@@ -58,6 +59,7 @@ SET(SERVICE_UTIL_SOURCES
 	StringForm.cpp
 	utilities.cpp
 	SystemUtil.cpp
+	RootFinder.cpp
 )
 
 # Link shared library paths (Note: This should be added before Add_library !!!)

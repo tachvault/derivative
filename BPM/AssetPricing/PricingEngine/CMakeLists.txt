@@ -36,6 +36,8 @@ SET(PRICINGENGINE_SOURCE
 	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/GaussMarkovTermStructure.hpp
 	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/EquityVolatilitySurface.hpp
 	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/FuturesVolatilitySurface.hpp
+	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/CIRprocess.hpp
+	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/HestonAsset.hpp
 	Binomial.cpp
 	FiniteDifference.cpp
 	GaussMarkovWorld.cpp
@@ -57,6 +59,7 @@ SET(PRICINGENGINE_SOURCE
 	GaussMarkovTermStructure.cpp	
 	EquityVolatilitySurface.cpp
 	FuturesVolatilitySurface.cpp
+	HestonAsset.cpp
 )
 
 # Link shared library paths

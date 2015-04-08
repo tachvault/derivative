@@ -49,7 +49,7 @@ namespace derivative
 
 	class PRIMARYASSET_EXT_API TermStructure : public QFNestedVisitable
 	{
-		enum {TYPEID = CLASS_TERMSTRUCTURE_TYPE};
+		enum { TYPEID = CLASS_TERMSTRUCTURE_TYPE };
 
 	private:
 		class fit_func
@@ -58,19 +58,19 @@ namespace derivative
 			TermStructure& ts;
 			const std::vector<DeterministicCashflow>& cashflows;
 		public:
-			inline fit_func(const std::vector<DeterministicCashflow>& xcashflows,TermStructure& xts) : cashflows(xcashflows),ts(xts) { };
-			double operator()(Array<double,1>& zcb);
+			inline fit_func(const std::vector<DeterministicCashflow>& xcashflows, TermStructure& xts) : cashflows(xcashflows), ts(xts) { };
+			double operator()(Array<double, 1>& zcb);
 		};
 
 	public:
 		/// General constructor.
-		inline TermStructure(const Array<double,1>& xT,         ///< Time line of maturities .
-			const Array<double,1>& xB          ///< Time T(0) forward zero coupon bond prices for these maturities - thus the first bond price is always 1
-			) : T(xT.copy()),B(xB.copy())
+		inline TermStructure(const Array<double, 1>& xT,         ///< Time line of maturities .
+			const Array<double, 1>& xB          ///< Time T(0) forward zero coupon bond prices for these maturities - thus the first bond price is always 1
+			) : T(xT.copy()), B(xB.copy())
 		{ };
 
 		/// Constructor for term structure with n (uninitialised) data points.
-		inline TermStructure(int n) : T(n),B(n)
+		inline TermStructure(int n) : T(n), B(n)
 		{ };
 
 		/// Virtual copy constructor
@@ -80,7 +80,7 @@ namespace derivative
 		virtual void reinitialise();
 
 		/// Fit the term structure (as well as possible given the time line) to a set of market values.
-		virtual void approximate_fit(std::vector<DeterministicCashflow> cashflows,double eps = 1E-09);
+		virtual void approximate_fit(std::vector<DeterministicCashflow> cashflows, double eps = 1E-09);
 
 		/// For nested Visitor pattern.
 		virtual void accept(QFNestedVisitor& visitor) const;
@@ -89,6 +89,12 @@ namespace derivative
 
 		inline double& operator[](int idx);    ///< Returns B[idx].
 
+		/// Query time horizon
+		inline double time_horizon() const
+		{
+			return T(T.extent(firstDim) - 1);
+		};
+
 		/// Number of dates on the time line.
 		inline int length() const;
 
@@ -96,7 +102,7 @@ namespace derivative
 		inline double t(int idx) const;
 
 		/// read access to time line
-		inline const Array<double,1>& timeline() const
+		inline const Array<double, 1>& timeline() const
 		{
 			return T;
 		};
@@ -109,25 +115,25 @@ namespace derivative
 		int find_segment(double t) const;
 
 		/// Continuously compounded forward yield for the accrual period from u to v.
-		inline double forward_yield(double u,double v) const
+		inline double forward_yield(double u, double v) const
 		{
-			return (std::log((*this)(u)/(*this)(v)))/(v-u);
+			return (std::log((*this)(u) / (*this)(v))) / (v - u);
 		};
 
 		/// Continuously compounded forward yields for the accrual periods defined by the Array of dates xT.
-		Array<double,1> ccfwd(const Array<double,1>& xT) const;
+		Array<double, 1> ccfwd(const Array<double, 1>& xT) const;
 
 		/// Get all delta-compounded forward rates for the tenor structure xT.
-		Array<double,1> simple_rate(const Array<double,1>& xT,double delta) const;
+		Array<double, 1> simple_rate(const Array<double, 1>& xT, double delta) const;
 
 		/// Get the delta-compounded forward rate, observed today, for the forward date xT.
-		double simple_rate(double xT,double delta) const;
+		double simple_rate(double xT, double delta) const;
 
 		/** Get all delta-compounded forward swap rates for the tenor structure xT, keeping the swap end date fixed at the last element of xT.
 		This is the set of forward swap rates as in section 8 of
 		Jamshidian, F. (1997) LIBOR and Swap Market Models and Measures, <I>Finance and Stochastics</I>
 		1(4), pp. 293-330. */
-		Array<double,1> swaps(const Array<double,1>& xT,double delta) const;
+		Array<double, 1> swaps(const Array<double, 1>& xT, double delta) const;
 
 		/// Get forward swap rate, valid today.
 		double swap(double T0,    ///< Start date of the forward swap.
@@ -136,16 +142,16 @@ namespace derivative
 			) const;
 
 		/// Get forward swap rate, valid today, for a given tenor (no assumption on length of tenor periods).
-		double swap(const Array<double,1>& tenor    ///< Swap tenor structure.
+		double swap(const Array<double, 1>& tenor    ///< Swap tenor structure.
 			) const;
 
 		/** Present value of a (swap) basis point.
 		This is defined here as \f[ \sum_{i=1}^n \frac{B(t,T_0+i\delta)}{B(t,T_0)} \f] where
 		\f$ B(t,T) \f$ denotes the price of a zero coupon bond at time t (today), maturing at time T.
 		*/
-		double pvbp(double T0,int n,double delta) const;
+		double pvbp(double T0, int n, double delta) const;
 
-		double pvbp(const Array<double,1>& tenor) const;
+		double pvbp(const Array<double, 1>& tenor) const;
 
 		/// Find the maturity such that the zero coupon bond price for this maturity matches the target value
 		double find_maturity(double target) const;
@@ -155,15 +161,15 @@ namespace derivative
 	protected:
 
 		/// set of maturities and the associated zero coupon bond prices
-        /// (normalised to a unit notional).
-		Array<double,1>           T;   
-		
+		/// (normalised to a unit notional).
+		Array<double, 1>           T;
+
 		/** Interest rate term structures are represented as zero coupon bond prices.
 		Note that the time line starts at T(0), not zero, thus if T(0) is greater
 		than "today", B contains actually T(0)-forward bond prices.
 		Note also that the first bond price is always 1.
 		*/
-		Array<double,1>           B;
+		Array<double, 1>           B;
 	};
 
 	inline double TermStructure::operator[](int idx) const
@@ -171,17 +177,17 @@ namespace derivative
 		return B(idx);
 	}
 
-	inline double& TermStructure::operator[](int idx) 
+	inline double& TermStructure::operator[](int idx)
 	{
 		return B(idx);
 	}
 
-	inline int TermStructure::length() const 
+	inline int TermStructure::length() const
 	{
 		return T.extent(firstDim);
 	}
 
-	inline double TermStructure::t(int idx) const 
+	inline double TermStructure::t(int idx) const
 	{
 		return T(idx);
 	}

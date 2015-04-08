@@ -6,6 +6,7 @@ Initial version: Copyright 2003, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012,
 #include <cmath>
 #include "Polynomial.hpp"
 #include "DException.hpp"
+#include "rootfinder.h"
 
 namespace derivative
 {
@@ -34,12 +35,6 @@ namespace derivative
 		return y; 
 	}
 
-	/// Calculate root using Laguerre's method given starting point x.
-	complex<double> Polynomial::Laguerre(complex<double> x,const Array<complex<double>,1>& xc) const
-	{
-		throw std::logic_error("Implementation cannot be distributed due to copyright issues - an alternative, freely distributable implementation is planned for a future release");
-	}
-
 	void Polynomial::calc_roots()
 	{
 		int j;
@@ -49,8 +44,13 @@ namespace derivative
 			for (j=1;j<c.extent(firstDim);j++) {
 				if (c(j)!=0.0) allzero = false; }
 			poly = !allzero; }
-		if (poly) {
-			throw std::logic_error("Implementation cannot be distributed due to copyright issues - an alternative, freely distributable implementation is planned for a future release"); }
+		if (poly) 
+		{
+			bool polish_roots_after = true;
+			bool use_roots_as_starting_points = false;
+			cmplx_roots_gen(r, c, degree, polish_roots_after, use_roots_as_starting_points);
+			roots_available = true;
+		}
 		else throw DegeneratePolynomial();
 	}
 
