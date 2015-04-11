@@ -272,7 +272,7 @@ Demo::Demo(std::string& symbol, double strike, dd::date maturity, OptionType opt
 	
 	/// construct the implied vol retried.
 	m_volSurface = BuildEquityVolSurface(symbol, today);
-	std::shared_ptr<DeterministicAssetVol>  vol = m_volSurface->GetVolByStrike(m_strike);
+	std::shared_ptr<DeterministicAssetVol>  vol = m_volSurface->GetVolatility(m_maturity, m_strike);
 	
 	/// now construct the BlackScholesAdapter from the stock value.
 	m_stock = std::make_shared<BlackScholesAssetAdapter>(m_stockVal, vol);

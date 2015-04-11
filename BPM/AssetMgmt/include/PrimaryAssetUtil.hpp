@@ -91,6 +91,8 @@ namespace derivative
 
 			std::vector<std::shared_ptr<IObject> > objects;
 			EntityMgrUtil::findObjects(nm, objects);
+			if (objects.empty()) throw std::domain_error("No option data found");
+			EntityMgrUtil::registerObjects(objects);			
 			for (std::shared_ptr<IObject> obj : objects)
 			{
 				std::shared_ptr<T> option = dynamic_pointer_cast<T>(obj);

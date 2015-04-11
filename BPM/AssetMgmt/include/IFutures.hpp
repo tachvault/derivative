@@ -40,8 +40,6 @@ namespace derivative
 		
 		virtual void SetName(const Name& nm) = 0;
 
-		virtual const Exchange& GetExchange() const  = 0;
-
 		virtual void SetExchange(const Exchange& ex) = 0;
 
 		virtual void SetImpliedVol(double vol) = 0;

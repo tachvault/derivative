@@ -69,6 +69,8 @@ namespace derivative
 		/// Dimension of the volatility vector.
 		virtual int factors() const;
 
+		virtual double timeframe() const;
+
 		/// Division of time period into segments over which volatility is constant.
 		virtual Array<double,1> segments(double t,double dt) const;
 

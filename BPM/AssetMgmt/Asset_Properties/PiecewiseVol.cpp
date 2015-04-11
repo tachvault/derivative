@@ -95,13 +95,22 @@ namespace derivative
 			throw std::logic_error("mismatch factors");
 		}
 
-		for (int i = 0; i < timeline.size(); ++i)
+		for (int i = 0; i < timeline.size() - 1; ++i)
 		{
 			Array<double, 1> vol_lvl(1);
 			for (int j = 0; j < factors(); ++j)
 			{
-				bool status = neibor->get_volatility_level(j, timeline(i), vol_lvl);
-				v(j, i) = (v(j, i)/factor + vol_lvl(0)*factor)/2;
+				bool status = neibor->get_volatility_level(timeline(i), timeline(i+1), vol_lvl);
+				if (status)
+				{
+					//cout << " v(j, i) + (vol_lvl(0) - v(j, i))*factor " << v(j, i) << ", " << vol_lvl(0) << "," \
+						//<< (vol_lvl(0) - v(j, i)) << "," << factor << endl;
+					v(j, i) = v(j, i) + (vol_lvl(0) - v(j, i))*factor;
+				}
+				else
+				{
+					cout << " returned false " << endl;
+				}
 			}
 		}
 	}
@@ -109,6 +118,11 @@ namespace derivative
 	int PiecewiseConstVol::factors() const
 	{
 		return v.extent(secondDim);
+	}
+
+	double PiecewiseConstVol::timeframe() const
+	{
+		return timeline(timeline.extent(firstDim) - 1);
 	}
 
 	/// Integral over the square of the forward zero coupon bond volatility.

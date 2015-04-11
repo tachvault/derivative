@@ -80,6 +80,11 @@ namespace derivative
 			throw std::logic_error("not supported");
 		}
 
+		virtual double timeframe() const
+		{
+			throw std::logic_error("not applicable");
+		}
+
 		/// Dimension of the volatility vector.
 		virtual int factors() const;
 

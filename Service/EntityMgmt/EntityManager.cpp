@@ -58,7 +58,7 @@ namespace derivative
 		}
 	}
 
-	void EntityManager::registerObjects(const std::deque<const std::shared_ptr<IObject> > &objs)
+	void EntityManager::registerObjects(const std::vector<std::shared_ptr<IObject> > &objs)
 	{
 		///return if objs empty
 		if (objs.empty())

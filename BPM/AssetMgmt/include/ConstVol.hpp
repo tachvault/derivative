@@ -86,6 +86,11 @@ namespace derivative
 		/// Dimension of the volatility vector.
 		virtual int factors() const;
 
+		virtual double timeframe() const
+		{
+			throw std::logic_error("not applicable");
+		}
+
 		virtual double FwdBondVol(double t,double T1,double T2) const;
 
 		/// Integral over the scalar product between the bond volatility given by (*this) and a deterministic asset volatility.

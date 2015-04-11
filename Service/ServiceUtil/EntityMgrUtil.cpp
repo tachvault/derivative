@@ -29,7 +29,7 @@ namespace derivative
 		}
 	}
 
-	void EntityMgrUtil::registerObjects(const std::deque<const std::shared_ptr<IObject> > &objs)
+	void EntityMgrUtil::registerObjects(const std::vector<std::shared_ptr<IObject> > &objs)
 	{
 		/// get the EntityManager instance
 		EntityManager& entMgr = EntityManager::getInstance();

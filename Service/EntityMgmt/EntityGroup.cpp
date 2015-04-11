@@ -47,7 +47,7 @@ namespace derivative
 		}
 	}
 
-	void EntityGroup::registerObjects(const std::deque<const std::shared_ptr<IObject> > &objs)
+	void EntityGroup::registerObjects(const std::vector<std::shared_ptr<IObject> > &objs)
 	{
 		/// Lock for access to private members 
 		std::lock_guard<std::mutex> guard(m_mutex);

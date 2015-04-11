@@ -68,6 +68,11 @@ namespace derivative
 		
 		/// Dimension of the volatility vector.
 		virtual int factors() const;
+
+		virtual double timeframe() const
+		{
+			throw std::logic_error("not applicable");
+		}
 		
 		virtual int type() const;
 		

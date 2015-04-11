@@ -253,6 +253,9 @@ TEST_F(GCempirical, GCempiricalFileDataTest)
 	}
 };
 
+*/
+
+/*
 TEST_F(GCempirical, GCempiricalRealDataTest)
 {
 	std::string symbol("AAPL");
@@ -283,17 +286,12 @@ TEST_F(GCempirical, GCempiricalRealDataTest)
 	coeff(0) = 1.0;
 	GramCharlier gc(coeff);
 	std::shared_ptr<GramCharlierAssetAdapter> gcAdapter = GramCharlierAssetAdapter::Create(gc, stockVal, maturity);
-	
-	/// Now caliberate. Get the domestic interest rate
-	/// get today's date.
-	dd::date today = dd::day_clock::local_day();
-	auto maturity_in_type = Maturity::getMaturity(maturity);
-	std::shared_ptr<IIRValue> rateObj = PrimaryUtil::FindInterestRate(stockVal->GetStock()->GetCountry().GetCode(), maturity_in_type, today);
-	auto rate = rateObj->GetLastRate();
 	gcAdapter->calibrate(1, 1, highest_moment);
 }
 
 */
+
+/*
 TEST_F(GCempirical, VolatilitySurfaceTest)
 {
 	/// Test for EntityManager singleton
@@ -326,12 +324,14 @@ TEST_F(GCempirical, VolatilitySurfaceTest)
 	}
 }
 
+*/
 int main(int argc, char **argv)
 {
 	::testing::InitGoogleTest(&argc, argv);
 	google::InitGoogleLogging("Derivative");
 
 	// change the current working directory
+	/*
 	std::cout << boost::filesystem::current_path() << std::endl; 
 	_chdir("..\\CSVInputs"); 
 	std::cout << boost::filesystem::current_path() << std::endl; 
@@ -342,5 +342,6 @@ int main(int argc, char **argv)
 	highest_moment = 4;
 	if (argc>2) highest_moment = std::atoi(argv[2]);
 	strcpy(filename,argv[1]);
+	*/
 	return RUN_ALL_TESTS();
 }

@@ -108,7 +108,8 @@ namespace derivative
 		else
 		{
 			std::shared_ptr<EquityVolatilitySurface> volSurface = BuildEquityVolSurface(optMsg->GetRequest().underlying, today);
-			m_vol = volSurface->GetVolByStrike(m_strike);
+			/// we use GramCharlier to construct constant vol for the given maturity and strike
+		    m_vol = volSurface->GetConstVol(m_maturity, m_strike);
 		}
 
 		/// get the interest rate

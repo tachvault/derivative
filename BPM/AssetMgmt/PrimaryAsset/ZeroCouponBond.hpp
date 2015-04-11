@@ -89,6 +89,11 @@ namespace derivative
 			return m_country;
 		}
 
+		virtual const Exchange& GetExchange() const
+		{
+			throw std::logic_error("not applicable for bonds");
+		}
+
 		virtual DayCount::DayCountType GetDayCount() const
 		{
 			return m_dayCount;

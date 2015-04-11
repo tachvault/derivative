@@ -71,7 +71,7 @@ namespace derivative
 
 		/// register a set of objects together.
 		/// Useful routine when registering streaming data
-		static void registerObjects(const std::deque<const std::shared_ptr<IObject> > &objs);
+		static void registerObjects(const std::vector<std::shared_ptr<IObject> > &objs);
 
 		/// get the MySQL DataSource object
 		static std::shared_ptr<IDataSource> getDataSourceHandler(const Name& nm,unsigned short source);

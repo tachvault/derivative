@@ -31,7 +31,7 @@ namespace derivative
 		/// Register multiple objects together.
 		/// This more efficient when streaming data is
 		/// registered together from external data sources.
-		void EntityGroup::registerObjects(const std::deque<const std::shared_ptr<IObject> > &objs);
+		void EntityGroup::registerObjects(const std::vector<std::shared_ptr<IObject> > &objs);
 
 		/// Find by primary key
 		std::shared_ptr<IObject> findObject(const Name& nm);

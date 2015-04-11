@@ -309,7 +309,7 @@ namespace derivative
 						option->SetVolume(retvol);
 						option->SetOpenInterest(retopenInt);
 
-						LOG(INFO) << " DailyFuturesOptionValue " << symbol << " with trade date " << traddate << " constructed with " \
+					    LOG(INFO) << " DailyFuturesOptionValue " << symbol << " with trade date " << traddate << " constructed with " \
 							<< "maturity date" << matDate \
 							<< "strike price" << strike \
 							<< "trade price date" << rettradePrice << endl;

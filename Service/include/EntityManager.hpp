@@ -77,7 +77,7 @@ namespace derivative
 		/// Register multiple objects together.
 		/// This more efficient when streaming data is
 		/// registered together from external data sources.
-		void registerObjects(const std::deque<const std::shared_ptr<IObject> > &objs);
+		void registerObjects(const std::vector<std::shared_ptr<IObject> > &objs);
 
 		/// Register alias with the concerete Id.
 		void registerAlias(grpType concreteId, grpType aliasId);

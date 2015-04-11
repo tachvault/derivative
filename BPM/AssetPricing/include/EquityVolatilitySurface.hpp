@@ -11,7 +11,7 @@
 #include "Global.hpp"
 #include "DeterministicVol.hpp"
 #include "Name.hpp"
-#include "VolatilitySmile.hpp"
+#include "Country.hpp"
  
 #if defined _WIN32 || defined __CYGWIN__
 #ifdef PRICINGENGINE_EXPORTS
@@ -40,7 +40,9 @@
 
 namespace derivative
 {
+	class IStockValue;
 	class IDailyEquityOptionValue;
+	class BlackScholesAssetAdapter;
 
 	class PRICINGENGINE_DLL_API EquityVolatilitySurface
 		: virtual public IObject
@@ -94,10 +96,13 @@ namespace derivative
 		}
 
 		/// return the DeterministicAssetVol given strike price
-		std::shared_ptr<DeterministicAssetVol> GetVolByStrike(double strike);
+		std::shared_ptr<DeterministicAssetVol> GetVolatility(const dd::date& mat, double strike, bool exactMatch = false);
 
-		/// return <strike, vol> pairs for the given maturity
-		std::unique_ptr<VolatilitySmile> GetVolByMaturity(double mat) const;
+		/// return constant vol by CramCharlier (bootstrapped from adjacent maturities
+		std::shared_ptr<DeterministicAssetVol> GetConstVol(const dd::date& mat, double strike) const;
+
+		/// return GramCharlier vol.
+		double GetVolByGramCharlier(const dd::date& mat, double strike) const;
 
 		/// load options data from external source
 		void LoadOptions();
@@ -114,11 +119,20 @@ namespace derivative
 		/// underlying symbol
 		std::string m_symbol;
 
+		/// underlying
+		std::shared_ptr<IStockValue> m_asset;
+
+		/// BlackScholes asset
+		std::shared_ptr<BlackScholesAssetAdapter> m_bsasset;
+
 		/// processed date
 		dd::date m_processedDate;
 
 		/// options for the underlying for the given processed date
 		std::vector<std::shared_ptr<IDailyEquityOptionValue> > m_options;
+
+		/// country
+		Country m_cntry;
 
 		/// disallow the copy constructor and operator= functions
 		DISALLOW_COPY_AND_ASSIGN(EquityVolatilitySurface);
