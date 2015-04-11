@@ -45,6 +45,8 @@ Copyright (C) Nathan Muruganantha 2013 - 2014
 
 namespace derivative
 {
+	class BlackScholesAssetAdapter;
+
 	/// Adapter Class for GramCharlierAsset.
 	class DERIVATIVEASSET_DLL_API GramCharlierAssetAdapter : public virtual IObject,
 		public virtual IMake
@@ -146,16 +148,21 @@ namespace derivative
 
 	private:
 
+		/// underlying asset value
+		const std::shared_ptr<IAssetValue> m_asset;
+
 		/// GramCharlierAsset asset that behind this adapter class.
 		std::unique_ptr<GramCharlierAsset> m_gramCharlierAsset;
 
-		std::vector<std::shared_ptr<IDailyOptionValue> >& m_options;
+		std::shared_ptr<BlackScholesAssetAdapter> m_bsAsset;
 
-		/// underlying asset value
-		const std::shared_ptr<IAssetValue> m_asset;
-		
+		std::vector<std::shared_ptr<IDailyOptionValue> > m_options;
+
 		/// maturity
-		double T;
+		double m_tenor;
+
+		/// interest rate
+		double m_r;
 
 		/// Name(TYPEID, std::hash<std::string>()(symbol)) 
 		/// Key[0] => "symbol"
