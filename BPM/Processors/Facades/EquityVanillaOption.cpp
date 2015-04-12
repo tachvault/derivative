@@ -108,8 +108,18 @@ namespace derivative
 		else
 		{
 			std::shared_ptr<EquityVolatilitySurface> volSurface = BuildEquityVolSurface(optMsg->GetRequest().underlying, today);
-			/// we use GramCharlier to construct constant vol for the given maturity and strike
-		    m_vol = volSurface->GetConstVol(m_maturity, m_strike);
+			
+			try
+			{
+				// first try Vol surface
+				m_vol = volSurface->GetVolatility(m_maturity, m_strike);
+			}
+			catch (std::domain_error& e)
+			{
+				/// means for the maturity not enough data in historic vol
+				/// we use GramCharlier to construct constant vol for the given maturity and strike
+				m_vol = volSurface->GetConstVol(m_maturity, m_strike);
+			}			
 		}
 
 		/// get the interest rate

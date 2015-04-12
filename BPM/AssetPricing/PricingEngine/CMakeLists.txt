@@ -14,7 +14,7 @@ include_directories("${PROJECT_SOURCE_DIR}/BPM/AssetMgmt/include")
 include_directories("${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include")
 
 SET(PRICINGENGINE_SOURCE
-    ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/Binomial.hpp
+        ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/Binomial.hpp
 	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/FiniteDifference.hpp
 	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/GaussMarkovWorld.hpp
 	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/GaussMarkovWorldAdapter.hpp
@@ -34,6 +34,7 @@ SET(PRICINGENGINE_SOURCE
 	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/TSInstruments.hpp
 	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/GeometricBrownianMotion.hpp	
 	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/GaussMarkovTermStructure.hpp
+        ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/VolatilitySurface.hpp
 	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/EquityVolatilitySurface.hpp
 	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/FuturesVolatilitySurface.hpp
 	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/CIRprocess.hpp
@@ -56,7 +57,8 @@ SET(PRICINGENGINE_SOURCE
 	TSInstruments.cpp
 	TSPayoff.cpp
 	GeometricBrownianMotion.cpp
-	GaussMarkovTermStructure.cpp	
+	GaussMarkovTermStructure.cpp
+        VolatilitySurface.cpp
 	EquityVolatilitySurface.cpp
 	FuturesVolatilitySurface.cpp
 	HestonAsset.cpp

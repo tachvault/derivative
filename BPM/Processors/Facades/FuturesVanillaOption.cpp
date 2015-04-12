@@ -111,7 +111,7 @@ namespace derivative
 		else
 		{
 			std::shared_ptr<FuturesVolatilitySurface> volSurface = BuildFuturesVolSurface(optMsg->GetRequest().underlying, today, optMsg->GetRequest().deliveryDate);
-			m_vol = volSurface->GetVolByStrike(m_strike);
+			m_vol = volSurface->GetVolatility(m_maturity,m_strike);
 		}
 
 		/// get the interest rate for the delivery time (Not for the option maturity)

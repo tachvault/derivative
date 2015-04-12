@@ -7,11 +7,7 @@
 #include <string>
 #include <algorithm>
 
-#include "ClassType.hpp"
-#include "Global.hpp"
-#include "DeterministicVol.hpp"
-#include "Name.hpp"
-#include "Country.hpp"
+#include "VolatilitySurface.hpp"
  
 #if defined _WIN32 || defined __CYGWIN__
 #ifdef PRICINGENGINE_EXPORTS
@@ -44,8 +40,7 @@ namespace derivative
 	class IDailyEquityOptionValue;
 	class BlackScholesAssetAdapter;
 
-	class PRICINGENGINE_DLL_API EquityVolatilitySurface
-		: virtual public IObject
+	class PRICINGENGINE_DLL_API EquityVolatilitySurface	: public VolatilitySurface
 	{
       public:
        	  
@@ -71,7 +66,7 @@ namespace derivative
 		/// Constructor with Exemplar 
 		EquityVolatilitySurface(const Exemplar &ex);
 
-		EquityVolatilitySurface(const string& symbol, const dd::date& processDate);
+		EquityVolatilitySurface(const string& symbol, const std::shared_ptr<IAssetValue>& asset, const dd::date& processDate);
 
 		///destructor
 		~EquityVolatilitySurface()
@@ -84,55 +79,15 @@ namespace derivative
 			return m_name;
 		}
 
-		/// returns underlying asset symbol
-		std::string GetUnderlyingSymbol() const
-		{
-			return m_symbol;
-		}
-
-		dd::date GetProcessedDate() const
-		{
-			return m_processedDate;
-		}
-
-		/// return the DeterministicAssetVol given strike price
-		std::shared_ptr<DeterministicAssetVol> GetVolatility(const dd::date& mat, double strike, bool exactMatch = false);
-
 		/// return constant vol by CramCharlier (bootstrapped from adjacent maturities
 		std::shared_ptr<DeterministicAssetVol> GetConstVol(const dd::date& mat, double strike) const;
-
-		/// return GramCharlier vol.
-		double GetVolByGramCharlier(const dd::date& mat, double strike) const;
 
 		/// load options data from external source
 		void LoadOptions();
 
-		/// build vol surface for the given underlying
-		void Build(double strike);
-
 	private:
 		
 		Name m_name;
-
-		std::map<double, std::shared_ptr<DeterministicAssetVol> > m_vol;
-
-		/// underlying symbol
-		std::string m_symbol;
-
-		/// underlying
-		std::shared_ptr<IStockValue> m_asset;
-
-		/// BlackScholes asset
-		std::shared_ptr<BlackScholesAssetAdapter> m_bsasset;
-
-		/// processed date
-		dd::date m_processedDate;
-
-		/// options for the underlying for the given processed date
-		std::vector<std::shared_ptr<IDailyEquityOptionValue> > m_options;
-
-		/// country
-		Country m_cntry;
 
 		/// disallow the copy constructor and operator= functions
 		DISALLOW_COPY_AND_ASSIGN(EquityVolatilitySurface);
