@@ -11,7 +11,7 @@ Copyright (c) 2013 - 2014, Nathan Muruganantha. All rights reserved.
 
 #include "MySqlConnection.hpp"
 #include "FuturesOptionValueMySQLDAO.hpp"
-#include "RESTConnectionUtil.hpp"
+#include "QFUtil.hpp"
 
 namespace derivative
 {
@@ -70,7 +70,7 @@ namespace derivative
 		/// low(11),last_price(13),settle(15), volume(17),open_int(20)
 
 		std::vector<std::string> vec;
-		RESTConnectionUtil::splitLine(line, vec);
+		splitLine(line, vec);
 
 		string symbol = vec[0];
 		auto fur_id = std::hash<std::string>()(symbol);

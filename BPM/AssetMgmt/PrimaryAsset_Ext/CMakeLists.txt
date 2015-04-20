@@ -27,7 +27,6 @@ SET(PRIMARYASSET_EXT_SOURCE
 	${PROJECT_SOURCE_DIR}/BPM/assetmgmt/include/TSLinear.hpp
 	${PROJECT_SOURCE_DIR}/BPM/assetmgmt/include/TSLogLinear.hpp
 	${PROJECT_SOURCE_DIR}/BPM/assetmgmt/include/TSPayoff.hpp
-	${PROJECT_SOURCE_DIR}/BPM/assetmgmt/include/RESTConnectionUtil.hpp
 	${PROJECT_SOURCE_DIR}/BPM/assetmgmt/include/IRCurve.hpp
 	${PROJECT_SOURCE_DIR}/BPM/assetmgmt/include/PrimaryAssetUtil.hpp
 	CSVReader.cpp

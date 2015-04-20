@@ -15,6 +15,8 @@ Copyright (C) Nathan Muruganantha 2013 - 2014
 #include "IRCurve.hpp"
 #include "IFutures.hpp"
 #include "IFuturesValue.hpp"
+#include "Exchange.hpp"
+#include "ExchangeExt.hpp"
 
 namespace derivative
 {
@@ -129,6 +131,25 @@ namespace derivative
 
 			double Bt = term(tenor);
 			return PrimaryUtil::getDFToSimpleRate(Bt, tenor, 1);
+		}
+		
+		std::string GetTickerSymbol(unsigned short src, std::shared_ptr<IStock> stock)
+		{
+			/// get the exchange corresponding to the ticker symbol
+			ExchangeExt& symMap = ExchangeExt::getInstance();
+			auto exchange = stock->GetExchange();
+
+			/// using the exchange, get the extension
+			auto ext = symMap.GetExchangeExt(src, exchange.GetExchangeName());
+
+			/// now construct the complete symbol used by the given Data source
+			if (ext.empty())
+			{
+				return stock->GetSymbol();
+			}
+
+			std::string symbol = stock->GetSymbol() + std::string(".") + ext;
+			return symbol;
 		}
 	}
 }

@@ -14,6 +14,7 @@ Initial version: Copyright 2003, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012,
 #include "MCGatherer.hpp"
 #include "TermStructure.hpp"
 #include "ClassType.hpp"
+#include "MCPayOff.hpp"
 
 #if defined _WIN32 || defined __CYGWIN__
 #ifdef PRICINGENGINE_EXPORTS

@@ -11,7 +11,7 @@ Copyright (c) 2013 - 2014, Nathan Muruganantha. All rights reserved.
 
 #include "MySqlConnection.hpp"
 #include "FuturesValueMySQLDAO.hpp"
-#include "RESTConnectionUtil.hpp"
+#include "QFUtil.hpp"
 
 namespace derivative
 {
@@ -68,7 +68,7 @@ namespace derivative
 		/// volume(15), open_int(18), tradedate(19)
 
 		std::vector<std::string> vec;
-		RESTConnectionUtil::splitLine(line, vec);
+		splitLine(line, vec);
 
 		string symbol = vec[0];
 		dd::date tdate = dd::from_us_string(vec[19]);

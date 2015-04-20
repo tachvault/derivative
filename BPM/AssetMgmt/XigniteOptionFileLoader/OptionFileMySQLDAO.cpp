@@ -11,7 +11,7 @@ Copyright (c) 2013 - 2014, Nathan Muruganantha. All rights reserved.
 
 #include "MySqlConnection.hpp"
 #include "OptionFileMySQLDAO.hpp"
-#include "RESTConnectionUtil.hpp"
+#include "QFUtil.hpp"
 
 namespace derivative
 {
@@ -88,7 +88,7 @@ namespace derivative
 		/// 2015-01-23,2017-01-20,AAPLA20173115000,AAPL,AAPL170120C00115000,Call,115,148,11140,17.9,18.25,18.1
 		
 		std::vector<std::string> vec;
-		RESTConnectionUtil::splitLine(line, vec);
+		splitLine(line, vec);
 
 		auto volume = vec[7].empty() ? 0 : std::atoi(vec[7].c_str());
 		if (volume == 0)

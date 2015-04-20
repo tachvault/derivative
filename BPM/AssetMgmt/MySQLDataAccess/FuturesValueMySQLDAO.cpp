@@ -16,7 +16,8 @@ Copyright (c) 2015, Nathan Muruganantha. All rights reserved.
 #include "IFutures.hpp"
 #include "EntityMgrUtil.hpp"
 #include "PrimaryAssetUtil.hpp"
-#include "RESTConnectionUtil.hpp"
+
+
 namespace derivative
 {
 	GROUP_REGISTER(FuturesValueMySQLDAO);

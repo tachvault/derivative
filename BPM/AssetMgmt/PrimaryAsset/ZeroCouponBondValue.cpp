@@ -5,7 +5,7 @@ Copyright (c) 2013-2014 Nathan Muruganantha. All rights reserved.
 #include "ZeroCouponBondValue.hpp"
 #include "GroupRegister.hpp"
 #include "EntityMgrUtil.hpp"
-#include "RESTConnectionUtil.hpp"
+#include "QFUtil.hpp"
 #include "DException.hpp"
 
 namespace derivative

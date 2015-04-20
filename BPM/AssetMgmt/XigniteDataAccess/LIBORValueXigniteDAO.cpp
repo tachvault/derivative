@@ -19,7 +19,7 @@ Copyright (c) 2013 - 2014, Nathan Muruganantha. All rights reserved.
 #include "IDataSource.hpp"
 #include "CurrencyHolder.hpp"
 #include "IIBOR.hpp"
-#include "RESTConnectionUtil.hpp"
+#include "QFUtil.hpp"
 #include "PrimaryAssetUtil.hpp"
 
 using namespace utility;
@@ -158,8 +158,8 @@ namespace derivative
 				auto dateIter = v.as_object().find(U("Date"));
 				auto dateStr = dateIter->second.as_string();
 
-				/// get date from DESTConnectionUtil
-				auto repDate = RESTConnectionUtil::getDateFromString(dateStr);
+				/// get date
+				auto repDate = getDateFromString(dateStr);
 				m_value->SetReportedDate(repDate);
 			}
 			catch (const http_exception& e)

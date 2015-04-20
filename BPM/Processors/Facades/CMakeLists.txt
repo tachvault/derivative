@@ -20,9 +20,11 @@ include_directories("${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include")
 
 SET(FACADES_SOURCES
 	    EquityVanillaOption.hpp
-            EquityVanillaOption.cpp
-            FuturesVanillaOption.hpp
-            FuturesVanillaOption.cpp
+        EquityVanillaOption.cpp
+        FuturesVanillaOption.hpp
+        FuturesVanillaOption.cpp
+        EquityOptionSpread.hpp
+        EquityOptionSpread.cpp        
 )
 
 # Link shared library paths (Note: This should be added before Add_library !!!)

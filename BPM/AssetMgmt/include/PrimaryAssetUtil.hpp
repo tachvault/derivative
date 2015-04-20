@@ -41,6 +41,7 @@ namespace derivative
 {
 	class IIRValue;
 	class IAssetValue;
+	class IStock;
 	class IStockValue;
 	class IExchangeRateValue;
 	class IDailyEquityOptionValue;
@@ -123,6 +124,8 @@ namespace derivative
 		PRIMARYASSET_EXT_API double getCompoundRateToDF(double rate, double tenor);
 
 		PRIMARYASSET_EXT_API double getDFToCompoundRate(double df, double tenor);
+
+		PRIMARYASSET_EXT_API std::string GetTickerSymbol(unsigned short src, std::shared_ptr<IStock> stock);
 
 		PRIMARYASSET_EXT_API std::shared_ptr<IStockValue> getStockValue(const std::string& symbol);
 

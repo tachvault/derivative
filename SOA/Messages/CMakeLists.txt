@@ -26,11 +26,17 @@ SET(MESSAGES_SOURCES
         ${PROJECT_SOURCE_DIR}/SOA/include/FuturesVanillaOptMessage.hpp
         ${PROJECT_SOURCE_DIR}/SOA/include/EquityVanillaOptJSONVisitor.hpp
 	${PROJECT_SOURCE_DIR}/SOA/include/FuturesVanillaOptJSONVisitor.hpp
-	VanillaOptMessage.cpp
+	${PROJECT_SOURCE_DIR}/SOA/include/OptionSpreadMessage.hpp
+        ${PROJECT_SOURCE_DIR}/SOA/include/EquityOptionSpreadMessage.hpp
+         ${PROJECT_SOURCE_DIR}/SOA/include/EquityOptionSpreadJSONVisitor.hpp
+        VanillaOptMessage.cpp
 	EquityVanillaOptMessage.cpp
 	FuturesVanillaOptMessage.cpp
         EquityVanillaOptJSONVisitor.cpp
-	FuturesVanillaOptJSONVisitor.cpp        
+	FuturesVanillaOptJSONVisitor.cpp 
+        OptionSpreadMessage.cpp
+        EquityOptionSpreadMessage.cpp
+        EquityOptionSpreadJSONVisitor.cpp       
 )
 
 # Link shared library paths (Note: This should be added before Add_library !!!)

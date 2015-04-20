@@ -10,6 +10,8 @@ include_directories("${PROJECT_SOURCE_DIR}/Service/include")
 include_directories("${PROJECT_SOURCE_DIR}/SOA/include")
 
 SET(SYSTEMLOADER_SOURCES
+        BPMLoader.hpp        
+        BPMLoader.cpp
     	Loader.cpp
 )
 

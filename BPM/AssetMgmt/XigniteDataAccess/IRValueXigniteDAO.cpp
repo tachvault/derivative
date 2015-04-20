@@ -19,7 +19,7 @@ Copyright (c) 2013 - 2014, Nathan Muruganantha. All rights reserved.
 #include "IDataSource.hpp"
 #include "CountryHolder.hpp"
 #include "IIR.hpp"
-#include "RESTConnectionUtil.hpp"
+#include "QFUtil.hpp"
 #include "PrimaryAssetUtil.hpp"
 
 using namespace utility;
@@ -159,7 +159,7 @@ namespace derivative
 				auto dateStr = dateIter->second.as_string();
 
 				/// get date from DESTConnectionUtil
-				auto repDate = RESTConnectionUtil::getDateFromString(dateStr);
+				auto repDate = getDateFromString(dateStr);
 				m_value->SetReportedDate(repDate);			
 			}
 			catch (const http_exception& e)

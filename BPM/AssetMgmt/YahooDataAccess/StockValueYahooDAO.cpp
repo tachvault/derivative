@@ -19,7 +19,7 @@ Copyright (c) 2013, Nathan Muruganantha. All rights reserved.
 #include "IStock.hpp"
 #include "EntityMgrUtil.hpp"
 #include "PrimaryAssetUtil.hpp"
-#include "RESTConnectionUtil.hpp"
+#include "QFUtil.hpp"
 
 using namespace utility;
 using namespace web::http;
@@ -93,7 +93,7 @@ namespace derivative
 		/// Once have a builder instance, you can modify its components one by one:
 		builder.set_path(U("d/quotes.csv"));
 
-		std::string symbolStr = RESTConnectionUtil::GetTickerSymbol(YAHOO, m_stockVal->GetStock());
+		std::string symbolStr = PrimaryUtil::GetTickerSymbol(YAHOO, m_stockVal->GetStock());
 		utility::string_t symbol = utility::conversions::to_string_t(symbolStr);
 		builder.append_query(L"s=" + symbol);
 		builder.append_query(U("f=abopl1c1p2ydghjkd1t1c1p2exrj2v"));

@@ -6,7 +6,7 @@ Copyright (c) 2013-2014 Nathan Muruganantha. All rights reserved.
 #include "GroupRegister.hpp"
 #include "EntityMgrUtil.hpp"
 #include "DException.hpp"
-#include "RESTConnectionUtil.hpp"
+#include "QFUtil.hpp"
 
 namespace derivative
 {
@@ -55,7 +55,7 @@ namespace derivative
 		else throw YahooSrcException("Invalid data");
 		if (std::getline(input, elem,','))
 		{
-			m_tradeTime = pt::ptime(m_tradeDate) + RESTConnectionUtil::get_duration_from_string(elem);
+			m_tradeTime = pt::ptime(m_tradeDate) + get_duration_from_string(elem);
 			LOG(INFO) << "Last trade reported time " << pt::to_simple_string(m_tradeTime) <<endl;
 		}
 		else throw YahooSrcException("Invalid data");
