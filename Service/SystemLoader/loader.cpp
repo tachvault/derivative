@@ -10,6 +10,7 @@ Copyright (c) 2013 - 2014, Nathan Muruganantha. All rights reserved.
 #include "SystemUtil.hpp"
 #include "SystemManager.hpp"
 #include "IRESTJSONRequestInterceptor.hpp"
+#include "BPMLoader.hpp"
 
 namespace derivative
 {
@@ -84,6 +85,11 @@ int main(int argc, char** argv)
 		
 	if (mode == runModeEnum::STANDALONE || mode == runModeEnum::APP_SERVER)
 	{
+		/// Start BPMLoader
+		BPMLoader& bpm = BPMLoader::getInstance();
+		bpm.LoadLIBORRates();
+
+		/// start the dispatcher
 		StartDispatcher();
 	}
 

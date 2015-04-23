@@ -98,17 +98,7 @@ namespace derivative
 		virtual void Passivate();
 
 		virtual void Dispatch(std::shared_ptr<IMessage>& msg);
-
-		/// Evalue American call option with Binomial
-		virtual void ValueAmericanWithBinomial(int N = 1000);
-
-		virtual void ValueEuropeanWithBinomial(int N = 1000);
-		
-		/// evaluate with Monte-Carlo
-		void ValueEuropeanWithMC(size_t minpaths = 100000, size_t maxpaths = 100000, size_t N = 10, size_t train = 100, int degree = 2, double ci = 0.95);
-
-		void ValueAmericanWithMC(size_t minpaths = 100000, size_t maxpaths = 100000, size_t N = 10, size_t train = 100, int degree = 2, double ci = 0.95);
-
+				
 	private:
 
 		/// name
@@ -139,14 +129,7 @@ namespace derivative
 		double m_strike;
 
 		/// maturity date
-		dd::date m_maturity;
-
-		/// option values resulted from different pricing models.
-		double m_binomial;
-		
-		std::vector<MCValueType> m_mc;
-		
-		double m_closedForm;
+		dd::date m_maturity;		
 	};
 }
 

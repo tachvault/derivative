@@ -170,6 +170,7 @@ namespace derivative
 
 				entities.push_back(rate);
 			}
+			res->close();
 		}
 		catch (sql::SQLException &e)
 		{
@@ -177,5 +178,7 @@ namespace derivative
 			LOG(ERROR) << "# ERR: " << e.what();
 			throw e;
 		};
+
+		m_con = nullptr;
 	}
 } /* namespace derivative */

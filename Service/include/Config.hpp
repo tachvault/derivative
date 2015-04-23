@@ -46,7 +46,8 @@ namespace derivative
 		derivativeLibs.insert(std::pair<runModeEnum, std::string>(STANDALONE, "MySQLDataAccess"));
 		derivativeLibs.insert(std::pair<runModeEnum, std::string>(STANDALONE, "YahooDataAccess"));
 		derivativeLibs.insert(std::pair<runModeEnum, std::string>(STANDALONE, "XigniteDataAccess"));
-		derivativeLibs.insert(std::pair<runModeEnum, std::string>(STANDALONE, "Facades"));		
+		derivativeLibs.insert(std::pair<runModeEnum, std::string>(STANDALONE, "Facades"));
+		derivativeLibs.insert(std::pair<runModeEnum, std::string>(STANDALONE, "BPMLoader"));
 
 		/// application server mode required the following libraries loaded
 		derivativeLibs.insert(std::pair<runModeEnum, std::string>(STANDALONE, "MessageDispatcher"));
@@ -57,6 +58,7 @@ namespace derivative
 		derivativeLibs.insert(std::pair<runModeEnum, std::string>(APP_SERVER, "YahooDataAccess"));
 		derivativeLibs.insert(std::pair<runModeEnum, std::string>(APP_SERVER, "XigniteDataAccess"));
 		derivativeLibs.insert(std::pair<runModeEnum, std::string>(APP_SERVER, "Facades"));
+		derivativeLibs.insert(std::pair<runModeEnum, std::string>(STANDALONE, "BPMLoader"));
 
 		/// load balancer mode required the following libraries loaded
 		derivativeLibs.insert(std::pair<runModeEnum, std::string>(LOAD_BALANCER, "ESB"));

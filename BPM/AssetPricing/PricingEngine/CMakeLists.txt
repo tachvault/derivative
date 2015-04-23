@@ -40,6 +40,7 @@ SET(PRICINGENGINE_SOURCE
 	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/CIRprocess.hpp
 	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/HestonAsset.hpp
         ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/EquityAssetPricer.hpp
+        ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/FuturesAssetPricer.hpp
 	Binomial.cpp
 	FiniteDifference.cpp
 	GaussMarkovWorld.cpp
@@ -64,6 +65,7 @@ SET(PRICINGENGINE_SOURCE
 	FuturesVolatilitySurface.cpp
 	HestonAsset.cpp
         EquityAssetPricer.cpp
+        FuturesAssetPricer.cpp
 )
 
 # Link shared library paths

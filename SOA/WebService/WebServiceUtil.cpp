@@ -8,6 +8,7 @@ Copyright (C) Nathan Muruganantha 2013 - 2014
 #include "EquityVanillaOptMessage.hpp"
 #include "FuturesVanillaOptMessage.hpp"
 #include "EquityOptionSpreadMessage.hpp"
+#include "FuturesOptionSpreadMessage.hpp"
 #include "ESBManager.hpp"
 #include "QFUtil.hpp"
 
@@ -43,7 +44,7 @@ namespace derivative
 			web::json::value jsonMsg = msg->AsJSON();
 			return jsonMsg;
 		}
-		
+
 		void decodeOption(const std::string& opt, EquityOptionSpreadMessage::Leg& leg)
 		{
 			std::vector<std::string> vec;
@@ -569,6 +570,141 @@ namespace derivative
 			}
 
 			return ProcessMsg<EquityOptionSpreadMessage, EquityOptionSpreadMessage::Request>(msg, req);
+		}
+
+		web::json::value HandleFuturesOptionSpread(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings)
+		{
+			/// now add request parameters
+			std::shared_ptr<FuturesOptionSpreadMessage> msg = std::make_shared<FuturesOptionSpreadMessage>();
+			FuturesOptionSpreadMessage::FuturesRequest req;
+			try
+			{
+				if (query_strings.find(U("_style")) != query_strings.end())
+				{
+					if (query_strings.at(U("_style")).compare(U("european")) == 0)
+					{
+						req.style = FuturesOptionSpreadMessage::EUROPEAN;
+					}
+					else if (query_strings.at(U("_style")).compare(U("american")) == 0)
+					{
+						req.style = FuturesOptionSpreadMessage::AMERICAN;
+					}
+					else
+					{
+						throw std::invalid_argument("Invalid Style parameter");
+					}
+				}
+				else
+				{
+					req.style = FuturesOptionSpreadMessage::AMERICAN;
+				}
+
+				if (query_strings.find(U("_method")) != query_strings.end())
+				{
+					if (query_strings.at(U("_method")).compare(U("closed")) == 0)
+					{
+						if (req.style == FuturesOptionSpreadMessage::EUROPEAN)
+						{
+							req.method = FuturesOptionSpreadMessage::CLOSED;
+						}
+						else
+						{
+							throw std::invalid_argument("American open cannot be evaluated with closed form");
+						}
+					}
+					else if (query_strings.at(U("_method")).compare(U("lattice")) == 0)
+					{
+						req.method = FuturesOptionSpreadMessage::LATTICE;
+					}
+					else
+					{
+						throw std::invalid_argument("Invalid pricing method parameter");
+					}
+				}
+				else
+				{
+					req.method = FuturesOptionSpreadMessage::LATTICE;
+				}
+				if (query_strings.find(U("_ratetype")) != query_strings.end())
+				{
+					if (query_strings.at(U("_ratetype")).compare(U("Yield")) == 0)
+					{
+						req.rateType = FuturesOptionSpreadMessage::YIELD;
+					}
+					else if (query_strings.at(U("_ratetype")).compare(U("LIBOR")) == 0)
+					{
+						req.rateType = FuturesOptionSpreadMessage::LIBOR;
+					}
+					else
+					{
+						throw std::invalid_argument("Invalid Style parameter");
+					}
+				}
+				else
+				{
+					req.rateType = FuturesOptionSpreadMessage::YIELD;
+				}
+				if (query_strings.find(U("_symbol")) != query_strings.end())
+				{
+					req.underlying = conversions::to_utf8string(query_strings.at(U("_symbol")));
+				}
+				else
+				{
+					throw std::invalid_argument("No underlying symbol");
+				}
+
+				if (query_strings.find(U("_delivery")) != query_strings.end())
+				{
+					auto ddate = conversions::to_utf8string(query_strings.at(U("_delivery")));
+					req.deliveryDate = dd::from_string(ddate);
+				}
+				else
+				{
+					throw std::invalid_argument("No delivery date");
+				}
+
+				if (query_strings.find(U("_vol")) != query_strings.end())
+				{
+					auto vol = conversions::to_utf8string(query_strings.at(U("_vol")));
+					req.vol = stod(vol);
+				}
+
+				if (query_strings.find(U("_legs")) != query_strings.end())
+				{
+					std::string legs = conversions::to_utf8string(query_strings.at(U("_legs")));
+					decodeLegs(legs, req.legs);
+				}
+
+				if (query_strings.find(U("_naked")) != query_strings.end())
+				{
+					if (query_strings.at(U("_naked")).compare(U("long")) == 0)
+					{
+						req.equityPos.pos = FuturesOptionSpreadMessage::LONG;
+						if (query_strings.find(U("_units")) != query_strings.end())
+						{
+							req.equityPos.units = atoi(conversions::to_utf8string(query_strings.at(U("_units"))).c_str());
+						}
+					}
+					else if (query_strings.at(U("_naked")).compare(U("short")) == 0)
+					{
+						req.equityPos.pos = FuturesOptionSpreadMessage::SHORT;
+						if (query_strings.find(U("_units")) != query_strings.end())
+						{
+							req.equityPos.units = atoi(conversions::to_utf8string(query_strings.at(U("_units"))).c_str());
+						}
+					}
+					else
+					{
+						throw std::invalid_argument("Invalid Style parameter");
+					}
+				}
+			}
+			catch (std::exception& e)
+			{
+				return SendError<FuturesOptionSpreadMessage, FuturesOptionSpreadMessage::FuturesRequest>(msg, req, e.what());
+			}
+
+			return ProcessMsg<FuturesOptionSpreadMessage, FuturesOptionSpreadMessage::FuturesRequest>(msg, req);
 		}
 	}
 }

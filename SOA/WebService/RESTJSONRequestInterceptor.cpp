@@ -142,6 +142,11 @@ namespace derivative
 				auto msg = WebServiceUtil::HandleEquityOptionSpread(paths, query_strings);
 				message.reply(status_codes::OK, msg);
 			}
+			else if (paths[0].compare(U("FuturesSpread")) == 0)
+			{
+				auto msg = WebServiceUtil::HandleFuturesOptionSpread(paths, query_strings);
+				message.reply(status_codes::OK, msg);
+			}
 			else
 			{
 				throw std::invalid_argument("Only equity/futures/interest rate asset classes are supported");

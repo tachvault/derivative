@@ -45,7 +45,7 @@ namespace derivative
 	{
 	public:
 
-		enum OptionTypeEnum { CALL = 0, PUT = 1, UNKNOWN = 2 };
+		enum OptionTypeEnum { CALL = 0, PUT = 1, TYPE_UNKNOWN = 2 };
 
 		enum PricingMethodEnum { CLOSED = 0, LATTICE = 1, MONTE_CARLO = 2 };
 
@@ -74,7 +74,7 @@ namespace derivative
 				:style(EUROPEAN),
 				method(LATTICE),
 				rateType(LIBOR),
-				option(UNKNOWN),
+				option(TYPE_UNKNOWN),
 				strike(0.0),
 				vol(0.0)
 			{}
@@ -97,7 +97,7 @@ namespace derivative
 
 			bool validate()
 			{
-				if (option == OptionTypeEnum::UNKNOWN || \
+				if (option == OptionTypeEnum::TYPE_UNKNOWN || \
 					maturity.is_not_a_date() || \
 					(fabs(strike) < std::numeric_limits<double>::epsilon()))
 				{
@@ -110,7 +110,8 @@ namespace derivative
 		struct Response
 		{
 			Response()
-				:optPrice(0.0)
+				:optPrice(0.0),
+				underlyingTradePrice(0.0)
 			{}
 
 			dd::date underlyingTradeDate;

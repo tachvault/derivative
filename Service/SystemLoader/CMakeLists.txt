@@ -8,10 +8,9 @@ include_directories("${GFLAG_ROOT}/src/windows")
 # derivatives include_directories
 include_directories("${PROJECT_SOURCE_DIR}/Service/include")
 include_directories("${PROJECT_SOURCE_DIR}/SOA/include")
+include_directories("${PROJECT_SOURCE_DIR}/BPM/include")
 
 SET(SYSTEMLOADER_SOURCES
-        BPMLoader.hpp        
-        BPMLoader.cpp
     	Loader.cpp
 )
 
@@ -31,6 +30,7 @@ target_link_libraries (SYSTEMLOADER ENTITYMGMT)
 target_link_libraries (SYSTEMLOADER SERVICEUTIL)
 target_link_libraries (SYSTEMLOADER MESSAGEDISPATCHER)
 target_link_libraries (SYSTEMLOADER ESB)
+target_link_libraries (SYSTEMLOADER BPMLOADER)
 target_link_libraries (SYSTEMLOADER WEBSERVICE)
 
 # Set the preprocessor definition for _VARIADIC_MAX=10
