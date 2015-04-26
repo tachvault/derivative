@@ -35,7 +35,6 @@ Copyright (c) 2013, Nathan Muruganantha. All rights reserved.
 #include"IIRValue.hpp"
 #include "PrimaryAssetUtil.hpp"
 #include "IStock.hpp"
-#include "VolatilitySmile.hpp"
 #include "EquityVolatilitySurface.hpp"
 
 using namespace derivative;

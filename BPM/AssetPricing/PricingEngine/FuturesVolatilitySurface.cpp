@@ -12,7 +12,6 @@ Modified and ported: 2013, Nathan Muruganantha. All rights reserved.
 #include "IFutures.hpp"
 #include "BlackScholesAssetAdapter.hpp"
 #include "PiecewiseVol.hpp"
-#include "VolatilitySmile.hpp"
 #include "IDailyFuturesOptionValue.hpp"
 #include "Exchange.hpp"
 

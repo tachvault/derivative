@@ -20,6 +20,7 @@ Copyright (c) 2015, Nathan Muruganantha. All rights reserved.
 #include "FuturesVanillaOptMessage.hpp"
 #include "IMessageSink.hpp"
 #include "MsgProcessorManager.hpp"
+#include "EquityGARCH.hpp"
 
 using namespace derivative;
 using namespace derivative::SystemUtil;
@@ -349,6 +350,62 @@ TEST_F(FacadesTest, FacadesFuturesPutAmerTest)
 	cout << "Lattice form solution  of early exercise put option " << res.optPrice << endl;
 	sink->Passivate();
 	cout << "Monte-Carlo form solution  of early exercise put option " << res.optPrice << endl;
+	cout << "\n---------------------------------------------------------\n";
+};
+
+TEST_F(FacadesTest, FacadesHistoricVolTest)
+{
+	std::shared_ptr<EquityVanillaOptMessage> msg = std::make_shared<EquityVanillaOptMessage>();
+	EquityVanillaOptMessage::Request req;
+	req.option = EquityVanillaOptMessage::CALL;
+	req.rateType = EquityVanillaOptMessage::LIBOR;
+	req.style = EquityVanillaOptMessage::EUROPEAN;
+	req.maturity = dd::date(2015, 5, 10);
+	req.strike = 130.0;
+	req.underlying = string("AAPL");
+
+	/// closed form solution
+	req.method = EquityVanillaOptMessage::CLOSED;
+
+	/// get the  historic vol.
+	dd::date today = dd::day_clock::local_day();
+	std::shared_ptr<EquityGARCH> garch = BuildEquityGARCH(req.underlying, today);
+	std::shared_ptr<DeterministicAssetVol> vol;
+	try
+	{
+		// first try Vol surface
+		vol = garch->GetVolatility();
+	}
+	catch (std::domain_error& e)
+	{
+		cout << "Error " << e.what() << endl;
+ 	}
+
+	msg->SetRequest(req);
+	std::shared_ptr<IMessageSink> sink = getMsgSink(msg->GetMsgId());
+	sink->Dispatch(dynamic_pointer_cast<IMessage>(msg));
+	EquityVanillaOptMessage::Response res = msg->GetResponse();
+	sink->Passivate();
+	cout << "\n*********************************************************\n";
+	cout << "Closed form solution of call option " << res.optPrice << endl;
+
+	/// lattice form solution
+	req.method = EquityVanillaOptMessage::LATTICE;
+	msg->SetRequest(req);
+	sink = getMsgSink(msg->GetMsgId());
+	sink->Dispatch(dynamic_pointer_cast<IMessage>(msg));
+	res = msg->GetResponse();
+	sink->Passivate();
+	cout << "Lattice form solution  of call option " << res.optPrice << endl;
+
+	/// closed form solution
+	req.method = EquityVanillaOptMessage::MONTE_CARLO;
+	msg->SetRequest(req);
+	sink = getMsgSink(msg->GetMsgId());
+	//sink->Dispatch(dynamic_pointer_cast<IMessage>(msg));
+	res = msg->GetResponse();
+	sink->Passivate();
+	cout << "Monte-Carlo form solution  of call option " << res.optPrice << endl;
 	cout << "\n---------------------------------------------------------\n";
 };
 

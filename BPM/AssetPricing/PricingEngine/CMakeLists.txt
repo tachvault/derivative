@@ -41,6 +41,8 @@ SET(PRICINGENGINE_SOURCE
 	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/HestonAsset.hpp
         ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/EquityAssetPricer.hpp
         ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/FuturesAssetPricer.hpp
+        ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/GARCH.hpp
+        ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/EquityGARCH.hpp
 	Binomial.cpp
 	FiniteDifference.cpp
 	GaussMarkovWorld.cpp
@@ -61,6 +63,8 @@ SET(PRICINGENGINE_SOURCE
 	GeometricBrownianMotion.cpp
 	GaussMarkovTermStructure.cpp
         VolatilitySurface.cpp
+        GARCH.cpp
+        EquityGARCH.cpp
 	EquityVolatilitySurface.cpp
 	FuturesVolatilitySurface.cpp
 	HestonAsset.cpp

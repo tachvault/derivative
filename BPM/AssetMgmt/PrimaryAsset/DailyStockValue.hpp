@@ -145,10 +145,10 @@ namespace derivative
 			m_priceLow = price;
 		}
 
-		/// no last reported value for historical data
+		/// now last reported value for historical data
 		double GetTradePrice() const
 		{
-			return 0;
+			return m_priceClose;
 		}
 
 		/// set day's adjusted close price

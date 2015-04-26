@@ -23,7 +23,6 @@ namespace derivative
 		double priceHigh, double priceLow, double priceAdjClose, const dd::date& tradeDate)
 		: m_name(nm), m_priceOpen(priceOpen), m_priceClose(priceClose), m_priceHigh(priceHigh), \
 		m_priceLow(priceLow), m_priceAdjustedClose(priceAdjClose), m_tradeDate(tradeDate)
-
 	{
 	}
 

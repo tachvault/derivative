@@ -153,7 +153,6 @@ namespace derivative
 
 	void CSVwrite(std::ostream& os, const Array<double, 1>& v);
 	void CSVwrite(std::ostream& os, const Array<double, 2>& A);
-
 }
 
 /* namespace derivative */

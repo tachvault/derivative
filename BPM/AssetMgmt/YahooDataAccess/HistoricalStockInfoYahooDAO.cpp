@@ -130,6 +130,10 @@ namespace derivative
 		dd::date endDate;
 		HistoricalStockInfo::GetKeys(nm, symbolStr, startDate, endDate);
 
+		/// append symbol
+		utility::string_t symbol = utility::conversions::to_string_t(symbolStr);
+		builder.append_query(L"s=" + symbol);
+
 		/// append start date
 		builder.append_query(L"a=" + std::to_wstring((startDate.month() - 1)));
 		builder.append_query(L"b=" + std::to_wstring(startDate.day()));
@@ -185,7 +189,6 @@ namespace derivative
 			/// getting all into string and read from string?
 			for (std::string line; std::getline(input, line); )
 			{
-				LOG(INFO) << "Processing: " << line << endl;			
 				boost::tokenizer<boost::char_separator<char> >  tokens(line, sep); 
 				auto it = tokens.begin();
 				if (it != tokens.end()) dateStr = line;  else break;

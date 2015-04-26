@@ -162,7 +162,7 @@ namespace derivative
 
 	/// utility function to build historical stock information given
 	/// ticker symbol, start date and end date
-	PRIMARYASSET_EXT_API void BuildHistoricalStockInfo(ushort source, const std::string& symbol, const dd::date& start, const dd::date& end);
+	PRIMARYASSET_EXT_API std::shared_ptr<HistoricalStockInfo> BuildHistoricalStockInfo(ushort source, const std::string& symbol, const dd::date& start, const dd::date& end);
 
 	/// utility function to build historical stock information given
 	/// ticker symbol, start date and end date
