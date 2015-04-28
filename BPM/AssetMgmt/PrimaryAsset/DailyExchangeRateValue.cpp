@@ -19,9 +19,9 @@ namespace derivative
 	}
 
 	DailyExchangeRateValue::DailyExchangeRateValue(const Name& nm, double priceOpen, double priceClose, \
-		double priceHigh, double priceLow, const dd::date& tradeDate)
+		double priceHigh, double priceLow, double adjClose, const dd::date& tradeDate)
 		: m_name(nm), m_priceOpen(priceOpen), m_priceClose(priceClose), m_priceHigh(priceHigh), \
-		m_priceLow(priceLow), m_tradeDate(tradeDate)
+		m_priceLow(priceLow), m_adjClose(adjClose), m_tradeDate(tradeDate)
 
 	{
 	}
@@ -45,7 +45,8 @@ namespace derivative
 		/// The caller required to register the constructed with object with EntityManager
 		std::shared_ptr<DailyExchangeRateValue> exchangeRateVal = std::make_shared<DailyExchangeRateValue>(nm, boost::any_cast<double>(agrs[0]), \
 			boost::any_cast<double>(agrs[1]), boost::any_cast<double>(agrs[2]), \
-			boost::any_cast<double>(agrs[3]), boost::any_cast<dd::date>(agrs[4]));
+			boost::any_cast<double>(agrs[3]), boost::any_cast<double>(agrs[4]), \
+			boost::any_cast<dd::date>(agrs[5]));
 
 		/// return constructed object if no exception is thrown
 		return exchangeRateVal;

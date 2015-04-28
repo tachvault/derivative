@@ -83,10 +83,10 @@ namespace derivative
 			domestic = boost::any_cast<std::string>(i->second);
 			auto j = keys.find("foreign");
 			foreign = boost::any_cast<std::string>(j->second);
-			auto k = keys.find("start");
+			auto k = keys.find("startDate");
 			start = boost::any_cast<dd::date>(k->second);
-			auto l = keys.find("end");
-			end = boost::any_cast<dd::date>(k->second);
+			auto l = keys.find("endDate");
+			end = boost::any_cast<dd::date>(l->second);
 		}
 
 		/// Constructor with Exemplar for the Creator historical ExchangeRate value object
@@ -175,7 +175,7 @@ namespace derivative
 
 	/// utility function to build historical exchangeRate information given
 	/// domestic and foreign currency codes, start date and end dates
-	PRIMARYASSET_EXT_API void BuildHistoricalExchangeRateInfo(ushort source, const std::string& domCode, std::string& foreignCode, \
+	PRIMARYASSET_EXT_API std::shared_ptr<HistoricalExchangeRateInfo> BuildHistoricalExchangeRateInfo(ushort source, const std::string& domCode, std::string& foreignCode, \
 		                      const dd::date& start, const dd::date& end);
 
 	/// utility function to build historical exchangeRate information given

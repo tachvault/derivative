@@ -37,7 +37,7 @@ namespace derivative
 		DailyExchangeRateValue (const Name& nm);
 
 		DailyExchangeRateValue (const Name& nm, double openPrice, double closePrice, double priceHigh, \
-			double priceLow, const dd::date& tradeDate);
+			double priceLow, double adjClose, const dd::date& tradeDate);
 
 		std::shared_ptr<IMake> Make (const Name &nm);
 
@@ -135,7 +135,7 @@ namespace derivative
 		/// no last reported value for historical data
 		virtual double GetTradePrice() const
 		{
-			return 0;
+			return m_adjClose;
 		}
 
 		virtual double GetDivYield() const
@@ -163,6 +163,9 @@ namespace derivative
 
 		/// Low price on the day. 
 		std::atomic<double>    m_priceLow;
+
+		/// adjClose on the day. 
+		std::atomic<double>    m_adjClose;
 
 		/// The date this exchangeRate value.
 		dd::date m_tradeDate;

@@ -18,8 +18,10 @@ include_directories("${PROJECT_SOURCE_DIR}/BPM/AssetMgmt/include")
 SET(XIGNITEDATAACCESS_SOURCE
 	IRValueXigniteDAO.cpp
 	IRValueXigniteDAO.hpp
-    LIBORValueXigniteDAO.cpp
+        LIBORValueXigniteDAO.cpp
 	LIBORValueXigniteDAO.hpp
+        HistoricalExchangeRateInfoXigniteDAO.hpp
+        HistoricalExchangeRateInfoXigniteDAO.cpp
 )
 
 # Link shared library paths

@@ -43,7 +43,8 @@ SET(PRICINGENGINE_SOURCE
         ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/FuturesAssetPricer.hpp
         ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/GARCH.hpp
         ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/EquityGARCH.hpp
-	Binomial.cpp
+	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/FXGARCH.hpp
+        Binomial.cpp
 	FiniteDifference.cpp
 	GaussMarkovWorld.cpp
 	GaussMarkovWorldAdapter.cpp
@@ -65,6 +66,7 @@ SET(PRICINGENGINE_SOURCE
         VolatilitySurface.cpp
         GARCH.cpp
         EquityGARCH.cpp
+        FXGARCH.cpp
 	EquityVolatilitySurface.cpp
 	FuturesVolatilitySurface.cpp
 	HestonAsset.cpp
