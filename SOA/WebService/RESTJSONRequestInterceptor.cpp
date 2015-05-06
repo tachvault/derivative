@@ -129,9 +129,10 @@ namespace derivative
 				auto msg = WebServiceUtil::HandleFuturesOption(paths, query_strings);
 				message.reply(status_codes::OK, msg);
 			}
-			else if (paths[0].compare(U("ForexOption")) == 0)
+			else if (paths[0].compare(U("FXOption")) == 0)
 			{
-				throw std::invalid_argument("Foreign Exchange options are not exposed yet");
+				auto msg = WebServiceUtil::HandleFXOption(paths, query_strings);
+				message.reply(status_codes::OK, msg);
 			}
 			else if (paths[0].compare(U("InterestrateOption")) == 0)
 			{
@@ -145,6 +146,11 @@ namespace derivative
 			else if (paths[0].compare(U("FuturesSpread")) == 0)
 			{
 				auto msg = WebServiceUtil::HandleFuturesOptionSpread(paths, query_strings);
+				message.reply(status_codes::OK, msg);
+			}
+			else if (paths[0].compare(U("FXSpread")) == 0)
+			{
+				auto msg = WebServiceUtil::HandleFXOptionSpread(paths, query_strings);
 				message.reply(status_codes::OK, msg);
 			}
 			else

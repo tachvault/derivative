@@ -44,6 +44,8 @@ namespace derivative
 	
 		web::json::value HandleFuturesOptionSpread(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings);
 
+		web::json::value HandleFXOptionSpread(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings);
+
 		void HandleEquityOptionLegs(EquityVanillaOptMessage::Request &req, std::string& legs);
 	}
 }

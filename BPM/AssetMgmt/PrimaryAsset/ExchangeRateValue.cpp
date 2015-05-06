@@ -21,7 +21,8 @@ namespace derivative
 
 	ExchangeRateValue::ExchangeRateValue (const Name& nm)
 		:m_name(nm), m_priceAsk(0.0), m_priceBid(0.0), m_priceOpen(0.0), \
-		m_priceClose(0.0), m_dayLow(0.0), m_dayHigh(0.0), m_52WkLow(0.0), m_52WkHigh(0.0)
+		m_priceClose(0.0), m_dayLow(0.0), m_dayHigh(0.0), m_52WkLow(0.0), m_52WkHigh(0.0),
+		m_yield(0.0)
 	{
 		// m_vol = std::make_shared<VolatilitySurface>();
 	}

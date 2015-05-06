@@ -133,7 +133,7 @@ namespace derivative
 
 		virtual double GetDivYield() const
 		{
-			throw std::logic_error("Invalid call");
+			return m_yield;
 		}
 
 		std::shared_ptr<IAsset> GetAsset() const
@@ -261,6 +261,9 @@ namespace derivative
 		Name m_name;
 
 		std::shared_ptr<IExchangeRate> m_exchangeRate;
+
+		/// foreign rate as yield
+		std::atomic<double> m_yield;
 
 		mutable SpinLock m_lock;
 	};

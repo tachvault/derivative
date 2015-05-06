@@ -470,18 +470,18 @@ namespace derivative
 			if (!paths[1].empty() && paths[1].compare(U("Vanilla")) == 0)
 			{
 				/// now add request parameters
-				EquityVanillaOptMessage::Request req;
+				ExchangeRateVanillaOptMessage::Request req;
 				if (query_strings.find(U("_option")) != query_strings.end())
 				{
 					if (query_strings.at(U("_option")).compare(U("call")) == 0)
 					{
-						req.option = EquityVanillaOptMessage::CALL;
-						return HandleEquityVanillaOption(EquityVanillaOptMessage::CALL, paths, query_strings);
+						req.option = ExchangeRateVanillaOptMessage::CALL;
+						return HandleFXVanillaOption(ExchangeRateVanillaOptMessage::CALL, paths, query_strings);
 					}
 					else if (query_strings.at(U("_option")).compare(U("put")) == 0)
 					{
-						req.option = EquityVanillaOptMessage::PUT;
-						return HandleEquityVanillaOption(EquityVanillaOptMessage::PUT, paths, query_strings);
+						req.option = ExchangeRateVanillaOptMessage::PUT;
+						return HandleFXVanillaOption(ExchangeRateVanillaOptMessage::PUT, paths, query_strings);
 					}
 					else
 					{
@@ -585,7 +585,7 @@ namespace derivative
 
 				if (query_strings.find(U("_foreign")) != query_strings.end())
 				{
-					req.domestic = conversions::to_utf8string(query_strings.at(U("_foreign")));
+					req.foreign = conversions::to_utf8string(query_strings.at(U("_foreign")));
 				}
 				else
 				{
@@ -625,7 +625,7 @@ namespace derivative
 				}
 				else
 				{
-					req.volType = EquityVanillaOptMessage::IV;
+					req.volType = EquityVanillaOptMessage::HV;
 				}
 
 				if (query_strings.find(U("_vol")) != query_strings.end())
@@ -1006,6 +1006,10 @@ namespace derivative
 						throw std::invalid_argument("Invalid Volatility type parameter");
 					}
 				}
+				else
+				{
+					req.volType = ExchangeRateOptionSpreadMessage::HV;
+				}
 				if (query_strings.find(U("_domestic")) != query_strings.end())
 				{
 					req.domestic = conversions::to_utf8string(query_strings.at(U("_domestic")));
@@ -1017,7 +1021,7 @@ namespace derivative
 
 				if (query_strings.find(U("_foreign")) != query_strings.end())
 				{
-					req.domestic = conversions::to_utf8string(query_strings.at(U("_foreign")));
+					req.foreign = conversions::to_utf8string(query_strings.at(U("_foreign")));
 				}
 				else
 				{
