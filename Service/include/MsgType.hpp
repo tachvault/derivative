@@ -7,3 +7,5 @@ Copyright (c) 201, Nathan Muruganantha. All rights reserved.
 #define FUTURES_VANILLA_OPTION 2
 #define EQUITY__OPTION_SPREAD 3
 #define FUTURES__OPTION_SPREAD 4
+#define EXCHANGERATE_VANILLA_OPTION 5
+#define EXCHANGERATE__OPTION_SPREAD 6

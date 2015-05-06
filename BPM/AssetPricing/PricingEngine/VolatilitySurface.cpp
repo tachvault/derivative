@@ -28,10 +28,10 @@ namespace derivative
 	{
 		/// get country
 		m_cntry = dynamic_pointer_cast<IPrimitiveSecurity>(m_asset->GetAsset())->GetExchange().GetCountry();
-				
+
 		/// construct black scholes asset
 		std::shared_ptr<DeterministicAssetVol>  v;
-		m_bsasset = std::make_shared<BlackScholesAssetAdapter>(m_asset, v);		
+		m_bsasset = std::make_shared<BlackScholesAssetAdapter>(m_asset, v);
 	}
 
 	std::shared_ptr<DeterministicAssetVol> VolatilitySurface::GetVolatility(const dd::date& mat, double strike, bool exactMatch)
@@ -58,7 +58,7 @@ namespace derivative
 
 		/// if options not found for given strike then throw
 		if (exactMatch) throw std::domain_error("No applicable option data found");
-		
+
 		/// otherwise we will start approximate
 		/// return first if strike is less than min strike
 		if (m_vol.begin()->first > strike)
@@ -87,7 +87,8 @@ namespace derivative
 		if (it == m_vol.end())
 		{
 			LOG(WARNING) << "Cannot extrapolate but return the vol for largest strike price" << endl;
-			if (m_vol.rbegin()->second == nullptr)
+			auto rit = m_vol.rbegin();
+			if (rit->second == nullptr)
 			{
 				Build(m_vol.rbegin()->first);
 			}
@@ -148,7 +149,7 @@ namespace derivative
 			return v;
 		}
 
-		for(;it < m_options.end(); ++it)
+		for (; it < m_options.end(); ++it)
 		{
 			if ((*it)->GetMaturityDate() > mat)
 			{
@@ -158,7 +159,7 @@ namespace derivative
 			else if ((*it)->GetMaturityDate() == mat)
 			{
 				next = (*it)->GetMaturityDate();
-				prev = (*it)->GetMaturityDate(); 
+				prev = (*it)->GetMaturityDate();
 				break;
 
 			}
@@ -221,7 +222,7 @@ namespace derivative
 
 	void VolatilitySurface::Build(double strike)
 	{
-		
+
 		/// count the number of options for the given strike
 		/// it is required to initialize Array
 		int count = 0;
@@ -267,5 +268,5 @@ namespace derivative
 			m_vol.at(strike) = assetVol;
 			LOG(INFO) << " K = " << strike << ", Timeline " << timeline << ", vol " << vols << endl;
 		}
-	}	
+	}
 }

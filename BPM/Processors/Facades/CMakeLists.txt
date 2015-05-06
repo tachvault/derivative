@@ -22,11 +22,15 @@ SET(FACADES_SOURCES
 	EquityVanillaOption.hpp
         EquityVanillaOption.cpp
         FuturesVanillaOption.hpp
+        ExchangeRateVanillaOption.cpp
+        ExchangeRateVanillaOption.hpp
         FuturesVanillaOption.cpp
         EquityOptionSpread.hpp
         EquityOptionSpread.cpp
         FuturesOptionSpread.hpp
-        FuturesOptionSpread.cpp        
+        FuturesOptionSpread.cpp
+        ExchangeRateOptionSpread.hpp
+        ExchangeRateOptionSpread.cpp        
 )
 
 # Link shared library paths (Note: This should be added before Add_library !!!)

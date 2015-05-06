@@ -23,6 +23,7 @@ Copyright (c) 2015, Nathan Muruganantha. All rights reserved.
 #include "ConstVol.hpp"
 #include "PiecewiseVol.hpp"
 #include "EquityVolatilitySurface.hpp"
+#include "EquityGARCH.hpp"
 
 #include "EquityAssetPricer.hpp"
 
@@ -99,18 +100,34 @@ namespace derivative
 		}
 		else
 		{
-			std::shared_ptr<EquityVolatilitySurface> volSurface = BuildEquityVolSurface(optMsg->GetRequest().underlying, today);
+			if (optMsg->GetRequest().volType == EquityVanillaOptMessage::IV)
+			{
+				std::shared_ptr<EquityVolatilitySurface> volSurface = BuildEquityVolSurface(optMsg->GetRequest().underlying, today);
 
-			try
-			{
-				// first try Vol surface
-				m_vol = volSurface->GetVolatility(m_maturity, m_strike);
+				try
+				{
+					// first try Vol surface
+					m_vol = volSurface->GetVolatility(m_maturity, m_strike);
+				}
+				catch (std::domain_error& e)
+				{
+					/// means for the maturity not enough data in historic vol
+					/// we use GramCharlier to construct constant vol for the given maturity and strike
+					m_vol = volSurface->GetConstVol(m_maturity, m_strike);
+				}
 			}
-			catch (std::domain_error& e)
+			else
 			{
-				/// means for the maturity not enough data in historic vol
-				/// we use GramCharlier to construct constant vol for the given maturity and strike
-				m_vol = volSurface->GetConstVol(m_maturity, m_strike);
+				std::shared_ptr<EquityGARCH> garch = BuildEquityGARCH(optMsg->GetRequest().underlying, today);
+				try
+				{
+					m_vol = garch->GetVolatility();
+				}
+				catch (std::domain_error& e)
+				{
+					cout << "Error " << e.what() << endl;
+					throw e;
+				}
 			}
 		}
 

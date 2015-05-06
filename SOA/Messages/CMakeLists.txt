@@ -24,23 +24,31 @@ SET(MESSAGES_SOURCES
 	${PROJECT_SOURCE_DIR}/SOA/include/VanillaOptMessage.hpp
         ${PROJECT_SOURCE_DIR}/SOA/include/EquityVanillaOptMessage.hpp
         ${PROJECT_SOURCE_DIR}/SOA/include/FuturesVanillaOptMessage.hpp
+        ${PROJECT_SOURCE_DIR}/SOA/include/ExchangeRateVanillaOptMessage.hpp
         ${PROJECT_SOURCE_DIR}/SOA/include/EquityVanillaOptJSONVisitor.hpp
 	${PROJECT_SOURCE_DIR}/SOA/include/FuturesVanillaOptJSONVisitor.hpp
+        ${PROJECT_SOURCE_DIR}/SOA/include/ExchangeRateVanillaOptJSONVisitor.hpp
 	${PROJECT_SOURCE_DIR}/SOA/include/OptionSpreadMessage.hpp
         ${PROJECT_SOURCE_DIR}/SOA/include/EquityOptionSpreadMessage.hpp
         ${PROJECT_SOURCE_DIR}/SOA/include/EquityOptionSpreadJSONVisitor.hpp
         ${PROJECT_SOURCE_DIR}/SOA/include/FuturesOptionSpreadMessage.hpp
         ${PROJECT_SOURCE_DIR}/SOA/include/FuturesOptionSpreadJSONVisitor.hpp
+        ${PROJECT_SOURCE_DIR}/SOA/include/ExchangeRateOptionSpreadMessage.hpp
+        ${PROJECT_SOURCE_DIR}/SOA/include/ExchangeRateOptionSpreadJSONVisitor.hpp
         VanillaOptMessage.cpp
-	EquityVanillaOptMessage.cpp
-	FuturesVanillaOptMessage.cpp
+	    EquityVanillaOptMessage.cpp
+	    FuturesVanillaOptMessage.cpp
+        ExchangeRateVanillaOptMessage.cpp        
         EquityVanillaOptJSONVisitor.cpp
-	FuturesVanillaOptJSONVisitor.cpp 
+	    FuturesVanillaOptJSONVisitor.cpp
+        ExchangeRateVanillaOptJSONVisitor.cpp 
         OptionSpreadMessage.cpp
         EquityOptionSpreadMessage.cpp
         EquityOptionSpreadJSONVisitor.cpp
         FuturesOptionSpreadMessage.cpp
-        FuturesOptionSpreadJSONVisitor.cpp              
+        FuturesOptionSpreadJSONVisitor.cpp
+        ExchangeRateOptionSpreadMessage.cpp
+        EchangeRateOptionSpreadJSONVisitor.cpp              
 )
 
 # Link shared library paths (Note: This should be added before Add_library !!!)

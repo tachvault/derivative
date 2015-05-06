@@ -21,7 +21,7 @@ Copyright (c) 2015, Nathan Muruganantha. All rights reserved.
 #include "IMessageSink.hpp"
 #include "MsgProcessorManager.hpp"
 #include "EquityGARCH.hpp"
-#include "FXGARCH.hpp"
+#include "ExchangeRateGARCH.hpp"
 
 using namespace derivative;
 using namespace derivative::SystemUtil;
@@ -143,7 +143,7 @@ TEST_F(FacadesTest, FacadesHistoricVolTest)
 	}
 
 	/// get the  historic vol.
-	std::shared_ptr<GARCH> garchfx = BuildFXGARCH("CAD", "USD", today);
+	std::shared_ptr<GARCH> garchfx = BuildExchangeRateGARCH("CAD", "USD", today);
 	std::shared_ptr<DeterministicAssetVol> volfx;
 	try
 	{

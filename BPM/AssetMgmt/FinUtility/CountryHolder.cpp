@@ -7,6 +7,7 @@ Copyright (c) 2013 - 2014, Nathan Muruganantha. All rights reserved.
 
 #include "IDataSource.hpp"
 #include "CountryHolder.hpp"
+#include "CurrencyHolder.hpp"
 
 #include "CountryMySQLDAO.hpp"
 
@@ -23,6 +24,8 @@ namespace derivative
 
 		/// get Country given iso code
 		Country& GetCountry(const std::string& code);
+
+		void GetCountry(const std::string& name, std::vector<Country>& countries);
 
 	private:
 
@@ -86,8 +89,24 @@ namespace derivative
 		throw std::invalid_argument("Invalid Country code passed");
 	}
 
+	void CountryHolder::Impl::GetCountry(const std::string& currCode, std::vector<Country>& countries)
+	{
+		for (auto& cntry : m_data)
+		{
+			if (cntry.GetCurrency().GetCode().compare(currCode) == 0)
+			{
+				countries.push_back(cntry);
+			}
+		}
+	}
+
 	const Country& CountryHolder::GetCountry(const std::string& name)
 	{
 		return m_Impl->GetCountry(name);
+	}
+
+	void CountryHolder::GetCountry(const std::string& currCode, std::vector<Country>& countries)
+	{
+		m_Impl->GetCountry(currCode, countries);
 	}
 }

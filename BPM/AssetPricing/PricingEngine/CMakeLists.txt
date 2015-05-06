@@ -41,9 +41,10 @@ SET(PRICINGENGINE_SOURCE
 	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/HestonAsset.hpp
         ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/EquityAssetPricer.hpp
         ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/FuturesAssetPricer.hpp
+        ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/ExchangeRateAssetPricer.hpp
         ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/GARCH.hpp
         ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/EquityGARCH.hpp
-	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/FXGARCH.hpp
+	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/ExchangeRateGARCH.hpp
         Binomial.cpp
 	FiniteDifference.cpp
 	GaussMarkovWorld.cpp
@@ -66,12 +67,13 @@ SET(PRICINGENGINE_SOURCE
         VolatilitySurface.cpp
         GARCH.cpp
         EquityGARCH.cpp
-        FXGARCH.cpp
+        ExchangeRateGARCH.cpp
 	EquityVolatilitySurface.cpp
 	FuturesVolatilitySurface.cpp
 	HestonAsset.cpp
         EquityAssetPricer.cpp
         FuturesAssetPricer.cpp
+        ExchangeRateAssetPricer.cpp
 )
 
 # Link shared library paths

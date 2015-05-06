@@ -98,7 +98,7 @@ namespace derivative
 		builder.append_query(L"s=" + symbol);
 		builder.append_query(U("f=abopl1c1p2ydghjkd1t1c1p2exrj2v"));
 
-		http_client client(U("http://finance.yahoo.com/d/"));
+		http_client client(U("http://finance.yahoo.com"));
 		client.request(methods::GET, builder.to_string()).then([&](http_response response)
 		{
 			Concurrency::streams::container_buffer<std::string> instringbuffer;

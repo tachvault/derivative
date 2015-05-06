@@ -73,6 +73,8 @@ namespace derivative
 		/// Get the currency object given the ISO code
 		const Country& GetCountry(const std::string& name);
 
+		void GetCountry(const std::string& currCode, std::vector<Country>& countries);
+
 	private:	
 
 		class Impl;

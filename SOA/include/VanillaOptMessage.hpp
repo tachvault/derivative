@@ -53,6 +53,8 @@ namespace derivative
 
 		enum RateTypeEnum { YIELD = 0, LIBOR = 1 };
 
+		enum VolatilityTypeEnum { IV = 0, HV = 1 };
+
 		struct Greeks
 		{
 			Greeks()
@@ -75,6 +77,7 @@ namespace derivative
 				method(LATTICE),
 				rateType(LIBOR),
 				option(TYPE_UNKNOWN),
+				volType(IV),
 				strike(0.0),
 				vol(0.0)
 			{}
@@ -86,6 +89,8 @@ namespace derivative
 			PricingMethodEnum method;
 
 			RateTypeEnum rateType;
+
+			VolatilityTypeEnum volType;
 
 			std::string underlying;
 
