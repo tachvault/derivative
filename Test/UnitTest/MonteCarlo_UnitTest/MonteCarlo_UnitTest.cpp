@@ -241,8 +241,8 @@ TEST_F(MonteCarloTest, AntitheticExample)
 		std::shared_ptr<IStockValue> stockVal = getStockValue(symbol, S, sgm, 0.03);
 		int N = 100;
 		int numeraire_index = -1;
-		size_t minpaths = 10000000;
-		size_t maxpaths = 10000000;
+		size_t minpaths = 1000000;
+		size_t maxpaths = 1000000;
 		Array<double, 1> T(N + 1);
 		firstIndex idx;
 		double dt = mat / N;

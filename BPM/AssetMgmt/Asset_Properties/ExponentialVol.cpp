@@ -13,7 +13,7 @@ namespace derivative
     std::shared_ptr<DeterministicAssetVol> ExponentialVol::Clone() const
 	{
 		std::shared_ptr<DeterministicAssetVol> obj = \
-			std::make_shared<ExponentialVol>(lvl.copy(), decay.copy());
+			std::make_shared<ExponentialVol>(lvl, decay);
 		return obj;
 	}
 

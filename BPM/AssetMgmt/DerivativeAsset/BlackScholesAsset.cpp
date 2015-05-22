@@ -49,7 +49,7 @@ namespace derivative
 		/// Note: we don't move xaaset members.
 		v= xasset.v->Clone();
 		dividend = xasset.dividend->pointer_to_copy();
-
+		xzero = xasset.xzero;
 		return *this;
 	}
 
