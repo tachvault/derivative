@@ -57,6 +57,9 @@ namespace derivative
 		GeometricBrownianMotion(std::vector<std::shared_ptr<BlackScholesAssetAdapter> >& xunderlying);
 		
 		~GeometricBrownianMotion();
+
+		/// clone this object
+		std::shared_ptr<GeometricBrownianMotion>  Clone();
 		
 		/// Query the dimension of the process.
 		int dimension() const;
@@ -95,12 +98,15 @@ namespace derivative
 	private:
 		Array<double,1>*                                T; ///< Process timeline.
 		Array<double,1>*                        timeline_; ///< Timeline of asset price realisations reported by operator().
-		std::vector<std::shared_ptr<BlackScholesAssetAdapter> >& underlying; ///< Vector of pointers to underlying assets.
+		std::vector<std::shared_ptr<BlackScholesAssetAdapter> > underlying; ///< Vector of pointers to underlying assets.
 		Array<double,1>                                dW; ///< Work space to hold Brownian motion increments.
 		Array<double,1>                           vol_lvl; ///< Work space to hold volatility levels.
 		Array<double,2>                      asset_values; ///< Work space to hold asset values.
 		Array<int,1>*                        time_mapping; ///< Mapping of indices from internal to external timeline.
 		void add_drift(double tstart,double tend,int numeraire_index);
+
+		/// disallow the copy constructor and operator= functions
+		//DISALLOW_COPY_AND_ASSIGN(GeometricBrownianMotion);
 	};
 }
 

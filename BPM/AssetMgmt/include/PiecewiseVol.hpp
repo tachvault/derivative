@@ -48,7 +48,7 @@ namespace derivative
 			);
 
 		/// clone this object
-		virtual std::shared_ptr<DeterministicAssetVol>  Clone();
+		virtual std::shared_ptr<DeterministicAssetVol>  Clone() const;
 
 		virtual ~PiecewiseConstVol()
 		{

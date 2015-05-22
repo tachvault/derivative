@@ -9,8 +9,11 @@ Initial version: Copyright 2003, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012,
 #include <vector>
 #include <list>
 #include <memory>
+#include <thread>
+#include <map>
 
 #include "MSWarnings.hpp"
+#include "SpinLock.hpp"
 #include "MCGatherer.hpp"
 #include "TermStructure.hpp"
 #include "ClassType.hpp"
@@ -63,13 +66,32 @@ namespace derivative
 
 	@see GeometricBrownianMotion
 	*/
+
+	/// private {thread, MCMapping Object} specific resource
+	/// We can't use thread_local C++ 11 feature since thread_local is for static class members.
+	template <class price_process>
+	class ThreadResource
+	{
+	public:
+
+		ThreadResource(const std::shared_ptr<price_process>& p, const Array<double, 2>& uv_t, const Array<double, 1>& muv_t);
+
+		std::shared_ptr<price_process> process_t;
+		Array<double, 2>        underlying_values_t;
+		Array<double, 1> mapped_underlying_values_t;
+
+
+		/// disallow the copy constructor and operator= functions
+		DISALLOW_COPY_AND_ASSIGN(ThreadResource);
+	};
+
 	template <class price_process,class mapped_random_variable>
 	class MCMapping 
 	{
 	public:
 
 		enum {TYPEID = CLASS_MCMAPPING_TYPE};
-
+		
 		/// Constructor.
 		MCMapping(MCPayoff& xpayoff,price_process& xprocess,const TermStructure& xts,int xnumeraire_index = -1);
 
@@ -90,6 +112,9 @@ namespace derivative
 		};
 
 	private:
+
+		std::shared_ptr<ThreadResource<price_process> > get_resource();
+
 		/** Index of underlying asset to use as the numeraire. If less than zero, use deterministic discounting
 		via the initial term structure. */
 		int        numeraire_index;
@@ -99,6 +124,19 @@ namespace derivative
 		Array<double,2>        underlying_values;
 		Array<double,1> mapped_underlying_values;
 		Array<double,1>         numeraire_values;
+
+		/// process pool by thread Id
+		std::map<std::thread::id, std::shared_ptr<ThreadResource<price_process> > > m_pool;
+
+		mutable SpinLock m_lock;
+	};
+
+	template <class price_process>
+	ThreadResource<price_process>::ThreadResource(const std::shared_ptr<price_process>& p, const Array<double, 2>& uv_t, const Array<double, 1>& muv_t)
+		:underlying_values_t(uv_t.copy()),
+		mapped_underlying_values_t(muv_t.copy()),
+		process_t(p)
+	{
 	};
 
 	template <class price_process,class mapped_random_variable>
@@ -133,16 +171,18 @@ namespace derivative
 	{
 		/* Using the random draw x, generate the values of the price process at the dates in the required timeline,
 		under the martingale measure associated with the chosen numeraire. */
-		process(underlying_values,numeraire_values,x,ts,numeraire_index);
+
+		/// get the thread specific resources
+		std::shared_ptr<ThreadResource<price_process> > res = get_resource();
+		res->process_t->operator()(res->underlying_values_t,numeraire_values,x,ts,numeraire_index);
 
 		// Map underlying values to the payoff.
-
-		for (int i=0; i<mapped_underlying_values.extent(firstDim); i++) 
+		for (int i=0; i<res->mapped_underlying_values_t.extent(firstDim); i++) 
 		{
-			mapped_underlying_values(i) = underlying_values(payoff.index(0,i),payoff.index(1,i));
+			res->mapped_underlying_values_t(i) = res->underlying_values_t(payoff.index(0,i),payoff.index(1,i));
 		}
 		// Calculate the discounted payoff.
-		return payoff(mapped_underlying_values,numeraire_values);
+		return payoff(res->mapped_underlying_values_t,numeraire_values);
 	}
 
 	template <class price_process,class mapped_random_variable>
@@ -150,23 +190,48 @@ namespace derivative
 	{
 		/* Using the random draw x, generate the values of the price process at the dates in the required timeline,
 		under the martingale measure associated with the chosen numeraire. */
+
+		/// get the thread specific resources
+		std::shared_ptr<ThreadResource<price_process> > res = get_resource();
 		if (numeraire_index >= 0) 
 		{
-			process(underlying_values,numeraire_values,x,ts,numeraire_index);
+			res->process_t->operator()(res->underlying_values_t,numeraire_values,x,ts,numeraire_index);
 		}
 		else
 		{
-			process(underlying_values,x,ts);
+			res->process_t->operator()(res->underlying_values_t,x,ts);
 		}
 
 		// Map underlying values to the payoff.
-		for (int i=0; i<mapped_underlying_values.extent(firstDim); i++)
+		for (int i=0; i<res->mapped_underlying_values_t.extent(firstDim); i++)
 		{
-			mapped_underlying_values(i) = underlying_values(payoff.index(0,i),payoff.index(1,i));
+			res->mapped_underlying_values_t(i) = res->underlying_values_t(payoff.index(0,i),payoff.index(1,i));
 		}
 
 		// Calculate the discounted payoff.
-		return payoff.payoffArray(mapped_underlying_values,numeraire_values);
+		return payoff.payoffArray(res->mapped_underlying_values_t,numeraire_values);
+	}
+
+	template <class price_process, class mapped_random_variable>
+	std::shared_ptr<ThreadResource<price_process> > MCMapping<price_process, mapped_random_variable>::get_resource()
+	{
+		std::lock_guard<SpinLock> lock(m_lock);
+
+		static int i = 1;
+
+		/// check if this thread has a ThreadResource allocated
+		auto it = m_pool.find(std::this_thread::get_id());
+		if (it != m_pool.end())
+		{
+			return it->second;
+		}   
+		
+		/// if not then clone one from master process; add to m_pool and return
+		std::shared_ptr<price_process> my_process = process.Clone();
+		std::shared_ptr<ThreadResource<price_process> > res = \
+			std::make_shared<ThreadResource<price_process> >(my_process, underlying_values, mapped_underlying_values);
+		m_pool.insert(std::make_pair(std::this_thread::get_id(), res)); 
+		return res;
 	}
 
 } /* namespace derivative */

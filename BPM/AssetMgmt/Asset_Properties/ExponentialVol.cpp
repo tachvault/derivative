@@ -10,10 +10,10 @@ namespace derivative
 {
 
 	/// clone this object
-    std::shared_ptr<DeterministicAssetVol> ExponentialVol::Clone()
+    std::shared_ptr<DeterministicAssetVol> ExponentialVol::Clone() const
 	{
 		std::shared_ptr<DeterministicAssetVol> obj = \
-			std::make_shared<ExponentialVol>(std::forward<Array<double,1> >(lvl), std::forward<Array<double,1> >(decay));
+			std::make_shared<ExponentialVol>(lvl.copy(), decay.copy());
 		return obj;
 	}
 

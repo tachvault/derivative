@@ -52,7 +52,7 @@ namespace derivative
 		{}
 
 		/// clone this object
-		virtual std::shared_ptr<DeterministicAssetVol>  Clone();
+		virtual std::shared_ptr<DeterministicAssetVol>  Clone() const;
 		
 		/// Returns the corresponding volatility of a state variable in a Gaussian HJM model where the forward rate volatility is given by *this - note that the sign of the mean reversion coefficient changes in this case.
 		std::shared_ptr<DeterministicAssetVol> component_vol(int i) const;

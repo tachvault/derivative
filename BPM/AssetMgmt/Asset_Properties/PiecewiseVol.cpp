@@ -24,10 +24,10 @@ namespace derivative
 	}
 
 	/// clone this object
-    std::shared_ptr<DeterministicAssetVol> PiecewiseConstVol::Clone()
+    std::shared_ptr<DeterministicAssetVol> PiecewiseConstVol::Clone() const
 	{
 		std::shared_ptr<DeterministicAssetVol> obj = \
-			std::make_shared<PiecewiseConstVol>(std::forward<Array<double,1> >(timeline), std::forward<Array<double,2> >(v));
+			std::make_shared<PiecewiseConstVol>(timeline.copy(), v.copy());
 		return obj;
 	}
 

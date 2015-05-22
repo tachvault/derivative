@@ -68,7 +68,7 @@ namespace derivative
 		virtual std::shared_ptr<DeterministicAssetVol> component_vol(int i) const;
 
 		/// clone this object
-		virtual std::shared_ptr<DeterministicAssetVol>  Clone();
+		virtual std::shared_ptr<DeterministicAssetVol>  Clone() const;
 
 		/// Get constant volatility levels over time interval [t,T]. Returns false if volatility
 		/// is not constant over this interval.

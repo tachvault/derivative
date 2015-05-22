@@ -67,8 +67,10 @@ namespace derivative
 	{
 		size_t i;
 		double result = 0.0;
+		Array<double, 2>        underlying_values;
+		Array<double, 1> mapped_underlying_values;
 		QRgen.reset();
-		for (i=0;i<QRgen.number_of_points();i++) result += mc_mapping.mapping(QRgen.random(x));
+		for (i = 0; i<QRgen.number_of_points(); i++) result += mc_mapping.mapping(QRgen.random(x), underlying_values, mapped_underlying_values);
 		return result/QRgen.number_of_points();
 	}
 
@@ -77,8 +79,10 @@ namespace derivative
 	{
 		size_t i;
 		QRgen.reset();
-		Array<double,1> result(mc_mapping.mappingArray(QRgen.random(x)));
-		for (i=1;i<QRgen.number_of_points();i++) result += mc_mapping.mappingArray(QRgen.random(x));
+		Array<double, 2>        underlying_values;
+		Array<double, 1> mapped_underlying_values;
+		Array<double, 1> result(mc_mapping.mappingArray(QRgen.random(x),underlying_values, mapped_underlying_values));
+		for (i = 1; i<QRgen.number_of_points(); i++) result += mc_mapping.mappingArray(QRgen.random(x),underlying_values, mapped_underlying_values);
 		result /= QRgen.number_of_points();
 		return result;
 	}

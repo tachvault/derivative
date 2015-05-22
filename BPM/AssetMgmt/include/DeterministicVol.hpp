@@ -61,7 +61,7 @@ namespace derivative
 		virtual std::shared_ptr<DeterministicAssetVol> component_vol(int i) const = 0;
 
 		/// clone this object
-		virtual std::shared_ptr<DeterministicAssetVol>  Clone() = 0;
+		virtual std::shared_ptr<DeterministicAssetVol>  Clone()  const = 0;
 
 		virtual void output() const
 		{}

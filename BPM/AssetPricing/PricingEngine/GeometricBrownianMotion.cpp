@@ -6,19 +6,45 @@ Initial version: Copyright 2003, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012,
 #include "GeometricBrownianMotion.hpp"
 #include "QFArrayUtil.hpp"
 #include "IAssetValue.hpp"
+#include "IAsset.hpp"
 
 namespace derivative
 {
 	GeometricBrownianMotion::GeometricBrownianMotion(std::vector<std::shared_ptr<BlackScholesAssetAdapter> >& xunderlying)
 		: underlying(xunderlying),T(NULL),timeline_(NULL),asset_values(xunderlying.size(),2),time_mapping(NULL),
 		dW(xunderlying[0]->GetVolatilityFunction().factors()),vol_lvl(xunderlying[0]->GetVolatilityFunction().factors())
-	{ }
+	{
+		underlying.resize(xunderlying.size());
+		std::copy(xunderlying.begin(), xunderlying.end(), underlying.begin());
+	}
 
 	GeometricBrownianMotion::~GeometricBrownianMotion()
 	{
 		if (T) delete T;
 		if (timeline_) delete timeline_;
 		if (time_mapping) delete time_mapping;
+	}
+
+	/// clone this object
+	std::shared_ptr<GeometricBrownianMotion> GeometricBrownianMotion::Clone()
+	{
+		std::vector<std::shared_ptr<BlackScholesAssetAdapter> > new_underlying;
+		new_underlying.reserve(underlying.size());
+		for (auto &bs : underlying)
+		{
+			std::shared_ptr<BlackScholesAssetAdapter> new_bs = std::make_shared<BlackScholesAssetAdapter>(*bs);
+			new_underlying.push_back(new_bs);
+		}
+
+		std::shared_ptr<GeometricBrownianMotion> bwm = std::make_shared<GeometricBrownianMotion>(new_underlying);
+		bwm->T = new Array<double, 1>(T->copy());
+		bwm->timeline_ = new Array<double, 1>(timeline_->copy());
+		bwm->dW = dW.copy();
+		bwm->vol_lvl = vol_lvl.copy();
+		bwm->asset_values = asset_values.copy();
+		bwm->time_mapping = new Array<int, 1>(time_mapping->copy());
+
+		return bwm;
 	}
 
 	/// Query the dimension of the process.
