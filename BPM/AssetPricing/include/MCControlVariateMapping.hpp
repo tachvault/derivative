@@ -83,19 +83,13 @@ namespace derivative
 	template <class target_price_process,class controlvariate_price_process,class cv_random_variable>
 	double MCControlVariateMapping<target_price_process,controlvariate_price_process,cv_random_variable>::mapping(cv_random_variable x)
 	{
-		Array<double, 2>        underlying_values;
-		Array<double, 1> mapped_underlying_values;
-		return target.mapping(x, underlying_values, mapped_underlying_values) - \
-			controlvariate.mapping(x, underlying_values, mapped_underlying_values) + controlvariate_values_sum;
+		return target.mapping(x) - controlvariate.mapping(x) + controlvariate_values_sum;
 	}
 
 	template <class target_price_process,class controlvariate_price_process,class cv_random_variable>
 	Array<double,1> MCControlVariateMapping<target_price_process,controlvariate_price_process,cv_random_variable>::mappingArray(cv_random_variable x)
 	{
-		Array<double, 2>        underlying_values;
-		Array<double, 1> mapped_underlying_values;
-		return target.mappingArray(x, underlying_values, mapped_underlying_values) - \
-			controlvariate.mappingArray(x, underlying_values, mapped_underlying_values) + controlvariate_values;
+		return target.mappingArray(x) - controlvariate.mappingArray(x) + controlvariate_values;
 	}
 
 } /* namespace derivative */

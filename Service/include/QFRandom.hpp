@@ -48,6 +48,9 @@ namespace derivative
 	{
 	private:
 
+		RandomWrapper& operator=(const RandomWrapper&) = delete;
+		RandomWrapper& operator=(const RandomWrapper&) volatile = delete;
+		
 		std::shared_ptr<random_number_generator_type>  rng;
 
 		mutable SpinLock m_lock;
@@ -55,6 +58,12 @@ namespace derivative
 	public:
 		inline RandomWrapper(const std::shared_ptr<random_number_generator_type>& xrng) : rng(xrng)
 		{ };
+		
+		RandomWrapper(const RandomWrapper& other)
+		{
+			rng = other.rng;
+		}
+		
 		/// Returns a draw from random_number_generator_type.
 		inline rntype random()
 		{

@@ -133,6 +133,7 @@ TEST_F(HJMTest, LoadLibraries)
 	ASSERT_TRUE(retValue == true);		
 }
 
+/*
 TEST_F(HJMTest, LSMCHJM) 
 {
 	int i,j;
@@ -184,10 +185,14 @@ TEST_F(HJMTest, LSMCHJM)
 		world.set_reporting(0,0);
 		world.set_reporting(0,-1,world.time_horizon());
 		boost::normal_distribution<double> normal;
-		boost::variate_generator<boost::mt19937&, boost::normal_distribution<double> > normalRNG(boost_random_engine,normal);
-		RandomWrapper<boost::variate_generator<boost::mt19937&, boost::normal_distribution<double> >,double> normalRNGwrap(normalRNG);
+		
+		std::shared_ptr<boost::variate_generator<boost::mt19937&, boost::normal_distribution<double> > > normalRNG = \
+			std::make_shared<boost::variate_generator<boost::mt19937&, boost::normal_distribution<double> > >(boost_random_engine, normal);
+		std::shared_ptr<RandomWrapper<boost::variate_generator<boost::mt19937&, boost::normal_distribution<double> >, double> > normalRNGwrap = \
+			std::make_shared<RandomWrapper<boost::variate_generator<boost::mt19937&, boost::normal_distribution<double> >, double>>(normalRNG);
 		RandomArray<RandomWrapper<boost::variate_generator<boost::mt19937&, boost::normal_distribution<double> >,double>,double> 
 			random_container(normalRNGwrap,world.factors(),world.number_of_steps()); 
+		
 		MCTrainingPaths<GaussMarkovWorld,RandomArray<RandomWrapper<boost::variate_generator<boost::mt19937&, boost::normal_distribution<double> >,double>,double> >
 			training_paths(world,T,train,random_container,*(domestic_economy.initialTS),numeraire_index);
 		std::vector<std::function<double (const Array<double,1>&,const Array<double,2>&)> > basisfunctions;
@@ -258,8 +263,6 @@ TEST_F(HJMTest, LSMCHJM)
 		std::cerr << "Other exception caught" << endl; 
 	}
 };
-
-/*
 
 TEST_F(HJMTest, MBinaryGaussianTest) 
 {

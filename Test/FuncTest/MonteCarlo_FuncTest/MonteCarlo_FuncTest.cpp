@@ -88,6 +88,8 @@ using  std::cerr;
 
 //using namespace std::placeholders;
 
+/*
+
 // Declare a new test fixture for MonteCarloTest, deriving from testing::Test.
 class MonteCarloTest : public testing::Test 
 {
@@ -720,7 +722,7 @@ TEST_F(MonteCarloTest, LSTest)
 		LongstaffSchwartzExerciseBoundary1D ls(T,ts,paths,f,2);
 		/* Now do the valuation as in the example in the paper - note that properly the valuation paths should
 		be independent of the paths used to estimate the exercise boundary. */
-		MCGatherer<double> MCestimate;
+/*		MCGatherer<double> MCestimate;
 		Array<double,1> path(4);
 		for (i=0;i<8;i++) 
 		{
@@ -2099,6 +2101,8 @@ TEST_F(MonteCarloTest, QRMargrabeExampleReduced)
 		std::cerr << "Other exception caught" << endl; 
 	}
 }
+
+*/
 
 int main(int argc, char **argv)
 {
