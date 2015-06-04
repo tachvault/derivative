@@ -19,7 +19,9 @@ include_directories("${PROJECT_SOURCE_DIR}/BPM/AssetMgmt/include")
 include_directories("${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include")
 
 SET(FACADES_SOURCES
-	EquityVanillaOption.hpp
+	EquityOption.hpp
+        EquityOption.cpp
+        EquityVanillaOption.hpp
         EquityVanillaOption.cpp
         FuturesVanillaOption.hpp
         ExchangeRateVanillaOption.cpp
@@ -30,7 +32,17 @@ SET(FACADES_SOURCES
         FuturesOptionSpread.hpp
         FuturesOptionSpread.cpp
         ExchangeRateOptionSpread.hpp
-        ExchangeRateOptionSpread.cpp        
+        ExchangeRateOptionSpread.cpp
+        EquityBarrierOption.hpp
+        EquityBarrierOption.cpp
+        EquityAverageOption.hpp
+        EquityAverageOption.cpp
+        EquityLookBackOption.hpp
+        EquityLookBackOption.cpp
+        EquityChooserOption.hpp
+        EquityChooserOption.cpp
+        EquityMargrabeOption.hpp
+        EquityMargrabeOption.cpp             
 )
 
 # Link shared library paths (Note: This should be added before Add_library !!!)

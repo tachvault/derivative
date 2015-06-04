@@ -45,6 +45,7 @@ SET(PRICINGENGINE_SOURCE
         ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/GARCH.hpp
         ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/EquityGARCH.hpp
 	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/ExchangeRateGARCH.hpp
+        ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/MCAssetPricer.hpp
         Binomial.cpp
 	FiniteDifference.cpp
 	GaussMarkovWorld.cpp
@@ -74,6 +75,7 @@ SET(PRICINGENGINE_SOURCE
         EquityAssetPricer.cpp
         FuturesAssetPricer.cpp
         ExchangeRateAssetPricer.cpp
+        MCAssetPricer.cpp
 )
 
 # Link shared library paths

@@ -1149,7 +1149,6 @@ TEST_F(MonteCarloTest, LSMCPath)
 	}
 }
 
-
 TEST_F(MonteCarloTest, MCDownAndOut)
 {
 	std::cout << "=================================================================================" << endl;
@@ -1469,6 +1468,281 @@ TEST_F(MonteCarloTest, MCMargrabe)
 	}
 }
 
+TEST_F(MonteCarloTest, QRMargrabeExampleReduced)
+{
+	std::cout << "==================================================================" << std::endl;
+	std::cout << "Test and demonstration for quasirandom Monte Carlo. " << std::endl;
+
+	try
+	{
+		std::string symbol("AAPL");
+		double S = 100.0;
+		double r = 0.05;
+		double sgm = 0.3;
+		double mat = 1.5;
+		double K = 1.0;
+		K *= S;
+		double call_strike = K;
+		int N = 10;
+		int numeraire_index = -1;
+		size_t minpaths = 40;
+		size_t maxpaths = 40;
+		// set up timeline - N is the number of time steps, mat is the maturity of the option
+		Array<double, 1> T(N + 1);
+		firstIndex idx;
+		double dt = mat / N;
+		T = idx*dt;
+		// set up first asset - volatility level is sgm on both factors
+		Array<double, 1> sgm1(2);
+		sgm1 = sgm;
+
+		/// BlackScholes object for google stock
+		std::shared_ptr<IStockValue> stockVal = getStockValue(symbol, S, sgm, 0);
+		std::shared_ptr<DeterministicAssetVol>  vol = std::make_shared<ConstVol>(sgm1);
+		/// now construct the BlackScholesAdapter from the stock value.
+		std::shared_ptr<BlackScholesAssetAdapter> stock = \
+			std::make_shared<BlackScholesAssetAdapter>(stockVal, vol);
+
+		// initialise vector of underlying assets
+		std::vector<std::shared_ptr<BlackScholesAssetAdapter> > underlying;
+		underlying.push_back(stock);
+
+		// term structure of interest rates
+		FlatTermStructure ts(r, 0.0, mat + 10.0);
+		// set up second asset
+		Array<double, 1> sgm2(2);
+		sgm2 = 0.1, 0.4;
+
+		/// BlackScholes object for google stock
+		std::shared_ptr<DeterministicAssetVol>  vol2 = std::make_shared<ConstVol>(sgm2);
+		/// now construct the BlackScholesAdapter from the stock value.
+		std::shared_ptr<BlackScholesAssetAdapter> stock2 = \
+			std::make_shared<BlackScholesAssetAdapter>(stockVal, std::move(vol2));
+		underlying.push_back(stock2);
+		// closed form price via formula implemented as member function of BlackScholesAsset - K/S is strike factor
+		double margrabe_price = stock->Margrabe(stock2, mat, K / (stockVal->GetTradePrice()));
+		cout << "Closed form Margrabe option: " << margrabe_price << endl;
+		// set up MBinaries
+		Array<int, 2> xS(1, 1);
+		xS = 1;
+		Array<int, 2> mindex(2, 2);
+		mindex = 0, 1,
+			N, N;
+		Array<double, 1> malpha(2);
+		malpha = 1.0, 0.0;
+		Array<double, 2> mA(1, 2);
+		mA = 1.0, -1.0;
+		Array<double, 1> ma(1);
+		ma = K / (stockVal->GetTradePrice());
+		MBinary M1(underlying, ts, T, mindex, malpha, xS, mA, ma);
+		double M1price = M1.price();
+		Array<double, 1> malpha2(2);
+		malpha2 = 0.0, 1.0;
+		MBinary M2(underlying, ts, T, mindex, malpha2, xS, mA, ma);
+		cout << "MBinary price of Margrabe option: " << M1price - K / (stockVal->GetTradePrice())*M2.price() << std::endl;
+		exotics::Margrabe margrabe(stock, stock2, 0.0, mat, 1.0, K / (stockVal->GetTradePrice()), ts);
+		cout << "Price of Margrabe option via MExotics: " << margrabe.price() << std::endl;
+
+		//---------------- Margrabe option price by quasi-random Monte Carlo -------------
+		// quasi-random number generator
+		unsigned long n = minpaths;
+		SobolArrayNormal sobol(2, N, maxpaths);
+		// asset price process
+		GeometricBrownianMotion gbm(underlying);
+		// create MCPayoffList from MBinaries
+		std::shared_ptr<MBinaryPayoff> M1payoff = M1.get_payoff();
+		std::shared_ptr<MBinaryPayoff> M2payoff = M2.get_payoff();
+		MCPayoffList mcpayofflist;
+		mcpayofflist.push_back(M1payoff);
+		mcpayofflist.push_back(M2payoff, -K / (stockVal->GetTradePrice()));
+		cout << "Strike coefficient: " << K / (stockVal->GetTradePrice()) << endl;
+		// MCMapping to map random numbers to asset price realisations to discounted payoffs
+		MCMapping<GeometricBrownianMotion, Array<double, 2> > mc_mapping(mcpayofflist, gbm, ts, numeraire_index);
+		// mapping functor
+		std::function<double(Array<double, 2>)> func = std::bind(&MCMapping<GeometricBrownianMotion, Array<double, 2> >::mapping, &mc_mapping, std::placeholders::_1);
+		// generic Monte Carlo algorithm object
+		MCGeneric<Array<double, 2>, double, SobolArrayNormal> mc_QR(func, sobol);
+		MCGatherer<double> mcgathererQR;
+
+		// run quasi-random Monte Carlo simulation and compare to closed form value
+		cout << "Minimum number of paths: " << minpaths << "\nMaximum number of paths: " << maxpaths << endl;
+		cout << "Margrabe option\nPaths,Closed form value,";
+		cout << "QR MC value\n";
+		std::cerr << "Margrabe option\nPaths,Closed form value,";
+		std::cerr << "QR MC value\n";
+		double CFprice = margrabe.price();
+		while (n <= maxpaths)
+		{
+			cout << n << ',' << CFprice << ',';
+			std::cerr << n << ',' << CFprice << ',';
+			// simulate
+			mc_QR.simulate(mcgathererQR, n);
+			// output Monte Carlo result
+			cout << mcgathererQR.mean() << ',' << endl;
+			std::cerr << mcgathererQR.mean() << ',' << endl;
+			n = mcgathererQR.number_of_simulations();
+		}
+	} // end of try block
+
+	catch (std::logic_error xcpt)
+	{
+		std::cerr << xcpt.what() << endl;
+	}
+	catch (std::runtime_error xcpt)
+	{
+		std::cerr << xcpt.what() << endl;
+	}
+	catch (...)
+	{
+		std::cerr << "Other exception caught" << endl;
+	}
+}
+
+TEST_F(MonteCarloTest, QRMargrabeExample)
+{
+	std::cout << "==================================================================" << std::endl;
+	std::cout << "Test and demonstration for quasirandom Monte Carlo. " << std::endl;
+
+	try
+	{
+		std::string symbol("S1");
+		double S = 100.0;
+		double r = 0.05;
+		double sgm = 0.3;
+		double mat = 1.5;
+		double K = 1.0;
+		K *= S;
+		double call_strike = K;
+		int N = 10;
+		int numeraire_index = -1;
+		size_t minpaths = 40;
+		size_t maxpaths = 40;
+		Array<double, 1> T(N + 1);
+		firstIndex idx;
+		double dt = mat / N;
+		T = idx*dt;
+		Array<double, 1> sgm1(2);
+		sgm1 = sgm;
+
+		std::shared_ptr<DeterministicAssetVol> vol = std::make_shared<ConstVol>(sgm1);
+		std::shared_ptr<IStockValue> stockValuePtr = getStockValue(symbol, S, sgm, 0.03);
+		/// now construct the BlackScholesAdapter from the stock value.
+		std::shared_ptr<BlackScholesAssetAdapter> stock = \
+			std::make_shared<BlackScholesAssetAdapter>(stockValuePtr, vol);
+
+		std::vector<std::shared_ptr<BlackScholesAssetAdapter> > underlying;
+		underlying.push_back(stock);
+
+		FlatTermStructure ts(r, 0.0, mat + 10.0);
+		Array<int, 2> xS(1, 1);
+		xS = 1;
+		Array<double, 1> sgm2(2);
+		sgm2 = 0.1, 0.4;
+
+		/// BlackScholes object for google stock
+		std::shared_ptr<DeterministicAssetVol>  vol2 = std::make_shared<ConstVol>(sgm2);
+		/// now construct the BlackScholesAdapter from the stock value.
+		std::shared_ptr<BlackScholesAssetAdapter> stock2 = \
+			std::make_shared<BlackScholesAssetAdapter>(stockValuePtr, vol2);
+
+		K = 1.0;
+		double margrabe_price = stock->Margrabe(stock2, mat, K);
+		cout << "Closed form Margrabe option: " << margrabe_price << endl;
+		underlying.push_back(stock2);
+		Array<int, 2> mindex(2, 2);
+		mindex = 0, 1,
+			N, N;
+		Array<double, 1> malpha(2);
+		malpha = 1.0, 0.0;
+		Array<double, 2> mA(1, 2);
+		mA = 1.0, -1.0;
+		Array<double, 1> ma(1);
+		ma = K;
+		MBinary M1(underlying, ts, T, mindex, malpha, xS, mA, ma);
+		double M1price = M1.price(1000000000);
+		Array<double, 1> malpha2(2);
+		malpha2 = 0.0, 1.0;
+		MBinary M2(underlying, ts, T, mindex, malpha2, xS, mA, ma);
+		cout << "MBinary price of Margrabe option: " << M1price - K*M2.price(1000000000) << std::endl;
+		exotics::Margrabe margrabe(stock, stock2, 0.0, mat, 1.0, K, ts);
+		cout << "Price of Margrabe option via MExotics: " << margrabe.price() << std::endl;
+
+		// instantiate random number generator
+		std::shared_ptr<ranlib::NormalUnit<double> > normalRNG = std::make_shared<ranlib::NormalUnit<double> >();
+		std::shared_ptr<RandomWrapper<ranlib::NormalUnit<double>, double> > randomWrapper = \
+			std::make_shared<RandomWrapper<ranlib::NormalUnit<double>, double> >(normalRNG);
+		RandomArray<RandomWrapper<ranlib::NormalUnit<double>, double>, double> random_container2(randomWrapper, 2, N);  // 2 factors, N time steps
+
+		SobolArrayNormal sobol(2, N, maxpaths * 2);
+		GeometricBrownianMotion gbm(underlying);
+		std::shared_ptr<MBinaryPayoff> M1payoff = M1.get_payoff();
+		std::shared_ptr<MBinaryPayoff> M2payoff = M2.get_payoff();
+		MCPayoffList mcpayofflist;
+		mcpayofflist.push_back(M1payoff);
+		mcpayofflist.push_back(M2payoff, -K);
+		cout << "Strike coefficient: " << K << endl;
+		MCMapping<GeometricBrownianMotion, Array<double, 2> > mc_mapping(mcpayofflist, gbm, ts, numeraire_index);
+		std::function<double(Array<double, 2>)> func = std::bind(&MCMapping<GeometricBrownianMotion, Array<double, 2> >::mapping, &mc_mapping, std::placeholders::_1);
+		MCGeneric<Array<double, 2>, double, RandomArray<RandomWrapper<ranlib::NormalUnit<double>, double>, double> > mc(func, random_container2);
+		MCGatherer<double> mcgatherer;
+		// std functor to convert random variates to their antithetics (instantiated from template)
+		std::function<Array<double, 2>(Array<double, 2>)> antithetic = normal_antithetic < Array<double, 2> >;
+		MCGeneric<Array<double, 2>, double, RandomArray<RandomWrapper<ranlib::NormalUnit<double>, double>, double> > mc_antithetic(func, random_container2, antithetic);
+		MCGatherer<double> mcgatherer_antithetic;
+		MCGeneric<Array<double, 2>, double, SobolArrayNormal> mc_QR(func, sobol);
+		MCGatherer<double> mcgathererQR;
+		// For nested construction of randomised QMC using random shift
+		MCGatherer<double> mcgathererQRran;
+
+		// instantiate random number generator
+		std::shared_ptr<ranlib::Uniform<double> > ugen = std::make_shared<ranlib::Uniform<double> >();
+		std::shared_ptr<RandomWrapper<ranlib::Uniform<double>, double> > unigenWrapper = \
+			std::make_shared<RandomWrapper<ranlib::Uniform<double>, double> >(ugen);
+		RandomArray<RandomWrapper<ranlib::Uniform<double>, double>, double> unigen(unigenWrapper, 2, N);
+
+		unsigned long n = minpaths;
+		cout << "Minimum number of paths: " << minpaths << "\nMaximum number of paths: " << maxpaths << endl;
+		cout << "Margrabe option\nPaths,Closed form value,MC value,95% CI lower bound,95% CI upper bound,Difference in standard errors,";
+		cout << "Antithetic MC value,95% CI lower bound,95% CI upper bound,Difference in standard errors,CI width,Antithetic CI width,";
+		cout << "QR MC value,randomised QR MC value,95% CI lower bound,95% CI upper bound,Difference in standard errors,CI width\n";
+		boost::math::normal normal;
+		double d = boost::math::quantile(normal, 0.95);
+		double CFprice = margrabe.price();
+		while (mcgatherer.number_of_simulations() < maxpaths)
+		{
+			mc.simulate(mcgatherer, n);
+			cout << mcgatherer.number_of_simulations() << ',' << CFprice << ',' << mcgatherer.mean() << ',' << mcgatherer.mean() - d*mcgatherer.stddev() << ',' << mcgatherer.mean() + d*mcgatherer.stddev() << ',' << (mcgatherer.mean() - CFprice) / mcgatherer.stddev() << ',' << std::flush;
+			mc_antithetic.simulate(mcgatherer_antithetic, n / 2);
+			cout << mcgatherer_antithetic.mean() << ',' << mcgatherer_antithetic.mean() - d*mcgatherer_antithetic.stddev() << ',' << mcgatherer_antithetic.mean() + d*mcgatherer_antithetic.stddev() << ',' << (mcgatherer_antithetic.mean() - CFprice) / mcgatherer_antithetic.stddev() << ',' << std::flush;
+			cout << 2.0*d*mcgatherer.stddev() << ',' << 2.0*d*mcgatherer_antithetic.stddev() << ',';
+			mc_QR.simulate(mcgathererQR, n - 1);
+			cout << mcgathererQR.mean() << ',';
+			// Nested construction of randomised QMC using random shift
+			SobolArrayNormal sobolr(2, N, n / 32);
+			RandomShiftQMCMapping<GeometricBrownianMotion, Array<double, 2>, SobolArrayNormal> QR_mapping(sobolr, mcpayofflist, gbm, ts, numeraire_index);
+			std::function<double(Array<double, 2>)> QRfunc = std::bind(&RandomShiftQMCMapping<GeometricBrownianMotion, Array<double, 2>, SobolArrayNormal>::mapping, &QR_mapping, std::placeholders::_1);
+			MCGeneric<Array<double, 2>, double, RandomArray<RandomWrapper<ranlib::Uniform<double>, double>, double> > randomQMC(QRfunc, unigen);
+			mcgathererQRran.reset();
+			randomQMC.simulate(mcgathererQRran, 32);
+			cout << mcgathererQRran.mean() << ',' << mcgathererQRran.mean() - d*mcgathererQRran.stddev() << ',' << mcgathererQRran.mean() + d*mcgathererQRran.stddev() << ',' << (mcgathererQRran.mean() - CFprice) / mcgathererQRran.stddev() << ',' << 2.0*d*mcgathererQRran.stddev() << endl;
+			n = mcgatherer.number_of_simulations();
+		}
+	} // end of try block
+
+	catch (std::logic_error xcpt)
+	{
+		std::cerr << xcpt.what() << endl;
+	}
+	catch (std::runtime_error xcpt)
+	{
+		std::cerr << xcpt.what() << endl;
+	}
+	catch (...)
+	{
+		std::cerr << "Other exception caught" << endl;
+	}
+}
+
 TEST_F(MonteCarloTest, QRCVTest)
 {
 	std::cout << "==================================================================" << std::endl;
@@ -1516,7 +1790,7 @@ TEST_F(MonteCarloTest, QRCVTest)
 		FlatTermStructure ts(r, 0.0, mat + 10.0);
 		MCGatherer<double> mcgatherer;
 		// std functor to convert random variates to their antithetics (instantiated from template)
-		std::function<Array<double, 2>(Array<double, 2>)> antithetic = normal_antithetic < Array<double, 2> > ;
+		std::function<Array<double, 2>(Array<double, 2>)> antithetic = normal_antithetic < Array<double, 2> >;
 		MCGatherer<double> mcgatherer_antithetic;
 		unsigned long n = minpaths;
 		boost::math::normal normal;
@@ -1661,281 +1935,6 @@ TEST_F(MonteCarloTest, QRCVTest)
 			n = cvgatherer2.number_of_simulations();
 		}
 	} // end of try block
-	catch (std::logic_error xcpt)
-	{
-		std::cerr << xcpt.what() << endl;
-	}
-	catch (std::runtime_error xcpt)
-	{
-		std::cerr << xcpt.what() << endl;
-	}
-	catch (...)
-	{
-		std::cerr << "Other exception caught" << endl;
-	}
-}
-
-TEST_F(MonteCarloTest, QRMargrabeExample)
-{
-	std::cout << "==================================================================" << std::endl;
-	std::cout << "Test and demonstration for quasirandom Monte Carlo. " << std::endl;
-
-	try
-	{
-		std::string symbol("S1");
-		double S = 100.0;
-		double r = 0.05;
-		double sgm = 0.3;
-		double mat = 1.5;
-		double K = 1.0;
-		K *= S;
-		double call_strike = K;
-		int N = 10;
-		int numeraire_index = -1;
-		size_t minpaths = 40;
-		size_t maxpaths = 40;
-		Array<double, 1> T(N + 1);
-		firstIndex idx;
-		double dt = mat / N;
-		T = idx*dt;
-		Array<double, 1> sgm1(2);
-		sgm1 = sgm;
-
-		std::shared_ptr<DeterministicAssetVol> vol = std::make_shared<ConstVol>(sgm1);
-		std::shared_ptr<IStockValue> stockValuePtr = getStockValue(symbol, S, sgm, 0.03);
-		/// now construct the BlackScholesAdapter from the stock value.
-		std::shared_ptr<BlackScholesAssetAdapter> stock = \
-			std::make_shared<BlackScholesAssetAdapter>(stockValuePtr, vol);
-
-		std::vector<std::shared_ptr<BlackScholesAssetAdapter> > underlying;
-		underlying.push_back(stock);
-
-		FlatTermStructure ts(r, 0.0, mat + 10.0);
-		Array<int, 2> xS(1, 1);
-		xS = 1;
-		Array<double, 1> sgm2(2);
-		sgm2 = 0.1, 0.4;
-
-		/// BlackScholes object for google stock
-		std::shared_ptr<DeterministicAssetVol>  vol2 = std::make_shared<ConstVol>(sgm2);
-		/// now construct the BlackScholesAdapter from the stock value.
-		std::shared_ptr<BlackScholesAssetAdapter> stock2 = \
-			std::make_shared<BlackScholesAssetAdapter>(stockValuePtr, vol2);
-
-		K = 1.0;
-		double margrabe_price = stock->Margrabe(stock2, mat, K);
-		cout << "Closed form Margrabe option: " << margrabe_price << endl;
-		underlying.push_back(stock2);
-		Array<int, 2> mindex(2, 2);
-		mindex = 0, 1,
-			N, N;
-		Array<double, 1> malpha(2);
-		malpha = 1.0, 0.0;
-		Array<double, 2> mA(1, 2);
-		mA = 1.0, -1.0;
-		Array<double, 1> ma(1);
-		ma = K;
-		MBinary M1(underlying, ts, T, mindex, malpha, xS, mA, ma);
-		double M1price = M1.price(1000000000);
-		Array<double, 1> malpha2(2);
-		malpha2 = 0.0, 1.0;
-		MBinary M2(underlying, ts, T, mindex, malpha2, xS, mA, ma);
-		cout << "MBinary price of Margrabe option: " << M1price - K*M2.price(1000000000) << std::endl;
-		exotics::Margrabe margrabe(stock, stock2, 0.0, mat, 1.0, K, ts);
-		cout << "Price of Margrabe option via MExotics: " << margrabe.price() << std::endl;
-
-		// instantiate random number generator
-		std::shared_ptr<ranlib::NormalUnit<double> > normalRNG = std::make_shared<ranlib::NormalUnit<double> >();
-		std::shared_ptr<RandomWrapper<ranlib::NormalUnit<double>, double> > randomWrapper = \
-			std::make_shared<RandomWrapper<ranlib::NormalUnit<double>, double> >(normalRNG);
-		RandomArray<RandomWrapper<ranlib::NormalUnit<double>, double>, double> random_container2(randomWrapper, 2, N);  // 2 factors, N time steps
-
-		SobolArrayNormal sobol(2, N, maxpaths * 2);
-		GeometricBrownianMotion gbm(underlying);
-		std::shared_ptr<MBinaryPayoff> M1payoff = M1.get_payoff();
-		std::shared_ptr<MBinaryPayoff> M2payoff = M2.get_payoff();
-		MCPayoffList mcpayofflist;
-		mcpayofflist.push_back(M1payoff);
-		mcpayofflist.push_back(M2payoff, -K);
-		cout << "Strike coefficient: " << K << endl;
-		MCMapping<GeometricBrownianMotion, Array<double, 2> > mc_mapping(mcpayofflist, gbm, ts, numeraire_index);
-		std::function<double(Array<double, 2>)> func = std::bind(&MCMapping<GeometricBrownianMotion, Array<double, 2> >::mapping, &mc_mapping, std::placeholders::_1);
-		MCGeneric<Array<double, 2>, double, RandomArray<RandomWrapper<ranlib::NormalUnit<double>, double>, double> > mc(func, random_container2);
-		MCGatherer<double> mcgatherer;
-		// std functor to convert random variates to their antithetics (instantiated from template)
-		std::function<Array<double, 2>(Array<double, 2>)> antithetic = normal_antithetic < Array<double, 2> > ;
-		MCGeneric<Array<double, 2>, double, RandomArray<RandomWrapper<ranlib::NormalUnit<double>, double>, double> > mc_antithetic(func, random_container2, antithetic);
-		MCGatherer<double> mcgatherer_antithetic;
-		MCGeneric<Array<double, 2>, double, SobolArrayNormal> mc_QR(func, sobol);
-		MCGatherer<double> mcgathererQR;
-		// For nested construction of randomised QMC using random shift
-		MCGatherer<double> mcgathererQRran;
-
-		// instantiate random number generator
-		std::shared_ptr<ranlib::Uniform<double> > ugen = std::make_shared<ranlib::Uniform<double> >();
-		std::shared_ptr<RandomWrapper<ranlib::Uniform<double>, double> > unigenWrapper = \
-			std::make_shared<RandomWrapper<ranlib::Uniform<double>, double> >(ugen);
-		RandomArray<RandomWrapper<ranlib::Uniform<double>, double>, double> unigen(unigenWrapper, 2, N);
-
-		unsigned long n = minpaths;
-		cout << "Minimum number of paths: " << minpaths << "\nMaximum number of paths: " << maxpaths << endl;
-		cout << "Margrabe option\nPaths,Closed form value,MC value,95% CI lower bound,95% CI upper bound,Difference in standard errors,";
-		cout << "Antithetic MC value,95% CI lower bound,95% CI upper bound,Difference in standard errors,CI width,Antithetic CI width,";
-		cout << "QR MC value,randomised QR MC value,95% CI lower bound,95% CI upper bound,Difference in standard errors,CI width\n";
-		boost::math::normal normal;
-		double d = boost::math::quantile(normal, 0.95);
-		double CFprice = margrabe.price();
-		while (mcgatherer.number_of_simulations() < maxpaths)
-		{
-			mc.simulate(mcgatherer, n);
-			cout << mcgatherer.number_of_simulations() << ',' << CFprice << ',' << mcgatherer.mean() << ',' << mcgatherer.mean() - d*mcgatherer.stddev() << ',' << mcgatherer.mean() + d*mcgatherer.stddev() << ',' << (mcgatherer.mean() - CFprice) / mcgatherer.stddev() << ',' << std::flush;
-			mc_antithetic.simulate(mcgatherer_antithetic, n / 2);
-			cout << mcgatherer_antithetic.mean() << ',' << mcgatherer_antithetic.mean() - d*mcgatherer_antithetic.stddev() << ',' << mcgatherer_antithetic.mean() + d*mcgatherer_antithetic.stddev() << ',' << (mcgatherer_antithetic.mean() - CFprice) / mcgatherer_antithetic.stddev() << ',' << std::flush;
-			cout << 2.0*d*mcgatherer.stddev() << ',' << 2.0*d*mcgatherer_antithetic.stddev() << ',';
-			mc_QR.simulate(mcgathererQR, n - 1);
-			cout << mcgathererQR.mean() << ',';
-			// Nested construction of randomised QMC using random shift
-			SobolArrayNormal sobolr(2, N, n / 32);
-			RandomShiftQMCMapping<GeometricBrownianMotion, Array<double, 2>, SobolArrayNormal> QR_mapping(sobolr, mcpayofflist, gbm, ts, numeraire_index);
-			std::function<double(Array<double, 2>)> QRfunc = std::bind(&RandomShiftQMCMapping<GeometricBrownianMotion, Array<double, 2>, SobolArrayNormal>::mapping, &QR_mapping, std::placeholders::_1);
-			MCGeneric<Array<double, 2>, double, RandomArray<RandomWrapper<ranlib::Uniform<double>, double>, double> > randomQMC(QRfunc, unigen);
-			mcgathererQRran.reset();
-			randomQMC.simulate(mcgathererQRran, 32);
-			cout << mcgathererQRran.mean() << ',' << mcgathererQRran.mean() - d*mcgathererQRran.stddev() << ',' << mcgathererQRran.mean() + d*mcgathererQRran.stddev() << ',' << (mcgathererQRran.mean() - CFprice) / mcgathererQRran.stddev() << ',' << 2.0*d*mcgathererQRran.stddev() << endl;
-			n = mcgatherer.number_of_simulations();
-		}
-	} // end of try block
-
-	catch (std::logic_error xcpt)
-	{
-		std::cerr << xcpt.what() << endl;
-	}
-	catch (std::runtime_error xcpt)
-	{
-		std::cerr << xcpt.what() << endl;
-	}
-	catch (...)
-	{
-		std::cerr << "Other exception caught" << endl;
-	}
-}
-
-TEST_F(MonteCarloTest, QRMargrabeExampleReduced)
-{
-	std::cout << "==================================================================" << std::endl;
-	std::cout << "Test and demonstration for quasirandom Monte Carlo. " << std::endl;
-
-	try
-	{
-		std::string symbol("AAPL");
-		double S = 100.0;
-		double r = 0.05;
-		double sgm = 0.3;
-		double mat = 1.5;
-		double K = 1.0;
-		K *= S;
-		double call_strike = K;
-		int N = 10;
-		int numeraire_index = -1;
-		size_t minpaths = 40;
-		size_t maxpaths = 40;
-		// set up timeline - N is the number of time steps, mat is the maturity of the option
-		Array<double, 1> T(N + 1);
-		firstIndex idx;
-		double dt = mat / N;
-		T = idx*dt;
-		// set up first asset - volatility level is sgm on both factors
-		Array<double, 1> sgm1(2);
-		sgm1 = sgm;
-
-		/// BlackScholes object for google stock
-		std::shared_ptr<IStockValue> stockVal = getStockValue(symbol, S, sgm, 0);
-		std::shared_ptr<DeterministicAssetVol>  vol = std::make_shared<ConstVol>(sgm1);
-		/// now construct the BlackScholesAdapter from the stock value.
-		std::shared_ptr<BlackScholesAssetAdapter> stock = \
-			std::make_shared<BlackScholesAssetAdapter>(stockVal, vol);
-
-		// initialise vector of underlying assets
-		std::vector<std::shared_ptr<BlackScholesAssetAdapter> > underlying;
-		underlying.push_back(stock);
-
-		// term structure of interest rates
-		FlatTermStructure ts(r, 0.0, mat + 10.0);
-		// set up second asset
-		Array<double, 1> sgm2(2);
-		sgm2 = 0.1, 0.4;
-
-		/// BlackScholes object for google stock
-		std::shared_ptr<DeterministicAssetVol>  vol2 = std::make_shared<ConstVol>(sgm2);
-		/// now construct the BlackScholesAdapter from the stock value.
-		std::shared_ptr<BlackScholesAssetAdapter> stock2 = \
-			std::make_shared<BlackScholesAssetAdapter>(stockVal, std::move(vol2));
-		underlying.push_back(stock2);
-		// closed form price via formula implemented as member function of BlackScholesAsset - K/S is strike factor
-		double margrabe_price = stock->Margrabe(stock2, mat, K / (stockVal->GetTradePrice()));
-		cout << "Closed form Margrabe option: " << margrabe_price << endl;
-		// set up MBinaries
-		Array<int, 2> xS(1, 1);
-		xS = 1;
-		Array<int, 2> mindex(2, 2);
-		mindex = 0, 1,
-			N, N;
-		Array<double, 1> malpha(2);
-		malpha = 1.0, 0.0;
-		Array<double, 2> mA(1, 2);
-		mA = 1.0, -1.0;
-		Array<double, 1> ma(1);
-		ma = K / (stockVal->GetTradePrice());
-		MBinary M1(underlying, ts, T, mindex, malpha, xS, mA, ma);
-		double M1price = M1.price();
-		Array<double, 1> malpha2(2);
-		malpha2 = 0.0, 1.0;
-		MBinary M2(underlying, ts, T, mindex, malpha2, xS, mA, ma);
-		cout << "MBinary price of Margrabe option: " << M1price - K / (stockVal->GetTradePrice())*M2.price() << std::endl;
-		exotics::Margrabe margrabe(stock, stock2, 0.0, mat, 1.0, K / (stockVal->GetTradePrice()), ts);
-		cout << "Price of Margrabe option via MExotics: " << margrabe.price() << std::endl;
-
-		//---------------- Margrabe option price by quasi-random Monte Carlo -------------
-		// quasi-random number generator
-		unsigned long n = minpaths;
-		SobolArrayNormal sobol(2, N, maxpaths);
-		// asset price process
-		GeometricBrownianMotion gbm(underlying);
-		// create MCPayoffList from MBinaries
-		std::shared_ptr<MBinaryPayoff> M1payoff = M1.get_payoff();
-		std::shared_ptr<MBinaryPayoff> M2payoff = M2.get_payoff();
-		MCPayoffList mcpayofflist;
-		mcpayofflist.push_back(M1payoff);
-		mcpayofflist.push_back(M2payoff, -K / (stockVal->GetTradePrice()));
-		cout << "Strike coefficient: " << K / (stockVal->GetTradePrice()) << endl;
-		// MCMapping to map random numbers to asset price realisations to discounted payoffs
-		MCMapping<GeometricBrownianMotion, Array<double, 2> > mc_mapping(mcpayofflist, gbm, ts, numeraire_index);
-		// mapping functor
-		std::function<double(Array<double, 2>)> func = std::bind(&MCMapping<GeometricBrownianMotion, Array<double, 2> >::mapping, &mc_mapping, std::placeholders::_1);
-		// generic Monte Carlo algorithm object
-		MCGeneric<Array<double, 2>, double, SobolArrayNormal> mc_QR(func, sobol);
-		MCGatherer<double> mcgathererQR;
-
-		// run quasi-random Monte Carlo simulation and compare to closed form value
-		cout << "Minimum number of paths: " << minpaths << "\nMaximum number of paths: " << maxpaths << endl;
-		cout << "Margrabe option\nPaths,Closed form value,";
-		cout << "QR MC value\n";
-		std::cerr << "Margrabe option\nPaths,Closed form value,";
-		std::cerr << "QR MC value\n";
-		double CFprice = margrabe.price();
-		while (n <= maxpaths)
-		{
-			cout << n << ',' << CFprice << ',';
-			std::cerr << n << ',' << CFprice << ',';
-			// simulate
-			mc_QR.simulate(mcgathererQR, n);
-			// output Monte Carlo result
-			cout << mcgathererQR.mean() << ',' << endl;
-			std::cerr << mcgathererQR.mean() << ',' << endl;
-			n = mcgathererQR.number_of_simulations();
-		}
-	} // end of try block
-
 	catch (std::logic_error xcpt)
 	{
 		std::cerr << xcpt.what() << endl;

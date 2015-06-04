@@ -51,9 +51,9 @@ namespace derivative
 	and numeraire value realisations to a discounted payoff.
 	*/
 
-	/* The data member index of MCPayoff, which represents the (asset, time) index
-	   combinations which need to be simulated, i.e. in this case asset 0 at each time Ti
-	   , 0 < i≤N, so 
+	/* The data member index of MCPayoff, which represents the (asset, time)
+	   index combinations which need to be simulated, 
+	   i.e. in this case asset 0 at each time Ti, 0 < i≤N, so 
 	   index = 0 0 · · · 0
 	           1 2 · · · N
 	*/
@@ -155,20 +155,116 @@ namespace derivative
 		double K; ///< Strike.
 	};
 
+	/// Also called Asian option
 	class PRICINGENGINE_DLL_API MCDiscreteArithmeticMeanFixedStrike : public MCPayoff
 	{
 	public:
 
 		enum { TYPEID = CLASS_MCDISCRETEARITHMETICMEANFIXEDSTRIKE_TYPE };
 
-		MCDiscreteArithmeticMeanFixedStrike(int asset_index, const Array<double, 1>& T, double xK, int number_of_observations_in_existing_average, double existing_average);
+		MCDiscreteArithmeticMeanFixedStrike(int asset_index, const Array<double, 1>& T, double xK, int number_of_observations_in_existing_average, \
+			double existing_average, int sign = 1);
 		virtual double operator()(const Array<double, 1>& underlying_values, const Array<double, 1>& numeraire_values);
 
 	private:
 		double                                        K; ///< Strike.
+		int opt; /// call = 1, put = -1
 		int number_of_observations_in_existing_average_;
 		double                        existing_average_;
 	};
+
+	class PRICINGENGINE_DLL_API MCDiscreteArithmeticMeanFloatingStrike : public MCPayoff
+	{
+	public:
+
+		enum { TYPEID = CLASS_MCDISCRETEARITHMETICMEANFIXEDSTRIKE_TYPE };
+
+		MCDiscreteArithmeticMeanFloatingStrike(int asset_index, const Array<double, 1>& T, int number_of_observations_in_existing_average, \
+			double existing_average, int sign = 1);
+		virtual double operator()(const Array<double, 1>& underlying_values, const Array<double, 1>& numeraire_values);
+
+	private:
+		int opt; /// call = 1, put = -1
+		int number_of_observations_in_existing_average_;
+		double                        existing_average_;
+	};
+
+	/// Direct implementation of class representing discounted payoff of a down-and-out barrier call option.
+	class PRICINGENGINE_DLL_API BarrierOut : public MCPayoff
+	{
+	public:
+		
+		enum OptionType {DOWN = 1, UP = 2};
+
+		BarrierOut(const Array<double, 1>& T, int underlying_index, OptionType opt, double xstrike, \
+			double xbarrier, int sign = 1);
+		
+		/// Calculate discounted payoff. 
+		virtual double operator()(const Array<double, 1>& underlying_values, ///< Underlying values for the (asset,time) combinations in index Array.
+			const Array<double, 1>& numeraire_values   ///< Numeraire values for the dates in timeline Array.
+			);
+
+	private:
+		
+		int opt; /// call = 1, put = -1
+		OptionType optType;
+		double strike;		
+		double barrier;
+	};
+	
+	class PRICINGENGINE_DLL_API BarrierIn : public MCPayoff
+	{
+	public:
+
+		enum OptionType { DOWN = 1, UP = 2 };
+
+		BarrierIn(const Array<double, 1>& T, int underlying_index, OptionType opt, double xstrike, \
+			double xbarrier, int sign = 1);
+
+		/// Calculate discounted payoff. 
+		virtual double operator()(const Array<double, 1>& underlying_values, ///< Underlying values for the (asset,time) combinations in index Array.
+			const Array<double, 1>& numeraire_values   ///< Numeraire values for the dates in timeline Array.
+			);
+
+	private:
+		int opt; /// call = 1, put = -1
+		OptionType optType;
+		double strike;
+		double barrier;
+	};
+
+	class PRICINGENGINE_DLL_API MCDiscreteLookBack : public MCPayoff
+	{
+	public:
+
+		enum { TYPEID = CLASS_MCDISCRETEARITHMETICMEANFIXEDSTRIKE_TYPE };
+
+		MCDiscreteLookBack(int asset_index, const Array<double, 1>& T, double xK, int sign = 1);
+		virtual double operator()(const Array<double, 1>& underlying_values, const Array<double, 1>& numeraire_values);
+
+	private:
+		int opt; /// call = 1, put = -1
+		double K; ///< Strike.
+		double max_price;
+	};
+	
+	class PRICINGENGINE_DLL_API MCChooser : public MCPayoff
+	{
+	public:
+
+		enum { TYPEID = CLASS_MCCHOOSER_TYPE };
+
+		MCChooser(double tzero, double tend, int asset_index, double strike);
+		virtual double operator()(const Array<double, 1>& underlying_values, const Array<double, 1>& numeraire_values);
+		inline double& strike()
+		{
+			return K;
+		};
+
+	private:
+		double K; ///< Strike.
+	};
+	
 
 } /* namespace derivative */
 

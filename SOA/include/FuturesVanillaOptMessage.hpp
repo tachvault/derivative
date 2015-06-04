@@ -48,7 +48,7 @@ namespace derivative
 
 		enum { MSGID = FUTURES_VANILLA_OPTION };
 
-		struct FuturesRequest : public Request
+		struct MESSAGES_DLL_API FuturesRequest : public Request
 		{
 			FuturesRequest()
 			{}

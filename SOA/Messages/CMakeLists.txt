@@ -35,12 +35,22 @@ SET(MESSAGES_SOURCES
         ${PROJECT_SOURCE_DIR}/SOA/include/FuturesOptionSpreadJSONVisitor.hpp
         ${PROJECT_SOURCE_DIR}/SOA/include/ExchangeRateOptionSpreadMessage.hpp
         ${PROJECT_SOURCE_DIR}/SOA/include/ExchangeRateOptionSpreadJSONVisitor.hpp
+        ${PROJECT_SOURCE_DIR}/SOA/include/EquityBarrierOptJSONVisitor.hpp
+        ${PROJECT_SOURCE_DIR}/SOA/include/EquityBarrierOptMessage.hpp
+        ${PROJECT_SOURCE_DIR}/SOA/include/EquityAverageOptJSONVisitor.hpp
+        ${PROJECT_SOURCE_DIR}/SOA/include/EquityAverageOptMessage.hpp
+        ${PROJECT_SOURCE_DIR}/SOA/include/EquityLookBackOptJSONVisitor.hpp
+        ${PROJECT_SOURCE_DIR}/SOA/include/EquityLookBackOptMessage.hpp
+        ${PROJECT_SOURCE_DIR}/SOA/include/EquityChooserOptJSONVisitor.hpp                                          
+        ${PROJECT_SOURCE_DIR}/SOA/include/EquityChooserOptMessage.hpp
+        ${PROJECT_SOURCE_DIR}/SOA/include/EquityMargrabeOptJSONVisitor.hpp
+        ${PROJECT_SOURCE_DIR}/SOA/include/EquityMargrabeOptMessage.hpp
         VanillaOptMessage.cpp
-	    EquityVanillaOptMessage.cpp
-	    FuturesVanillaOptMessage.cpp
+	EquityVanillaOptMessage.cpp
+	FuturesVanillaOptMessage.cpp
         ExchangeRateVanillaOptMessage.cpp        
         EquityVanillaOptJSONVisitor.cpp
-	    FuturesVanillaOptJSONVisitor.cpp
+	FuturesVanillaOptJSONVisitor.cpp
         ExchangeRateVanillaOptJSONVisitor.cpp 
         OptionSpreadMessage.cpp
         EquityOptionSpreadMessage.cpp
@@ -48,7 +58,17 @@ SET(MESSAGES_SOURCES
         FuturesOptionSpreadMessage.cpp
         FuturesOptionSpreadJSONVisitor.cpp
         ExchangeRateOptionSpreadMessage.cpp
-        EchangeRateOptionSpreadJSONVisitor.cpp              
+        ExchangeRateOptionSpreadJSONVisitor.cpp
+        EquityBarrierOptJSONVisitor.cpp
+        EquityBarrierOptMessage.cpp
+        EquityAverageOptJSONVisitor.cpp
+        EquityAverageOptMessage.cpp
+        EquityLookBackOptJSONVisitor.cpp
+        EquityLookBackOptMessage.cpp
+        EquityChooserOptJSONVisitor.cpp
+        EquityChooserOptMessage.cpp
+        EquityMargrabeOptJSONVisitor.cpp
+        EquityMargrabeOptMessage.cpp           
 )
 
 # Link shared library paths (Note: This should be added before Add_library !!!)

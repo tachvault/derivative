@@ -6,9 +6,12 @@ Copyright (c) 2013, Nathan Muruganantha. All rights reserved.
 #define _DERIVATIVE_VANILLAOPTMESSAGE_H_
 
 #include <atomic>
+#include <cpprest/filestream.h>
 #include <cpprest/json.h>
 #include "IMessage.hpp"
 #include "IVisitor.hpp"
+
+using namespace utility;
 
 #if defined _WIN32 || defined __CYGWIN__
 #ifdef MESSAGES_EXPORTS
@@ -47,13 +50,13 @@ namespace derivative
 
 		enum OptionTypeEnum { CALL = 0, PUT = 1, TYPE_UNKNOWN = 2 };
 
-		enum PricingMethodEnum { CLOSED = 0, LATTICE = 1, MONTE_CARLO = 2 };
+		enum PricingMethodEnum { CLOSED = 0, LATTICE = 1, MONTE_CARLO = 2, METHOD_UNKNOWN = 3 };
 
-		enum OptionStyleEnum { EUROPEAN = 0, AMERICAN = 1 };
+		enum OptionStyleEnum { EUROPEAN = 0, AMERICAN = 1, STYLE_UNKNOWN = 2 };
 
-		enum RateTypeEnum { YIELD = 0, LIBOR = 1 };
+		enum RateTypeEnum { YIELD = 0, LIBOR = 1, RATE_UNKNOWN = 2 };
 
-		enum VolatilityTypeEnum { IV = 0, HV = 1 };
+		enum VolatilityTypeEnum { IV = 0, HV = 1, VOL_UNKNOWN = 2 };
 
 		struct Greeks
 		{
@@ -180,6 +183,24 @@ namespace derivative
 		virtual void accept(const shared_ptr<IVisitor>& visitor, json::value& out) = 0;
 
 		virtual json::value AsJSON() = 0;
+
+		inline virtual void ParseSymbol(VanillaOptMessage::Request &req, const std::map<string_t, string_t>& query_strings);
+
+		inline virtual void ParseMaturity(VanillaOptMessage::Request &req, const std::map<string_t, string_t>& query_strings);
+
+		inline virtual void ParseStrike(VanillaOptMessage::Request &req, const std::map<string_t, string_t>& query_strings);
+
+		inline virtual void ParseVol(VanillaOptMessage::Request &req, const std::map<string_t, string_t>& query_strings);
+
+		inline virtual VanillaOptMessage::OptionTypeEnum ParseOptionType(const std::map<string_t, string_t>& query_strings);
+
+		inline virtual VanillaOptMessage::OptionStyleEnum  ParseOptionStyle(const std::map<string_t, string_t>& query_strings);
+
+		inline virtual VanillaOptMessage::PricingMethodEnum  ParsePricingMethod(const std::map<string_t, string_t>& query_strings);
+
+		inline virtual VanillaOptMessage::RateTypeEnum  ParseRateType(const std::map<string_t, string_t>& query_strings);
+
+		inline virtual VanillaOptMessage::VolatilityTypeEnum  ParseVolType(const std::map<string_t, string_t>& query_strings);
 
 	protected:
 

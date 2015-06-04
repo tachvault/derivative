@@ -10,6 +10,31 @@ Copyright (c) 2013, Nathan Muruganantha. All rights reserved.
 #include "ClassType.hpp"
 #include "IObject.hpp"
 
+#if defined _WIN32 || defined __CYGWIN__
+#ifdef MESSAGES_EXPORTS
+#ifdef __GNUC__
+#define MESSAGES_DLL_API __attribute__ ((dllexport))
+#else
+#define MESSAGES_DLL_API __declspec(dllexport)
+#endif
+#else
+#ifdef __GNUC__
+#define MESSAGES_DLL_API __attribute__ ((dllimport))
+#else
+#define MESSAGES_DLL_API __declspec(dllimport)
+#endif
+#endif
+#define MESSAGES_DLL_LOCAL
+#else
+#if __GNUC__ >= 4
+#define MESSAGES_DLL_API __attribute__ ((visibility ("default")))
+#define MESSAGES_DLL_LOCAL  __attribute__ ((visibility ("hidden")))
+#else
+#define MESSAGES_DLL_API
+#define MESSAGES_DLL_LOCAL
+#endif
+#endif
+
 using namespace web;
 
 /// This interface represents messages, as sent and received
@@ -18,7 +43,7 @@ using namespace web;
 namespace derivative
 {
 	class IMessage;
-	class IVisitor
+	class MESSAGES_DLL_API IVisitor
 	{
 	public:
 
