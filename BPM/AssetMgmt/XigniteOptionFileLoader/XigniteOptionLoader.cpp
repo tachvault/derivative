@@ -25,7 +25,7 @@ int main(int argc, char *args[])
 	if (argc < 2)
 	{
 		printf("Usage: XigniteOptionLoader.exe output_folder date\n");
-		printf("Ex: XigniteOptionLoader.exe C:\Temp\ 2015/ 03/05 \n");
+		printf("Ex: XigniteOptionLoader.exe C:\Temp\ 2015/03/05 \n");
 		return -1;
 	}
 

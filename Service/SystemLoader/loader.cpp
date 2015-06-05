@@ -56,6 +56,10 @@ int main(int argc, char** argv)
 		return -1;
 	}
 
+	// start logging
+	FLAGS_log_dir = "C://Temp/glog";
+	google::InitGoogleLogging("Derivative");
+
 	/// get the mode (STANDALONE, APP_SERVER, LOAD_BALANCER)
 	/// and load the required libraries for each mode
 	runModeEnum mode = static_cast<runModeEnum>(atoi(argv[1]));
