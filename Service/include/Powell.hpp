@@ -167,7 +167,7 @@ namespace derivative
 					{
 						converged = true;
 						minarg = currpos;
-						throw done();
+						break;
 					}
 					result = lsearch(f, currpos, directions(k, Range::all()), eps, std::max(10, maxit / 1000));
 					startpos = currpos;
