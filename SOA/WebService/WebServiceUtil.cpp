@@ -183,7 +183,7 @@ namespace derivative
 				req.method = msg->ParsePricingMethod(query_strings);
 				if (req.method == VanillaOptMessage::METHOD_UNKNOWN)
 				{
-					req.method = VanillaOptMessage::CLOSED;
+					req.method = VanillaOptMessage::LATTICE;
 				}
 				req.rateType = msg->ParseRateType(query_strings);
 				req.volType = msg->ParseVolType(query_strings);
@@ -281,10 +281,6 @@ namespace derivative
 			/// now add request parameters
 			std::shared_ptr<EquityLookBackOptMessage> msg = std::make_shared<EquityLookBackOptMessage>();
 			EquityLookBackOptMessage::Request req;
-			msg->ParseSymbol(req, query_strings);
-			msg->ParseMaturity(req, query_strings);
-			msg->ParseStrike(req, query_strings);
-			msg->ParseVol(req, query_strings);
 			try
 			{
 				msg->ParseSymbol(req, query_strings);
@@ -318,10 +314,6 @@ namespace derivative
 			/// now add request parameters
 			std::shared_ptr<EquityChooserOptMessage> msg = std::make_shared<EquityChooserOptMessage>();
 			EquityChooserOptMessage::Request req;
-			msg->ParseSymbol(req, query_strings);
-			msg->ParseMaturity(req, query_strings);
-			msg->ParseStrike(req, query_strings);
-			msg->ParseVol(req, query_strings);
 			try
 			{
 				msg->ParseSymbol(req, query_strings);

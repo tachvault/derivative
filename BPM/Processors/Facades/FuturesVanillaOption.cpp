@@ -169,10 +169,10 @@ namespace derivative
 
 		/// now get the greeks
 		double mat = (double((m_maturity - dd::day_clock::local_day()).days())) / 365;
-		res.greeks.delta = m_futures->delta(mat, m_strike, m_termRate);
-		res.greeks.gamma = m_futures->gamma(mat, m_strike, m_termRate);
-		/// res.greeks.theta = m_futures->theta(...);
-		res.greeks.vega = m_futures->vega(mat, m_strike, m_termRate);
+		res.greeks.delta = m_futures->delta(mat, m_strike, m_termRate, m_optType);
+		res.greeks.gamma = m_futures->gamma(mat, m_strike, m_termRate, m_optType);
+		res.greeks.theta = m_futures->theta(mat, m_strike, m_termRate, m_optType);
+		res.greeks.vega = m_futures->vega(mat, m_strike, m_termRate, m_optType);
 
 		/// set the message;
 		optMsg->SetResponse(res);

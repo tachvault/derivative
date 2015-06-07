@@ -96,7 +96,7 @@ namespace derivative
 		{
 			if (optMsg->GetRequest().style == EquityVanillaOptMessage::EUROPEAN)
 			{
-				res.optPrice = VanillaOptionPricer::ValueAmericanWithBinomial(m_stock, m_termRate, m_maturity, \
+				res.optPrice = VanillaOptionPricer::ValueEuropeanWithBinomial(m_stock, m_termRate, m_maturity, \
 					m_strike, static_cast<VanillaOptionPricer::VanillaOptionType>(m_optType));
 			}
 			else
@@ -128,11 +128,11 @@ namespace derivative
 		res.underlyingTradePrice = m_stockVal->GetTradePrice();
 		/// now get the greeks
 		double mat = (double((m_maturity - dd::day_clock::local_day()).days())) / 365;
-		res.greeks.delta = m_stock->delta(mat, m_strike, m_termRate);
-		res.greeks.gamma = m_stock->gamma(mat, m_strike, m_termRate);
-		res.greeks.vega = m_stock->vega(mat, m_strike, m_termRate);
-		/// res.greeks.theta = m_stock->theta(...);
-		/// res.greeks.vega = m_stock->vega(...);
+		res.greeks.delta = m_stock->delta(mat, m_strike, m_termRate, m_optType);
+		res.greeks.gamma = m_stock->gamma(mat, m_strike, m_termRate, m_optType);
+		res.greeks.vega = m_stock->vega(mat, m_strike, m_termRate, m_optType);
+		res.greeks.theta = m_stock->theta(mat, m_strike, m_termRate, m_optType);
+		res.greeks.vega = m_stock->vega(mat, m_strike, m_termRate, m_optType);
 
 		/// set the message;
 		optMsg->SetResponse(res);

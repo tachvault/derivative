@@ -39,8 +39,8 @@ namespace derivative
 		greekObj[L"delta"] = json::value::number(msg->GetResponse().greeks.delta);
 		greekObj[L"gamma"] = json::value::number(msg->GetResponse().greeks.gamma);
 		greekObj[L"vega"] = json::value::number(msg->GetResponse().greeks.vega);
-		//greekObj[L"theta"] = json::value::number(msg->GetResponse().greeks.theta);
-		resObj[L"greeks"] = greekObj;
+		greekObj[L"theta"] = json::value::number(msg->GetResponse().greeks.theta);
+		resObj[L"greeks (BS)"] = greekObj;
 		out[L"request"] = reqObj;
 		out[L"response"] = resObj;
 

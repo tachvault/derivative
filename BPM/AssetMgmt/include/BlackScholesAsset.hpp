@@ -107,6 +107,9 @@ namespace derivative
 		/// Vega of a European call or put option (call is default).
 		double vega(double mat, double K, double r, int sign = 1) const;
 
+		/// Theta of a European call or put option (call is default).
+		double theta(double mat, double K, double r, int sign = 1) const;
+
 		/// Option to exchange one asset for another.
 		double Margrabe(const BlackScholesAsset& S,double mat,double K, int sign = 1) const;
 		

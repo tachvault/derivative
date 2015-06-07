@@ -125,6 +125,12 @@ namespace derivative
 			return m_backScholesAsset->vega(mat, K, r, sign);
 		}
 
+		/// Theta of a European call or put option (call is default).
+		inline double theta(double mat, double K, double r, int sign = 1) const
+		{
+			return m_backScholesAsset->theta(mat, K, r, sign);
+		}
+
 		/// Option to exchange one asset for another.
 		inline double Margrabe(std::shared_ptr<BlackScholesAssetAdapter>& S,double mat,double K, int sign = 1) const
 		{
