@@ -35,8 +35,11 @@ namespace derivative
 		std::shared_ptr<GeometricBrownianMotion> bwm = std::make_shared<GeometricBrownianMotion>(new_underlying);
 		bwm->T = std::unique_ptr<Array<double, 1> >(new Array<double, 1>(T->copy()));
 		bwm->timeline_ = std::unique_ptr<Array<double, 1> >(new Array<double, 1>(timeline_->copy()));
+		bwm->dW.resize(dW.extent(firstDim));
 		bwm->dW = dW.copy();
+		bwm->vol_lvl.resize(vol_lvl.extent(firstDim));
 		bwm->vol_lvl = vol_lvl.copy();
+		bwm->asset_values.resize(asset_values.extent(firstDim), asset_values.extent(secondDim));
 		bwm->asset_values = asset_values.copy();
 		bwm->time_mapping = std::unique_ptr<Array<int, 1> >(new Array<int, 1>(time_mapping->copy()));
 		return bwm;

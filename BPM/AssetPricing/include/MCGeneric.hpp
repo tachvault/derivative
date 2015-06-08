@@ -135,7 +135,7 @@ namespace derivative
 		{
 			auto simulations = (number_of_simulations > maxSimulations) ? maxSimulations : number_of_simulations;
 			number_of_simulations -= simulations;
-			futures.push_back(std::async(std::launch::async, static_cast<std::shared_ptr<MCGatherer<rettype> >(\
+			futures.push_back(std::async(static_cast<std::shared_ptr<MCGatherer<rettype> >(\
 				MCGeneric<argtype, rettype, random_number_generator_type>::*)(size_t, unsigned long)>\
 				(&MCGeneric<argtype, rettype, random_number_generator_type>::simulate), this, mcgatherer.dimension(), simulations));
 		}
