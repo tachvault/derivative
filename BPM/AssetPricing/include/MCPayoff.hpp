@@ -63,10 +63,13 @@ namespace derivative
 
 		enum { TYPEID = CLASS_MCPAYOFF_TYPE };
 
-		Array<double, 1> timeline;  ///< Time line collecting all event dates.
-		Array<int, 2>       index;  ///< A 2 x N matrix of indices, where each column represents the
-
-		///< indices of an (asset,time) combination affecting the payoff.
+		/// Time line collecting all event dates.
+		Array<double, 1> timeline;
+		
+		/// A 2 x N matrix of indices, where each column represents the
+		/// indices of an (asset,time) combination affecting the payoff.
+		Array<int, 2>       index;  
+		
 		inline MCPayoff(const Array<double, 1>& xtimeline, const Array<int, 2>& xindex)
 			: timeline(xtimeline), index(xindex)
 		{ };

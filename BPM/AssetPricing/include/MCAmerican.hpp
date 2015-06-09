@@ -6,6 +6,8 @@ Initial version: Copyright 2003, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012,
 #ifndef _DERIVATIVE_MCAMERICAN_H_
 #define _DERIVATIVE_MCAMERICAN_H_
 
+#include <mutex>
+
 #include "MCPayoff.hpp"
 #include "LongstaffSchwartz.hpp"
 
@@ -35,6 +37,7 @@ namespace derivative
 	private:
 		exercise_boundary& boundary;
 		Array<double,2>        path;
+		mutable std::mutex m_mutex;
 	public:
 		LSExerciseStrategy(exercise_boundary& xboundary);
 		/// Calculate discounted payoff. 
@@ -138,6 +141,8 @@ namespace derivative
 	template <class exercise_boundary>
 	double LSExerciseStrategy<exercise_boundary>::operator()(const Array<double,1>& underlying_values,const Array<double,1>& numeraire_values)
 	{
+		std::lock_guard<std::mutex> lock(m_mutex);
+
 		// reformat for LongstaffSchwartzExerciseBoundary.apply()
 		int i,j,c;
 		c = 0;

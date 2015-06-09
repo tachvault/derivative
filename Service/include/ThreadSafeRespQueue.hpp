@@ -24,7 +24,7 @@ namespace derivative
 		{
 			std::unique_lock<std::mutex> lk(mut);
 			auto now = std::chrono::system_clock::now();
-			if (data_cond.wait_until(lk, now + std::chrono::milliseconds(600000), [this, reqId]{
+			if (data_cond.wait_until(lk, now + std::chrono::milliseconds(1800000), [this, reqId]{
 				return (!data_queue.empty() && data_queue.front()->GetMsgSequence().m_intReqID == reqId); }))
 			{
 				value = data_queue.front();
@@ -49,7 +49,7 @@ namespace derivative
 		{
 			std::unique_lock<std::mutex> lk(mut);
 			auto now = std::chrono::system_clock::now();
-			if (data_cond.wait_until(lk, now + std::chrono::milliseconds(600000), [this, reqId]{
+			if (data_cond.wait_until(lk, now + std::chrono::milliseconds(1800000), [this, reqId]{
 				return (!data_queue.empty() && data_queue.front()->GetMsgSequence().m_intReqID == reqId); }))
 			{
 				std::shared_ptr<IMessage> res = data_queue.front();
