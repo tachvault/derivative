@@ -63,22 +63,16 @@ namespace derivative
 	class MCGeneric
 	{
 	public:
-		inline MCGeneric(std::function<rettype(argtype)> func, random_number_generator_type& rng)
-			: f(func), random_number_generator(rng)
+		inline MCGeneric(std::function<rettype(argtype)> func, random_number_generator_type& rng, size_t max_sim = 100000)
+			: f(func), random_number_generator(rng), max_simulation(max_sim)
 		{ };
-		inline MCGeneric(std::function<rettype(argtype)> func, random_number_generator_type& rng, std::function<argtype(argtype)> antifunc)
-			: f(func), random_number_generator(rng), antithetic(antifunc)
+		inline MCGeneric(std::function<rettype(argtype)> func, random_number_generator_type& rng, std::function<argtype(argtype)> antifunc, size_t max_sim = 100000)
+			: f(func), random_number_generator(rng), antithetic(antifunc), max_simulation(max_sim)
 		{ };
 		inline void set_antithetic(std::function<rettype(argtype)> antifunc)
 		{
 			antithetic = antifunc;
 		};
-
-		inline void set_dimesions(int p, int t)
-		{
-			payoff_dim = p;
-			time_dim = t;
-		}
 
 		/// run within an async call. Reply on the return value optimization..
 		std::shared_ptr<MCGatherer<rettype> > simulate(size_t dim, unsigned long number_of_simulations);
@@ -94,11 +88,8 @@ namespace derivative
 		random_number_generator_type      random_number_generator;
 		
 		/// represents maximum simulations per one async call
-		static int maxSimulations;
+		std::size_t max_simulation;
 	};
-
-	template <class argtype, class rettype, class random_number_generator_type>
-	int MCGeneric<argtype, rettype, random_number_generator_type>::maxSimulations = 100000;
 
 	template <class argtype, class rettype, class random_number_generator_type>
 	std::shared_ptr<MCGatherer<rettype> > MCGeneric<argtype, rettype, random_number_generator_type>::simulate(size_t dim, unsigned long number_of_simulations)
@@ -130,10 +121,10 @@ namespace derivative
 	{
 		std::vector<std::future<std::shared_ptr<MCGatherer<rettype> > > >futures;
 		/// get the number of asyn call required
-		int func_calls = std::ceil((double)(number_of_simulations) / maxSimulations);
+		int func_calls = std::ceil((double)(number_of_simulations) / max_simulation);
 		for (int i = 0; i < func_calls; ++i)
 		{
-			auto simulations = (number_of_simulations > maxSimulations) ? maxSimulations : number_of_simulations;
+			auto simulations = (number_of_simulations > max_simulation) ? max_simulation : number_of_simulations;
 			number_of_simulations -= simulations;
 			futures.push_back(std::async(static_cast<std::shared_ptr<MCGatherer<rettype> >(\
 				MCGeneric<argtype, rettype, random_number_generator_type>::*)(size_t, unsigned long)>\
