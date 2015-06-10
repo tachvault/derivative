@@ -145,15 +145,23 @@ namespace derivative
 			}
 			else if (!paths[1].empty() && paths[1].compare(U("Average")) == 0)
 			{
-				return HandleEquityVanillaOption(paths, query_strings);
+				return HandleEquityAverageOption(paths, query_strings);
 			}
-			else if (!paths[1].empty() && paths[1].compare(U("Barrier")) == 0)
+			else if (!paths[1].empty() && paths[1].compare(U("LookBack")) == 0)
 			{
-				return HandleEquityVanillaOption(paths, query_strings);
+				return HandleEquityLookBackOption(paths, query_strings);
 			}
-			else if (!paths[1].empty() && paths[1].compare(U("Barrier")) == 0)
+			else if (!paths[1].empty() && paths[1].compare(U("Chooser")) == 0)
 			{
-				return HandleEquityVanillaOption(paths, query_strings);
+				return HandleEquityChooserOption(paths, query_strings);
+			}
+			else if (!paths[1].empty() && paths[1].compare(U("Margrabe")) == 0)
+			{
+				return HandleEquityMargrabeOption(paths, query_strings);
+			}
+			else
+			{
+				throw std::invalid_argument("Invalid option type");
 			}
 		}
 
@@ -249,10 +257,14 @@ namespace derivative
 			try
 			{
 				msg->ParseSymbol(req, query_strings);
+				req.averageType = msg->ParseAverageType(query_strings);
 				msg->ParseMaturity(req, query_strings);
-				msg->ParseStrike(req, query_strings);
-				msg->ParseVol(req, query_strings);
 				req.option = msg->ParseOptionType(query_strings);
+				if (req.averageType == EquityAverageOptMessage::FIXED_STRIKE)
+				{
+					msg->ParseStrike(req, query_strings);
+				}
+				msg->ParseVol(req, query_strings);				
 				if (req.option == VanillaOptMessage::TYPE_UNKNOWN)
 				{
 					req.option = VanillaOptMessage::CALL;
@@ -261,10 +273,16 @@ namespace derivative
 				if (req.option == VanillaOptMessage::STYLE_UNKNOWN)
 				{
 					req.style == VanillaOptMessage::EUROPEAN;
+				}			
+				req.method = msg->ParsePricingMethod(query_strings);
+				if (req.method == VanillaOptMessage::METHOD_UNKNOWN)
+				{
+					req.method = VanillaOptMessage::MONTE_CARLO;
 				}
-
-				req.averageType = msg->ParseAverageType(query_strings);
-				req.method = VanillaOptMessage::MONTE_CARLO;
+				else if (req.method != VanillaOptMessage::MONTE_CARLO)
+				{
+					throw std::invalid_argument("Only monte carlo valuation is supported");
+				}
 				req.rateType = msg->ParseRateType(query_strings);
 				req.volType = msg->ParseVolType(query_strings);
 			}
