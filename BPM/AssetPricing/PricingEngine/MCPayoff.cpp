@@ -392,7 +392,8 @@ namespace derivative
 
 	double MCChooser::operator()(const Array<double, 1>& underlying_values, const Array<double, 1>& numeraire_values)
 	{
-		double instrinc = (underlying_values(0) >= K) ? std::max(0.0, underlying_values(0) - K) : std::max(0.0, K - underlying_values(0));
+		double last = underlying_values(underlying_values.extent(firstDim) - 1);
+		double instrinc = (last >= K) ? std::max(0.0, last - K)	: std::max(0.0, K - last);
 		return numeraire_values(0) / numeraire_values(1) * instrinc;
 	}
 }
