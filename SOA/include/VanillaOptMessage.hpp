@@ -73,6 +73,13 @@ namespace derivative
 			double theta;
 		};
 
+		struct MonteCarlo
+		{
+			size_t sim;
+
+			int steps;
+		};
+
 		struct Request
 		{
 			Request()
@@ -102,6 +109,8 @@ namespace derivative
 			double strike;
 
 			double vol;
+
+			MonteCarlo monte;
 
 			bool validate()
 			{
