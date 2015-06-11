@@ -238,7 +238,7 @@ namespace derivative
 		double avg = number_of_observations_in_existing_average_ * existing_average_;
 		for (i = 0; i < index.extent(secondDim); i++) avg += underlying_values(i);
 		avg /= i + number_of_observations_in_existing_average_;
-		int instrinc = (opt == 1) ? std::max(0.0, underlying_values(underlying_values.extent(firstDim) - 1) - avg) : std::max(0.0, avg - underlying_values(underlying_values.extent(firstDim) - 1));
+		double instrinc = (opt == 1) ? std::max(0.0, underlying_values(underlying_values.extent(firstDim) - 1) - avg) : std::max(0.0, avg - underlying_values(underlying_values.extent(firstDim) - 1));
 		return numeraire_values(0) / numeraire_values(i - 1) * instrinc;
 	}
 
@@ -276,7 +276,7 @@ namespace derivative
 		}
 		if (indicator)
 		{
-			int instrinc = (opt == 1) ? std::max(0.0, underlying_values(underlying_values.extent(firstDim) - 1) - strike) : std::max(0.0, strike - underlying_values(underlying_values.extent(firstDim) - 1));
+			double instrinc = (opt == 1) ? std::max(0.0, underlying_values(underlying_values.extent(firstDim) - 1) - strike) : std::max(0.0, strike - underlying_values(underlying_values.extent(firstDim) - 1));
 			result = numeraire_values(0) / numeraire_values(numeraire_values.extent(firstDim) - 1) * instrinc;
 		}
 		return result;
@@ -315,14 +315,14 @@ namespace derivative
 		}
 		if (indicator)
 		{
-			int instrinc = (opt == 1) ? std::max(0.0, underlying_values(underlying_values.extent(firstDim) - 1) - strike) : std::max(0.0, strike - underlying_values(underlying_values.extent(firstDim) - 1));
+			double instrinc = (opt == 1) ? std::max(0.0, underlying_values(underlying_values.extent(firstDim) - 1) - strike) : std::max(0.0, strike - underlying_values(underlying_values.extent(firstDim) - 1));
 			result = numeraire_values(0) / numeraire_values(numeraire_values.extent(firstDim) - 1) * instrinc;
 		}
 		return result;
 	}
 
-	MCDiscreteLookBack::MCDiscreteLookBack(int asset_index, const Array<double, 1>& T, double xK, int sign)
-		: MCPayoff(T, T.extent(firstDim) - 1), K(xK), max_price(0.0), opt(sign)
+	MCDiscreteFixedLookBack::MCDiscreteFixedLookBack(int asset_index, double initial, const Array<double, 1>& T, double xK, int sign)
+		: MCPayoff(T, T.extent(firstDim) - 1), K(xK), initial_price(initial), opt(sign)
 	{
 		blitz::firstIndex  idx;
 		blitz::secondIndex jdx;
@@ -330,15 +330,57 @@ namespace derivative
 		index(0, blitz::Range::all()) = asset_index;
 	}
 
-	double MCDiscreteLookBack::operator()(const Array<double, 1>& underlying_values, const Array<double, 1>& numeraire_values)
+	double MCDiscreteFixedLookBack::operator()(const Array<double, 1>& underlying_values, const Array<double, 1>& numeraire_values)
 	{
-		double max_price = 0;
+		auto exercise_price = initial_price;
 		for (int i = 0; i < underlying_values.extent(firstDim); i++)
 		{
-			max_price = (underlying_values(i) > max_price) ? underlying_values(i) : max_price;
+			if ((opt == 1) && (underlying_values(i) > exercise_price))
+			{
+				exercise_price = underlying_values(i);
+			}
+			else if ((opt == -1) && (underlying_values(i) < exercise_price))
+			{
+				exercise_price = underlying_values(i);
+			}
 		}
-		double intrinsic = (opt == 1) ? std::max(0.0, underlying_values(underlying_values.extent(firstDim) - 1) - K) : std::max(0.0, K - underlying_values(underlying_values.extent(firstDim) - 1));
+		double intrinsic = (opt == 1) ? std::max(0.0, exercise_price - K) : std::max(0.0, K - exercise_price);
 		return numeraire_values(0) / numeraire_values(numeraire_values.extent(firstDim) - 1) * intrinsic;
+	}
+
+	MCDiscreteFloatingLookBack::MCDiscreteFloatingLookBack(int asset_index, double initial, const Array<double, 1>& T, int sign)
+		: MCPayoff(T, T.extent(firstDim) - 1), initial_price(initial), opt(sign)
+	{
+		blitz::firstIndex  idx;
+		blitz::secondIndex jdx;
+		index = idx * (jdx + 1);
+		index(0, blitz::Range::all()) = asset_index;
+	}
+
+	double MCDiscreteFloatingLookBack::operator()(const Array<double, 1>& underlying_values, const Array<double, 1>& numeraire_values)
+	{
+		auto strike = initial_price;
+		for (int i = 0; i < underlying_values.extent(firstDim); i++)
+		{
+			if ((opt == -1) && (underlying_values(i) > strike))
+			{
+				strike = underlying_values(i);
+			}
+			else if ((opt == 1) && (underlying_values(i) < strike))
+			{
+				strike = underlying_values(i);
+			}
+		}
+		double instrinc = 0;
+		if (opt == 1)
+		{
+			instrinc = std::max(0.0, underlying_values(underlying_values.extent(firstDim) - 1) - strike);
+		}
+		else
+		{
+			instrinc = std::max(0.0, strike - underlying_values(underlying_values.extent(firstDim) - 1));
+		}
+		return numeraire_values(0) / numeraire_values(numeraire_values.extent(firstDim) - 1) * instrinc;
 	}
 
 	MCChooser::MCChooser(double tzero, double tend, int asset_index, double strike)

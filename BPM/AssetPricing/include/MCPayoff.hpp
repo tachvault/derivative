@@ -236,21 +236,35 @@ namespace derivative
 		double barrier;
 	};
 
-	class PRICINGENGINE_DLL_API MCDiscreteLookBack : public MCPayoff
+	class PRICINGENGINE_DLL_API MCDiscreteFixedLookBack : public MCPayoff
 	{
 	public:
 
 		enum { TYPEID = CLASS_MCDISCRETEARITHMETICMEANFIXEDSTRIKE_TYPE };
 
-		MCDiscreteLookBack(int asset_index, const Array<double, 1>& T, double xK, int sign = 1);
+		MCDiscreteFixedLookBack(int asset_index, double initial, const Array<double, 1>& T, double xK, int sign = 1);
 		virtual double operator()(const Array<double, 1>& underlying_values, const Array<double, 1>& numeraire_values);
 
 	private:
 		int opt; /// call = 1, put = -1
 		double K; ///< Strike.
-		double max_price;
+		double initial_price;
 	};
 	
+	class PRICINGENGINE_DLL_API MCDiscreteFloatingLookBack : public MCPayoff
+	{
+	public:
+
+		enum { TYPEID = CLASS_MCDISCRETEARITHMETICMEANFIXEDSTRIKE_TYPE };
+
+		MCDiscreteFloatingLookBack(int asset_index, double initial, const Array<double, 1>& T, int sign = 1);
+		virtual double operator()(const Array<double, 1>& underlying_values, const Array<double, 1>& numeraire_values);
+
+	private:
+		int opt; /// call = 1, put = -1
+		double initial_price;
+	};
+
 	class PRICINGENGINE_DLL_API MCChooser : public MCPayoff
 	{
 	public:

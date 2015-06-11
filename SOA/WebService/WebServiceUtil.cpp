@@ -260,17 +260,17 @@ namespace derivative
 				req.averageType = msg->ParseAverageType(query_strings);
 				msg->ParseMaturity(req, query_strings);
 				req.option = msg->ParseOptionType(query_strings);
+				if (req.option == VanillaOptMessage::TYPE_UNKNOWN)
+				{
+					req.option = VanillaOptMessage::CALL;
+				};
 				if (req.averageType == EquityAverageOptMessage::FIXED_STRIKE)
 				{
 					msg->ParseStrike(req, query_strings);
 				}
 				msg->ParseVol(req, query_strings);				
-				if (req.option == VanillaOptMessage::TYPE_UNKNOWN)
-				{
-					req.option = VanillaOptMessage::CALL;
-				};
 				req.style = msg->ParseOptionStyle(query_strings);
-				if (req.option == VanillaOptMessage::STYLE_UNKNOWN)
+				if (req.style == VanillaOptMessage::STYLE_UNKNOWN)
 				{
 					req.style == VanillaOptMessage::EUROPEAN;
 				}			
@@ -298,33 +298,47 @@ namespace derivative
 		{
 			/// now add request parameters
 			std::shared_ptr<EquityLookBackOptMessage> msg = std::make_shared<EquityLookBackOptMessage>();
-			EquityLookBackOptMessage::Request req;
+			EquityLookBackOptMessage::LookBackOptRequest req;
 			try
 			{
 				msg->ParseSymbol(req, query_strings);
+				req.lookBackType = msg->ParseLookBackType(query_strings);
 				msg->ParseMaturity(req, query_strings);
-				msg->ParseStrike(req, query_strings);
+				if (req.lookBackType == EquityLookBackOptMessage::FIXED_STRIKE)
+				{
+					msg->ParseStrike(req, query_strings);
+				}
 				msg->ParseVol(req, query_strings);
 				if (req.option == VanillaOptMessage::TYPE_UNKNOWN)
 				{
 					req.option = VanillaOptMessage::CALL;
 				};
 				req.style = msg->ParseOptionStyle(query_strings);
-				if (req.option == VanillaOptMessage::STYLE_UNKNOWN)
+				if (req.style == VanillaOptMessage::STYLE_UNKNOWN)
 				{
 					req.style == VanillaOptMessage::EUROPEAN;
 				}
-
-				req.method = VanillaOptMessage::MONTE_CARLO;
+				else if (req.style == VanillaOptMessage::AMERICAN)
+				{
+					throw std::invalid_argument("Only European style lookback options are supported");
+				}
+				req.method = msg->ParsePricingMethod(query_strings);
+				if (req.method == VanillaOptMessage::METHOD_UNKNOWN)
+				{
+					req.method = VanillaOptMessage::MONTE_CARLO;
+				}
+				else if (req.method != VanillaOptMessage::MONTE_CARLO)
+				{
+					throw std::invalid_argument("Only monte carlo valuation is supported");
+				}
 				req.rateType = msg->ParseRateType(query_strings);
 				req.volType = msg->ParseVolType(query_strings);
 			}
 			catch (std::exception& e)
 			{
-				return SendError<EquityLookBackOptMessage, EquityLookBackOptMessage::Request>(msg, req, e.what());
+				return SendError<EquityLookBackOptMessage, EquityLookBackOptMessage::LookBackOptRequest>(msg, req, e.what());
 			}
-
-			return ProcessMsg<EquityLookBackOptMessage, EquityLookBackOptMessage::Request>(msg, req);
+			return ProcessMsg<EquityLookBackOptMessage, EquityLookBackOptMessage::LookBackOptRequest>(msg, req);
 		}
 
 		web::json::value HandleEquityChooserOption(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings)
