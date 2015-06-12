@@ -53,7 +53,7 @@ namespace derivative
 		
 		std::shared_ptr<random_number_generator_type>  rng;
 
-		mutable SpinLock m_lock;
+		mutable std::mutex m_lock;
 
 	public:
 		inline RandomWrapper(const std::shared_ptr<random_number_generator_type>& xrng) : rng(xrng)
@@ -67,7 +67,7 @@ namespace derivative
 		/// Returns a draw from random_number_generator_type.
 		inline rntype random()
 		{
-			std::lock_guard<SpinLock> lock(m_lock);
+			std::lock_guard<std::mutex> lock(m_lock);
 			return rng->random();
 		};
 	};

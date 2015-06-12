@@ -387,23 +387,34 @@ namespace derivative
 				msg->ParseVol(req, query_strings);
 				if (query_strings.find(U("_numeraire")) != query_strings.end())
 				{
-					req.exchanged = conversions::to_utf8string(query_strings.at(U("_numeraire")));
+					req.numeraire = conversions::to_utf8string(query_strings.at(U("_numeraire")));
 				}
 				else
 				{
 					throw std::invalid_argument("No numeraire symbol");
 				}
+				req.option = msg->ParseOptionType(query_strings);
 				if (req.option == VanillaOptMessage::TYPE_UNKNOWN)
 				{
 					req.option = VanillaOptMessage::CALL;
 				};
 				req.style = msg->ParseOptionStyle(query_strings);
-				if (req.option == VanillaOptMessage::STYLE_UNKNOWN)
+				if (req.style == VanillaOptMessage::STYLE_UNKNOWN)
 				{
-					req.style == VanillaOptMessage::EUROPEAN;
+					req.style = VanillaOptMessage::EUROPEAN;
 				}
-
-				req.method = VanillaOptMessage::MONTE_CARLO;
+				req.method = msg->ParsePricingMethod(query_strings);
+				if (req.method == VanillaOptMessage::METHOD_UNKNOWN)
+				{
+					if (req.style == VanillaOptMessage::EUROPEAN)
+					{
+						req.method = VanillaOptMessage::CLOSED;
+					}
+					else
+					{
+						req.method = VanillaOptMessage::MONTE_CARLO;
+					}
+				}
 				req.rateType = msg->ParseRateType(query_strings);
 				req.volType = msg->ParseVolType(query_strings);
 			}
