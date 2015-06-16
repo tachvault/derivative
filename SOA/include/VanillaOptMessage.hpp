@@ -140,8 +140,8 @@ namespace derivative
 			Greeks greeks;
 		};
 
-		VanillaOptMessage(int extMsgId)
-			:m_msgSeq(++extMsgId)
+		VanillaOptMessage()
+			:m_msgSeq(++g_msgSeq)
 		{}
 
 		virtual ~VanillaOptMessage()
@@ -220,6 +220,10 @@ namespace derivative
 		Response m_res;
 
 		SystemResponse m_sysRes;
+
+	private:
+
+		static std::atomic<long> g_msgSeq;
 	};
 }
 /* namespace derivative */

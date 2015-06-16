@@ -130,9 +130,18 @@ namespace derivative
 
 	double BlackScholesAsset::DoleansExp(double t, double T, const Array<double, 1>& dW) const
 	{
-		Array<double, 1> vol_lvl(dW.extent(firstDim));
-		if (!v->get_volatility_level(t, T, vol_lvl)) throw std::logic_error("Volatility not constant in BlackScholesAsset::DoleansExp");
-		return std::exp(blitz::sum(dW*vol_lvl) - 0.5*v->volproduct(t, T - t, *v));
+		try
+		{
+			Array<double, 1> vol_lvl(dW.extent(firstDim));
+			if (!v->get_volatility_level(t, T, vol_lvl)) throw std::logic_error("Volatility not constant in BlackScholesAsset::DoleansExp");
+			auto x = std::exp(blitz::sum(dW*vol_lvl));
+			auto y = 0.5*v->volproduct(t, T - t, *v);
+			return  x - y;
+		}
+		catch (std::exception& e)
+		{
+			cout << " Error " << e.what() << endl;
+		}
 	}
 
 	/// Calculate the implied volatility for a given price.

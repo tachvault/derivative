@@ -20,12 +20,12 @@ namespace derivative
 		threadsafe_resp_queue()
 		{}
 
-		void wait_and_pop(std::shared_ptr<IMessage>& value, int reqId)
+		void wait_and_pop(std::shared_ptr<IMessage>& value, long reqId)
 		{
 			std::unique_lock<std::mutex> lk(mut);
 			auto now = std::chrono::system_clock::now();
 			if (data_cond.wait_until(lk, now + std::chrono::milliseconds(1800000), [this, reqId]{
-				return (!data_queue.empty() && data_queue.front()->GetMsgSequence().m_intReqID == reqId); }))
+				return (!data_queue.empty() && data_queue.front()->GetMsgSequence().m_extReqID == reqId); }))
 			{
 				value = data_queue.front();
 				data_queue.pop();
@@ -45,12 +45,12 @@ namespace derivative
 			data_queue.pop();
 		}
 
-		std::shared_ptr<IMessage> wait_and_pop(int reqId)
+		std::shared_ptr<IMessage> wait_and_pop(long reqId)
 		{
 			std::unique_lock<std::mutex> lk(mut);
 			auto now = std::chrono::system_clock::now();
 			if (data_cond.wait_until(lk, now + std::chrono::milliseconds(1800000), [this, reqId]{
-				return (!data_queue.empty() && data_queue.front()->GetMsgSequence().m_intReqID == reqId); }))
+				return (!data_queue.empty() && data_queue.front()->GetMsgSequence().m_extReqID == reqId); }))
 			{
 				std::shared_ptr<IMessage> res = data_queue.front();
 				data_queue.pop();

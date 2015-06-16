@@ -6,6 +6,8 @@ Copyright (c) 2013 - 2014, Nathan Muruganantha. All rights reserved.
 
 namespace derivative
 {
+	std::atomic<long> VanillaOptMessage::g_msgSeq = 0;
+
 	void VanillaOptMessage::ParseSymbol(VanillaOptMessage::Request &req, \
 		const std::map<string_t, string_t>& query_strings)
 	{

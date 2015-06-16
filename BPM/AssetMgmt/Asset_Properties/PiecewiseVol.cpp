@@ -54,37 +54,51 @@ namespace derivative
 	/// The integral over the scalar product between two piecewise constant volatility vectors.
 	double PiecewiseConstVol::volproduct(double t,double dt,const DeterministicAssetVol& xv) const
 	{
-		Array<double,1> lvl(v.extent(secondDim));
-		double result  = 0.0;
-		int    i       = find_segment(t,timeline);
-		double covered = 0.0;
-		while ((covered<dt-1e-12)&&(i<v.extent(firstDim)))
+		try
 		{
-			double tstep = std::min(timeline(i+1)-std::max(t,timeline(i)),dt-covered);
-			lvl      = v(i,blitz::Range::all());
-			result  += DeterministicVolMediator::volproduct_ConstVol(t+covered,tstep,lvl,xv);
-			covered += tstep;
-			i++;
+			Array<double, 1> lvl(v.extent(secondDim));
+			double result = 0.0;
+			int    i = find_segment(t, timeline);
+			double covered = 0.0;
+			while ((covered < dt - 1e-12) && (i < v.extent(firstDim)))
+			{
+				double tstep = std::min(timeline(i + 1) - std::max(t, timeline(i)), dt - covered);
+				lvl = v(i, blitz::Range::all());
+				result += DeterministicVolMediator::volproduct_ConstVol(t + covered, tstep, lvl, xv);
+				covered += tstep;
+				i++;
+			}
+			if (covered < dt - 1e-12) throw std::logic_error("Cannot extrapolate");
+			return result;
 		}
-		if (covered<dt-1e-12) throw std::logic_error("Cannot extrapolate");
-		return result;
+		catch (std::exception& e)
+		{
+			cout << " Error " << e.what() << endl;
+		}
 	}
 
 	Array<double,1> PiecewiseConstVol::integral(double t,double dt) const
 	{
-		Array<double,1> result(v.extent(secondDim));
-		result = 0.0;
-		int    i       = find_segment(t,timeline);
-		double covered = 0.0;
-		while ((covered<dt-1e-12)&&(i<v.extent(firstDim)))
+		try
 		{
-			double tstep = std::min(timeline(i+1)-std::max(t,timeline(i)),dt-covered);
-			result  += tstep * v(i,blitz::Range::all());
-			covered += tstep;
-			i++;
+			Array<double, 1> result(v.extent(secondDim));
+			result = 0.0;
+			int    i = find_segment(t, timeline);
+			double covered = 0.0;
+			while ((covered < dt - 1e-12) && (i < v.extent(firstDim)))
+			{
+				double tstep = std::min(timeline(i + 1) - std::max(t, timeline(i)), dt - covered);
+				result += tstep * v(i, blitz::Range::all());
+				covered += tstep;
+				i++;
+			}
+			if (covered < dt - 1e-12) throw std::logic_error("Cannot extrapolate");
+			return result;
 		}
-		if (covered<dt-1e-12) throw std::logic_error("Cannot extrapolate");
-		return result;
+		catch (std::exception& e)
+		{
+			cout << "Error " << e.what() << endl;
+		}
 	}
 
 	void PiecewiseConstVol::interpolate(const std::shared_ptr<DeterministicAssetVol>& neibor, double factor)

@@ -54,7 +54,7 @@ namespace derivative
 		m_reqQueue.push(msg);
 
 		/// now wait for the response message
-		std::shared_ptr<IMessage> respMsg = m_respQueue.wait_and_pop(msg->GetMsgSequence().m_intReqID);
+		std::shared_ptr<IMessage> respMsg = m_respQueue.wait_and_pop(msg->GetMsgSequence().m_extReqID);
 	}
 
 	void MessageDispatcher::Dispatch(std::shared_ptr<IMessage>& msg)

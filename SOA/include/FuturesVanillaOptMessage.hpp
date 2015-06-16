@@ -56,10 +56,6 @@ namespace derivative
 			dd::date deliveryDate;
 		};
 
-		FuturesVanillaOptMessage()
-			:VanillaOptMessage(extMsgId)
-		{}
-
 		virtual ~FuturesVanillaOptMessage()
 		{}
 

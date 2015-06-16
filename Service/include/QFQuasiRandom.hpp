@@ -7,11 +7,13 @@ Initial versions: Copyright (c) 2008, Frances Y. Kuo and Stephen Joe
 #ifndef _DERIVATIVE_QFQUASIRANDOM_H_
 #define _DERIVATIVE_QFQUASIRANDOM_H_
 
+#include <mutex>
 #include <boost/shared_ptr.hpp>
 #include <boost/math/distributions/normal.hpp>
 #include <blitz/array.h>
 
 #include "ClassType.hpp"
+#include "SpinLock.hpp"
 
 #if defined _WIN32 || defined __CYGWIN__
   #ifdef SERVICEUTIL_EXPORTS
@@ -137,10 +139,13 @@ namespace derivative
 		boost::math::normal  normal;
 		int                       n;
 		const double        epsilon;
+		mutable SpinLock m_lock;
 	};
 
 	inline Array<double,2>& SobolArrayNormal::random()
 	{
+		std::lock_guard<SpinLock> lock(m_lock);
+
 		int i,j,k;
 		Array<double,1> rnd(rng.random());
 		k = 0;

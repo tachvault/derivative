@@ -49,16 +49,17 @@ namespace derivative
 
 		struct MsgSequence
 		{
-			MsgSequence(int extId)
+			MsgSequence(long extId)
 				:m_extReqID(extId), m_intReqID(0)
 			{}
+
 			/// the request ID inserted into the message
 			/// by the external system (By load balancer)
-			int m_extReqID;
+			long m_extReqID;
 
 			/// the request ID inserted into the message
 			/// by the MessageDispatcher of each app server
-			int m_intReqID;
+			long m_intReqID;
 		};
 
 		struct SystemResponse
