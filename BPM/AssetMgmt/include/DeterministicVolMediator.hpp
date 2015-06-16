@@ -49,7 +49,9 @@ namespace derivative
 			const DeterministicAssetVol& v1,
 			const DeterministicAssetVol& v2);  
 		
-		static double volproduct_ConstVol(double t,double dt,const Array<double,1>& lvl,const DeterministicAssetVol& v2);   
+		static double volproduct_ConstVol(double t,double dt,const Array<double,1>& lvl,const DeterministicAssetVol& v2);  
+
+		static double volproduct_ConstVol(double t, double dt, const Array<double, 1>& lvl, const DeterministicAssetVol& v2, Array<double, 1>& temp);
 		
 		static double volproduct_ExponentialVol(double t,double dt,
 			const Array<double,1>& lvl,

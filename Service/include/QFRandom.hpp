@@ -52,9 +52,7 @@ namespace derivative
 		RandomWrapper& operator=(const RandomWrapper&) volatile = delete;
 		
 		std::shared_ptr<random_number_generator_type>  rng;
-
-		mutable std::mutex m_lock;
-
+		
 	public:
 		inline RandomWrapper(const std::shared_ptr<random_number_generator_type>& xrng) : rng(xrng)
 		{ };
@@ -67,8 +65,12 @@ namespace derivative
 		/// Returns a draw from random_number_generator_type.
 		inline rntype random()
 		{
-			std::lock_guard<std::mutex> lock(m_lock);
 			return rng->random();
+		};
+
+		inline void random_reference(Array<double, 2>& cnt)
+		{
+			return rng->random_reference(cnt);
 		};
 	};
 
@@ -96,6 +98,7 @@ namespace derivative
 
 		/// Returns an array of draws from random_number_generator_type.
 		blitz::Array<rntype, 2>& random();
+		void random_reference(blitz::Array<rntype, 2>&cnt);
 		inline blitz::Array<rntype, 2>& previous_draw()
 		{
 			return contents;
@@ -113,6 +116,21 @@ namespace derivative
 		}
 		//cout << rng << ", " << ++a << endl;
 		return contents;
+	}
+
+	template <class random_number_generator_type, class rntype>
+	void RandomArray<random_number_generator_type, rntype>::random_reference(blitz::Array<rntype, 2>&cnt)
+	{
+		static int a = 0;
+		int i, j;
+		if ((contents.extent(firstDim) != cnt.extent(firstDim)) || (contents.extent(secondDim) != cnt.extent(secondDim)))
+		{
+			cnt.resize(contents.extent(firstDim), contents.extent(secondDim));
+		}
+		for (i = 0; i < cnt.extent(firstDim); i++)
+		{
+			for (j = 0; j < cnt.extent(secondDim); j++) cnt(i, j) = rng->random();
+		}
 	}
 
 	template <class random_number_generator_type, class rntype>

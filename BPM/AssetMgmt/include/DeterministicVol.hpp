@@ -72,6 +72,8 @@ namespace derivative
 
 		virtual Array<double,1> integral(double t,double dt) const = 0;
 
+		virtual void integral(double t, double dt, Array<double, 1>& result) const = 0;
+
 		/// Dimension of the volatility vector.
 		virtual int factors() const = 0;
 

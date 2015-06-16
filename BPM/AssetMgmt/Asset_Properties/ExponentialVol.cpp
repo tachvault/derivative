@@ -39,6 +39,11 @@ namespace derivative
 		return result;
 	}
 
+	void ExponentialVol::integral(double t, double dt, Array<double, 1>& result) const
+	{
+		result = (lvl / decay * exp(decay*t) * (exp(decay*dt) - 1.0));
+	}
+
 	int ExponentialVol::factors() const
 	{
 		return lvl.extent(firstDim);

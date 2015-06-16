@@ -21,6 +21,7 @@ Initial version: Copyright 2003, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012,
 #define PRICINGENGINE_DLL_API __declspec(dllimport)
 #endif
 
+
 /*
 Template for generic Monte Carlo simulation.
 
@@ -86,7 +87,7 @@ namespace derivative
 		std::function<rettype(argtype)>                      f;  ///< Functor mapping a draw of the random variable to the Monte Carlo payoff(s).
 		std::function<argtype(argtype)>             antithetic;  ///< Functor mapping a draw of the random variable to their antithetic values.
 		random_number_generator_type      random_number_generator;
-		
+
 		/// represents maximum simulations per one async call
 		std::size_t max_simulation;
 	};
@@ -139,6 +140,110 @@ namespace derivative
 
 	template <class argtype, class rettype, class random_number_generator_type>
 	double MCGeneric<argtype, rettype, random_number_generator_type>::simulate(MCGatherer<rettype>& mcgatherer,
+		unsigned long initial_number_of_simulations,
+		double required_accuracy,
+		double confidence_level)
+	{
+		unsigned long n = initial_number_of_simulations;
+		simulate(mcgatherer, initial_number_of_simulations);
+		double d = boost::math::quantile(N, confidence_level); // was N.inverse(confidence_level);
+		double current_accuracy = d * mcgatherer.max_stddev();
+		while (required_accuracy < current_accuracy)
+		{
+			double q = current_accuracy / required_accuracy;
+			q *= q;
+			unsigned long additional_simulations = n * q - n;
+			if (!additional_simulations) break;
+			simulate(mcgatherer, additional_simulations);
+			n += additional_simulations;
+			current_accuracy = d * mcgatherer.max_stddev();
+		}
+		return current_accuracy;
+	}
+
+	/// Partial specialized version of MCGeneric with argtype = Array<double, 2>&
+	template <class rettype, class random_number_generator_type>
+	class MCGeneric<Array<double, 2>&, rettype, random_number_generator_type>
+	{
+	public:
+		inline MCGeneric(std::function<rettype(Array<double, 2>&)> func, random_number_generator_type& rng, size_t max_sim = 100000)
+			: f(func), random_number_generator(rng), max_simulation(max_sim)
+		{ };
+		inline MCGeneric(std::function<rettype(Array<double, 2>&)> func, random_number_generator_type& rng, std::function<Array<double, 2>&(Array<double, 2>&)> antifunc, size_t max_sim = 100000)
+			: f(func), random_number_generator(rng), antithetic(antifunc), max_simulation(max_sim)
+		{ };
+		inline void set_antithetic(std::function<rettype(Array<double, 2>&)> antifunc)
+		{
+			antithetic = antifunc;
+		};
+
+		/// run within an async call. Reply on the return value optimization..
+		std::shared_ptr<MCGatherer<rettype> > simulate(size_t dim, unsigned long number_of_simulations);
+
+		void simulate(MCGatherer<rettype>& mcgatherer, unsigned long number_of_simulations);
+
+		double simulate(MCGatherer<rettype>& mcgatherer, unsigned long initial_number_of_simulations, double required_accuracy, double confidence_level = 0.95);
+
+	private:
+		boost::math::normal                                     N;
+		std::function<rettype(Array<double, 2>&)>                      f;  ///< Functor mapping a draw of the random variable to the Monte Carlo payoff(s).
+		std::function<Array<double, 2>&(Array<double, 2>&)>             antithetic;  ///< Functor mapping a draw of the random variable to their antithetic values.
+		random_number_generator_type      random_number_generator;
+
+		/// represents maximum simulations per one async call
+		std::size_t max_simulation;
+	};
+
+	template <class rettype, class random_number_generator_type>
+	std::shared_ptr<MCGatherer<rettype> > MCGeneric<Array<double, 2>&, rettype, random_number_generator_type>::simulate(size_t dim, unsigned long number_of_simulations)
+	{
+		std::shared_ptr<MCGatherer<rettype> > gatherer = std::make_shared<MCGatherer<rettype> >(dim);
+		random_number_generator_type random_number_generator_copy = random_number_generator;
+		Array<double, 2> cnt;
+		if (!antithetic)
+		{
+			for (long long i = 0; i < number_of_simulations; i++)
+			{
+				random_number_generator_copy.random_reference(cnt);
+				*gatherer += f(cnt);
+			}
+		}
+		else
+		{
+			for (long long i = 0; i < number_of_simulations; i++)
+			{
+				random_number_generator_copy.random_reference(cnt);
+				rettype res = f(cnt);
+				res = 0.5 * (res + f(antithetic(cnt)));
+				*gatherer += res;
+			}
+		}
+		return gatherer;
+	}
+
+	template <class rettype, class random_number_generator_type>
+	void MCGeneric<Array<double, 2>&, rettype, random_number_generator_type>::simulate(MCGatherer<rettype>& mcgatherer, unsigned long number_of_simulations)
+	{
+		std::vector<std::future<std::shared_ptr<MCGatherer<rettype> > > >futures;
+		/// get the number of asyn call required
+		int func_calls = std::ceil((double)(number_of_simulations) / max_simulation);
+		for (int i = 0; i < func_calls; ++i)
+		{
+			auto simulations = (number_of_simulations > max_simulation) ? max_simulation : number_of_simulations;
+			number_of_simulations -= simulations;
+			futures.push_back(std::async(static_cast<std::shared_ptr<MCGatherer<rettype> >(\
+				MCGeneric<Array<double, 2>&, rettype, random_number_generator_type>::*)(size_t, unsigned long)>\
+				(&MCGeneric<Array<double, 2>&, rettype, random_number_generator_type>::simulate), this, mcgatherer.dimension(), simulations));
+		}
+
+		for (auto &val : futures)
+		{
+			mcgatherer += *(val.get());
+		}
+	}
+
+	template <class rettype, class random_number_generator_type>
+	double MCGeneric<Array<double, 2>&, rettype, random_number_generator_type>::simulate(MCGatherer<rettype>& mcgatherer,
 		unsigned long initial_number_of_simulations,
 		double required_accuracy,
 		double confidence_level)

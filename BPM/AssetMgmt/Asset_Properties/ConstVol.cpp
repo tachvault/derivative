@@ -27,6 +27,11 @@ namespace derivative
 		return result;
 	}
 
+	void ConstVol::integral(double t, double dt, Array<double, 1>& result) const
+	{
+		result = dt*lvl;
+	}
+
 	std::shared_ptr<DeterministicAssetVol> ConstVol::component_vol(int i) const
 	{
 		Array<double,1> clvl(lvl.extent(firstDim));
