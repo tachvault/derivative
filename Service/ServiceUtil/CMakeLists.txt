@@ -40,6 +40,8 @@ SET(SERVICE_UTIL_SOURCES
 	${PROJECT_SOURCE_DIR}/Service/include/utilities.h
 	${PROJECT_SOURCE_DIR}/Service/include/SystemUtil.hpp
 	${PROJECT_SOURCE_DIR}/Service/include/RootFinder.h
+        ${PROJECT_SOURCE_DIR}/Service/include/PseudoRandom.hpp
+        ${PROJECT_SOURCE_DIR}/Service/include/PseudoRandomArray.hpp
 	CSV2Array.cpp
 	cubature.c
 	cumnorm1.cpp

@@ -14,7 +14,7 @@ include_directories("${PROJECT_SOURCE_DIR}/BPM/AssetMgmt/include")
 include_directories("${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include")
 
 SET(PRICINGENGINE_SOURCE
-        ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/Binomial.hpp
+    ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/Binomial.hpp
 	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/FiniteDifference.hpp
 	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/GaussMarkovWorld.hpp
 	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/GaussMarkovWorldAdapter.hpp
@@ -34,19 +34,19 @@ SET(PRICINGENGINE_SOURCE
 	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/TSInstruments.hpp
 	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/GeometricBrownianMotion.hpp	
 	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/GaussMarkovTermStructure.hpp
-        ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/VolatilitySurface.hpp
+    ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/VolatilitySurface.hpp
 	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/EquityVolatilitySurface.hpp
 	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/FuturesVolatilitySurface.hpp
 	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/CIRprocess.hpp
 	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/HestonAsset.hpp
-        ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/EquityAssetPricer.hpp
-        ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/FuturesAssetPricer.hpp
-        ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/ExchangeRateAssetPricer.hpp
-        ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/GARCH.hpp
-        ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/EquityGARCH.hpp
+    ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/EquityAssetPricer.hpp
+    ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/FuturesAssetPricer.hpp
+    ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/ExchangeRateAssetPricer.hpp
+    ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/GARCH.hpp
+    ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/EquityGARCH.hpp
 	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/ExchangeRateGARCH.hpp
-        ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/MCAssetPricer.hpp
-        Binomial.cpp
+    ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/MCAssetPricer.hpp
+    Binomial.cpp
 	FiniteDifference.cpp
 	GaussMarkovWorld.cpp
 	GaussMarkovWorldAdapter.cpp
