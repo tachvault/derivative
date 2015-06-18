@@ -120,7 +120,7 @@ namespace derivative
 		return entMgr.findObjects(entMgr.findAlias(nm));
 	}
 
-	bool EntityMgrUtil::refreshObject(std::shared_ptr<IObject>& obj, unsigned short source)
+	bool EntityMgrUtil::refreshObject(std::shared_ptr<IObject> obj, unsigned short source)
 	{
 		/// check if the object is already registered with EntityManager
 

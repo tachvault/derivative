@@ -91,7 +91,7 @@ namespace derivative
 
 		/// refresh and object that is in the memory.
 		/// if the object is not in the memory in return false.
-		static bool refreshObject(shared_ptr<IObject>& obj, unsigned short source);
+		static bool refreshObject(shared_ptr<IObject> obj, unsigned short source);
 
 		/// Unbind an Entity in memory (with he EntityMgrUtil).
 		/// If the unound object is referenced by other objects then

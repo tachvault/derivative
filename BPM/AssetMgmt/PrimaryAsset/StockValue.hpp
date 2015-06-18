@@ -46,79 +46,86 @@ namespace derivative
 		/// construct StockValue from input stream.		
 		virtual void convert( istringstream  &input);
 
-		const Name& GetName()
+		virtual const Name& GetName()
 		{
 			return m_name;
 		}
 
+		/// The time, data accessed from external system
+		virtual pt::ptime GetAccessTime() const
+		{
+			std::lock_guard<SpinLock> lock(m_lock);
+			return m_accessTime;
+		}
+
 		/// return last asking price
-		double GetAskingPrice() const
+		virtual double GetAskingPrice() const
 		{
 			return m_priceAsk;
 		}
 
 		/// return bid price 
-		double GetBidPrice() const
+		virtual double GetBidPrice() const
 		{
 			return m_priceBid;
 		}
 
 		/// return last openned price
-		double GetPriceOpen() const
+		virtual double GetPriceOpen() const
 		{
 			return m_priceOpen;
 		}
 
 		/// return last closed price
-		double GetPriceClose() const
+		virtual double GetPriceClose() const
 		{
 			return m_priceClose;
 		}
 
 		/// return current market price
-		double GetTradePrice() const
+		virtual double GetTradePrice() const
 		{
 			return m_priceTrade;
 		}
 
 		/// return price change
-		double GetPriceChange() const
+		virtual double GetPriceChange() const
 		{
 			return m_change;
 		}
 
 		/// return percentage of price change
-		double  GetChangePct() const
+		virtual double  GetChangePct() const
 		{
 			return m_changePct;
 		}
 
 		/// return the div yield
-		double GetDivYield() const
+		virtual double GetDivYield() const
 		{
 			return m_divYield;
 		}
 
 		/// return div share
-		double GetDivShare() const
+		virtual double GetDivShare() const
 		{
 			return m_divShare;
 		}
 
 		/// return earning per share
-		double  GetEPS() const
+		virtual double  GetEPS() const
 		{
 			return m_eps;
 		}
 
 		//// Return the price-to-earnings ratio for this stock.
-		double  GetPE() const
+		virtual double  GetPE() const
 		{
 			return m_pe;
 		}
 
 		//// Return the double of shares outstanding of this stock.
-		int GetShares() const
+		virtual int GetShares() const
 		{
 			return m_shares;
 		}
@@ -183,6 +190,12 @@ namespace derivative
 		{
 			std::lock_guard<SpinLock> lock(m_lock);
 			return m_stock;
+		}
+
+		virtual void SetAccessTime(const pt::ptime& t)
+		{
+			std::lock_guard<SpinLock> lock(m_lock);
+			m_accessTime = t;
 		}
 
 		virtual void SetAskingPrice(double ask)
@@ -294,6 +307,8 @@ namespace derivative
 		}
 				
 	private:
+
+		pt::ptime m_accessTime;
 
 		/// ask price of the stock. 
 		/// yahoo symbol 'a'

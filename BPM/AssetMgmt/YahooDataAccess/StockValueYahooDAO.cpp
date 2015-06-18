@@ -113,6 +113,7 @@ namespace derivative
 
 		/// now return m_stockVal
 		m_stockVal = dynamic_pointer_cast<IStockValue>(EntityMgrUtil::registerObject(m_stockVal->GetName(), m_stockVal));
+		m_stockVal->SetAccessTime(pt::second_clock::local_time());
 		return m_stockVal;
 	}
 
@@ -143,7 +144,7 @@ namespace derivative
 
 		builder.append_query(U("f=abopl1c1p2ydghjkd1t1c1p2exrj2v"));
 
-		http_client client(U("http://finance.yahoo.com/d/"));
+		http_client client(U("http://finance.yahoo.com"));
 		client.request(methods::GET, builder.to_string()).then([&](http_response response)
 		{
 			Concurrency::streams::container_buffer<std::string> instringbuffer;
@@ -155,7 +156,7 @@ namespace derivative
 			istringstream istr(line);
 			istr >> stockVal;
 		}).wait();
-
+		stockVal->SetAccessTime(pt::second_clock::local_time());
 		return true;
 	}
 

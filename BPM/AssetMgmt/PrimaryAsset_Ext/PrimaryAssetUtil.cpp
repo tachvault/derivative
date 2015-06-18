@@ -48,6 +48,9 @@ namespace derivative
 
 		std::shared_ptr<IStockValue> getStockValue(const std::string& symbol)
 		{
+			/// in milliseconds
+			static long long g_accessDur = 30000;
+
 			std::shared_ptr<IStock> stock;
 			std::shared_ptr<IStockValue> stockVal;
 
@@ -58,7 +61,15 @@ namespace derivative
 			/// find current stock value from YAHOO data source
 			Name stockValName = IStockValue::ConstructName(symbol);
 			stockVal = dynamic_pointer_cast<IStockValue>(EntityMgrUtil::findObject(stockValName, YAHOO));
+
+			pt::ptime now = pt::second_clock::local_time();
+			pt::time_duration diff = now - stockVal->GetAccessTime();
+			if (diff.total_milliseconds() > g_accessDur)
+			{
+				EntityMgrUtil::refreshObject(stockVal, YAHOO);
+			}
 			stockVal->SetStock(stock);
+
 			return stockVal;
 		}
 

@@ -40,6 +40,16 @@ namespace derivative
 			m_name = nm;
 		}
 
+		virtual pt::ptime GetAccessTime() const
+		{
+			throw std::logic_error("not supported");
+		}
+
+		virtual void SetAccessTime(const pt::ptime& t)
+		{
+			throw std::logic_error("not supported");
+		}
+
 		shared_ptr<IStock> GetStock() const
 		{
 			return m_asset;

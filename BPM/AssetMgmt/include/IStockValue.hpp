@@ -39,6 +39,9 @@ namespace derivative
 			symbol = boost::any_cast<std::string>(i->second);
 		}
 
+		/// The time, data accessed from external system
+		virtual pt::ptime GetAccessTime() const = 0;
+
 		/// return last asking price
 		/// yahoo symbol 'a'
 		virtual double GetAskingPrice() const = 0;
@@ -115,6 +118,8 @@ namespace derivative
 		/// Get the associated stock
 		virtual std::shared_ptr<IStock> GetStock() const = 0;
 
+		virtual void SetAccessTime(const pt::ptime& t) = 0;
+
 		virtual void SetAskingPrice(double ask) = 0;
 
 		virtual void SetBidPrice(double bid) = 0;
@@ -171,7 +176,7 @@ namespace derivative
 	{
 		stockVal->convert(input);
 		return input;
-	}
+	}	
 }
 /* namespace derivative */
 
