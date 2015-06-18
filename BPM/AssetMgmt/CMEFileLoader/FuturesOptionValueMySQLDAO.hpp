@@ -17,8 +17,7 @@ namespace derivative
 	{
 	public:
 
-		FuturesOptionValueMySQLDAO(const std::string& file)
-			:m_furFile(file)
+		FuturesOptionValueMySQLDAO()
 		{}
 		
 		/// connect to MySQL
@@ -32,13 +31,11 @@ namespace derivative
 
 	private:
 
-		void Insert(const std::string& line);
+		void Insert(std::string line);
 		
 		sql::Driver *m_driver;
 
 		std::unique_ptr<sql::Connection> m_con;
-
-		std::string m_furFile;
 	};
 }
 

@@ -6,4 +6,5 @@ set BLITZ_DIR=%cd%\common\vc11\blitz-0.10\
 set GTEST_ROOT=%cd%\common\vc11\gtest-1.7.0\
 set GMOCK_ROOT=%cd%\common\vc11\gmock-1.7.0\
 set CASABLANCA=C:\Users\murugan\Documents\GitHub\casablanca
+set POCO_DIR=C:\poco-1.6.0
 cmake -G "Visual Studio 12 2013" -DCMAKE_BUILD_TYPE=Debug

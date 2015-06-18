@@ -8,10 +8,28 @@ Copyright (c) 2013 - 2014, Nathan Muruganantha. All rights reserved.
 #include <fstream>
 #include <sstream>
 #include <future>
+#include <tchar.h>
+
+#include "Poco/Foundation.h"
+#include "Poco/Net/Net.h"
+#include "Poco/Net/FTPStreamFactory.h"
+#include "Poco/Net/DialogSocket.h"
+#include "Poco/Net/SocketAddress.h"
+#include "Poco/Net/NetException.h"
+#include "Poco/URI.h"
+#include "Poco/StreamCopier.h"
 
 #include "MySqlConnection.hpp"
 #include "FuturesValueMySQLDAO.hpp"
 #include "QFUtil.hpp"
+
+using Poco::Net::FTPStreamFactory;
+using Poco::Net::FTPPasswordProvider;
+using Poco::Net::DialogSocket;
+using Poco::Net::SocketAddress;
+using Poco::Net::FTPException;
+using Poco::URI;
+using Poco::StreamCopier;
 
 namespace derivative
 {
@@ -26,7 +44,7 @@ namespace derivative
 		}
 		catch (sql::SQLException &e)
 		{
-			LOG(ERROR) << " MySQL throws exception while connecting to the database " << endl;
+			LOG(ERROR) << " MySQL throws exception while connecting to the database " << std::endl;
 			LOG(ERROR) << "# ERR: " << e.what();
 			throw e;
 		}
@@ -34,20 +52,31 @@ namespace derivative
 
 	void FuturesValueMySQLDAO::Upload()
 	{
-		vector<string> vec;
-
-		std::ifstream infile(m_furFile.c_str());
-		string line;
-		/// skip the first header line
-		if (infile.is_open()) getline(infile, line);
-		if (infile.is_open())
+		URI uri;
+		// ftp://ftp.cmegroup.com/pub/settle/comex_future.csv
+		uri.setScheme("ftp");
+		uri.setHost("ftp.cmegroup.com");
+		//uri.setPort(20);
+		uri.setPath("/pub/settle/comex_future.csv;type=a");
+		FTPStreamFactory sf;
+		std::unique_ptr<std::istream> pStr(sf.open(uri));
+		char line[256];
+		pStr->getline(line, 256);
+		while (pStr->getline(line, 256))
 		{
-			while (getline(infile, line))
-			{
-				Insert(line);
-			}
+			Insert(line);
 		}
-		infile.close();
+
+		// ftp://ftp.cmegroup.com/pub/settle/nymex_future.csv
+		uri.setScheme("ftp");
+		uri.setHost("ftp.cmegroup.com");
+		uri.setPath("/pub/settle/nymex_future.csv;type=a");
+		pStr.reset(sf.open(uri));
+		pStr->getline(line, 256);
+		while (pStr->getline(line, 256))
+		{
+			Insert(line);
+		}
 	};
 
 	void FuturesValueMySQLDAO::Delete()
@@ -58,7 +87,7 @@ namespace derivative
 		delete pstmt;
 	}
 
-	void FuturesValueMySQLDAO::Insert(const std::string& line)
+	void FuturesValueMySQLDAO::Insert(std::string line)
 	{
 		/// input: PRODUCT SYMBOL(0),CONTRACT MONTH(1),CONTRACT YEAR(2),CONTRACT DAY(3),CONTRACT,(4)PRODUCT DESCRIPTION(5),
 		/// OPEN(6),HIGH(7),HIGH AB INDICATOR(8),LOW(9),LOW AB INDICATOR(10),LAST(11),LAST AB INDICATOR(12),SETTLE(13),PT CHG(14),
@@ -67,6 +96,8 @@ namespace derivative
 		/// output: sym_tdate_id(0), contract_date(2,1), open(6), high(7), low(9), last(11), settle(13), 
 		/// volume(15), open_int(18), tradedate(19)
 
+		/// remove \r
+		line.erase(std::remove(line.begin(), line.end(), '\r'), line.end());
 		std::vector<std::string> vec;
 		splitLine(line, vec);
 

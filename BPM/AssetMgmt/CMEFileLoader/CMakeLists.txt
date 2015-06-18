@@ -4,6 +4,10 @@ include_directories(${Boost_INCLUDE_DIRS})
 # add Blitz includes
 include_directories(${BLITZ_ROOT})
 
+#POCO includes
+include_directories("${POCO_ROOT}/Foundation/include")
+include_directories("${POCO_ROOT}/Net/include")
+
 # add glog/gflag/gTest directories
 include_directories("${GLOG_ROOT}/src/windows")
 include_directories("${GFLAG_ROOT}/src/windows")
@@ -24,9 +28,9 @@ include_directories("${PROJECT_SOURCE_DIR}/AssetPricing/include")
 
 SET(CMEFILELOADER_SOURCES
 	CMEFileLoader.cpp
-        FuturesValueMySQLDAO.hpp
+    FuturesValueMySQLDAO.hpp
 	FuturesValueMySQLDAO.cpp
-        FuturesOptionValueMySQLDAO.hpp
+    FuturesOptionValueMySQLDAO.hpp
 	FuturesOptionValueMySQLDAO.cpp
 )
 
@@ -44,6 +48,8 @@ add_executable(CMEFILELOADER ${CMEFILELOADER_SOURCES})
 target_link_libraries (CMEFILELOADER ${GLOG_LIBRARY})
 target_link_libraries (CMEFILELOADER ${GFLAG_LIBRARY})
 target_link_libraries (CMEFILELOADER ${RESTSDK_LIBRARY})
+target_link_libraries (CMEFILELOADER ${POCOFOUNDATION_LIBRARY})
+target_link_libraries (CMEFILELOADER ${POCONET_LIBRARY})
 target_link_libraries (CMEFILELOADER ENTITYMGMT)
 target_link_libraries (CMEFILELOADER SERVICEUTIL)
 target_link_libraries (CMEFILELOADER FINUTILITY)
