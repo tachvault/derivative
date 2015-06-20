@@ -105,8 +105,6 @@ namespace derivative
 
 	private:
 
-		static std::atomic<int> extMsgId;
-
 		AverageOptRequest m_req;
 
 		AverageOptResponse m_res;

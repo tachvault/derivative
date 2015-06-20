@@ -16,6 +16,8 @@ Copyright (C) Nathan Muruganantha 2013 - 2014
 #include "FuturesOptionSpreadMessage.hpp"
 #include "ExchangeRateVanillaOptMessage.hpp"
 #include "ExchangeRateOptionSpreadMessage.hpp"
+#include "FuturesBarrierOptMessage.hpp"
+#include "FuturesAverageOptMessage.hpp"
 #include "ESBManager.hpp"
 #include "QFUtil.hpp"
 
@@ -430,163 +432,154 @@ namespace derivative
 		{
 			if (!paths[1].empty() && paths[1].compare(U("Vanilla")) == 0)
 			{
-				/// now add request parameters
-				FuturesVanillaOptMessage::Request req;
-				if (query_strings.find(U("_option")) != query_strings.end())
-				{
-					if (query_strings.at(U("_option")).compare(U("call")) == 0)
-					{
-						req.option = FuturesVanillaOptMessage::CALL;
-						return HandleFuturesVanillaOption(FuturesVanillaOptMessage::CALL, paths, query_strings);
-					}
-					else if (query_strings.at(U("_option")).compare(U("put")) == 0)
-					{
-						req.option = FuturesVanillaOptMessage::PUT;
-						return HandleFuturesVanillaOption(FuturesVanillaOptMessage::PUT, paths, query_strings);
-					}
-					else
-					{
-						throw std::invalid_argument("Only plain vanilla options are supported");
-					}
-				}
-				else
-				{
-					throw std::invalid_argument("No option parameter (call/put)");
-				}
+				return HandleFuturesVanillaOption(paths, query_strings);
 			}
+			else if (!paths[1].empty() && paths[1].compare(U("Barrier")) == 0)
+			{
+				return HandleFuturesBarrierOption(paths, query_strings);
+			}
+			else if (!paths[1].empty() && paths[1].compare(U("Average")) == 0)
+			{
+				return HandleFuturesAverageOption(paths, query_strings);
+			}			
 			else
 			{
-				throw std::logic_error("Only Plain Vanilla options are supported");
+				throw std::invalid_argument("Invalid option type");
 			}
 		}
 
-		web::json::value HandleFuturesVanillaOption(FuturesVanillaOptMessage::OptionTypeEnum opt, const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings)
+		web::json::value HandleFuturesVanillaOption(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings)
 		{
 			/// now add request parameters
 			std::shared_ptr<FuturesVanillaOptMessage> msg = std::make_shared<FuturesVanillaOptMessage>();
 			FuturesVanillaOptMessage::FuturesRequest req;
-			req.option = opt;
 			try
 			{
-				if (query_strings.find(U("_style")) != query_strings.end())
+				msg->ParseSymbol(req, query_strings);
+				msg->ParseMaturity(req, query_strings);
+				msg->ParseDeliveryDate(req, query_strings);
+				msg->ParseStrike(req, query_strings);
+				msg->ParseVol(req, query_strings);
+				req.option = msg->ParseOptionType(query_strings);
+				if (req.option == VanillaOptMessage::TYPE_UNKNOWN)
 				{
-					if (query_strings.at(U("_style")).compare(U("european")) == 0)
-					{
-						req.style = FuturesVanillaOptMessage::EUROPEAN;
-					}
-					else if (query_strings.at(U("_style")).compare(U("american")) == 0)
-					{
-						req.style = FuturesVanillaOptMessage::AMERICAN;
-					}
-					else
-					{
-						throw std::invalid_argument("Invalid Style parameter");
-					}
-				}
-				else
+					req.option = VanillaOptMessage::CALL;
+				};
+
+				req.style = msg->ParseOptionStyle(query_strings);
+				if (req.option == VanillaOptMessage::STYLE_UNKNOWN)
 				{
-					req.style = FuturesVanillaOptMessage::AMERICAN;
+					req.style == VanillaOptMessage::EUROPEAN;
 				}
 
-				if (query_strings.find(U("_method")) != query_strings.end())
+				req.method = msg->ParsePricingMethod(query_strings);
+				if (req.method == VanillaOptMessage::METHOD_UNKNOWN)
 				{
-					if (query_strings.at(U("_method")).compare(U("closed")) == 0)
-					{
-						if (req.style == FuturesVanillaOptMessage::EUROPEAN)
-						{
-							req.method = FuturesVanillaOptMessage::CLOSED;
-						}
-						else
-						{
-							throw std::invalid_argument("American open cannot be evaluated with closed form");
-						}
-					}
-					else if (query_strings.at(U("_method")).compare(U("lattice")) == 0)
-					{
-						req.method = FuturesVanillaOptMessage::LATTICE;
-					}
-					else
-					{
-						throw std::invalid_argument("Invalid pricing method parameter");
-					}
+					req.method = VanillaOptMessage::LATTICE;
 				}
-				else
-				{
-					req.method = FuturesVanillaOptMessage::LATTICE;
-				}
-
-				if (query_strings.find(U("_ratetype")) != query_strings.end())
-				{
-					if (query_strings.at(U("_ratetype")).compare(U("Yield")) == 0)
-					{
-						req.rateType = FuturesVanillaOptMessage::YIELD;
-					}
-					else if (query_strings.at(U("_ratetype")).compare(U("LIBOR")) == 0)
-					{
-						req.rateType = FuturesVanillaOptMessage::LIBOR;
-					}
-					else
-					{
-						throw std::invalid_argument("Invalid rate type parameter");
-					}
-				}
-				else
-				{
-					req.rateType = FuturesVanillaOptMessage::YIELD;
-				}
-
-				if (query_strings.find(U("_symbol")) != query_strings.end())
-				{
-					req.underlying = conversions::to_utf8string(query_strings.at(U("_symbol")));
-				}
-				else
-				{
-					throw std::invalid_argument("No underlying symbol");
-				}
-
-				if (query_strings.find(U("_maturity")) != query_strings.end())
-				{
-					auto mat = conversions::to_utf8string(query_strings.at(U("_maturity")));
-					req.maturity = dd::from_string(mat);
-				}
-				else
-				{
-					throw std::invalid_argument("No maturity date");
-				}
-				if (query_strings.find(U("_delivery")) != query_strings.end())
-				{
-					auto ddate = conversions::to_utf8string(query_strings.at(U("_delivery")));
-					req.deliveryDate = dd::from_string(ddate);
-				}
-				else
-				{
-					throw std::invalid_argument("No delivery date");
-				}
-
-				if (query_strings.find(U("_strike")) != query_strings.end())
-				{
-					auto strike = conversions::to_utf8string(query_strings.at(U("_strike")));
-					req.strike = stod(strike);
-				}
-				else
-				{
-					throw std::invalid_argument("No strike value");
-				}
-
-				if (query_strings.find(U("_vol")) != query_strings.end())
-				{
-					auto vol = conversions::to_utf8string(query_strings.at(U("_vol")));
-					req.vol = stod(vol);
-				}
+				req.rateType = msg->ParseRateType(query_strings);
+				req.volType = VanillaOptMessage::IV;
 			}
 			catch (std::exception& e)
 			{
-				return SendError<FuturesVanillaOptMessage, FuturesVanillaOptMessage::FuturesRequest>(msg, req, e.what());
+				return SendError<FuturesVanillaOptMessage, VanillaOptMessage::Request>(msg, req, e.what());
 			}
 
 			return ProcessMsg<FuturesVanillaOptMessage, FuturesVanillaOptMessage::FuturesRequest>(msg, req);
 		}
 
+		web::json::value HandleFuturesBarrierOption(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings)
+		{
+			/// now add request parameters
+			std::shared_ptr<FuturesBarrierOptMessage> msg = std::make_shared<FuturesBarrierOptMessage>();
+			FuturesBarrierOptMessage::BarrierRequest req;
+			try
+			{
+				msg->ParseSymbol(req, query_strings);
+				msg->ParseMaturity(req, query_strings);
+				msg->ParseDeliveryDate(req, query_strings);
+				msg->ParseStrike(req, query_strings);
+				msg->ParseVol(req, query_strings);
+
+				if (query_strings.find(U("_barrier")) != query_strings.end())
+				{
+					auto barrier = conversions::to_utf8string(query_strings.at(U("_barrier")));
+					req.barrier = stod(barrier);
+				}
+				else
+				{
+					throw std::invalid_argument("No barrier value");
+				}
+				req.option = msg->ParseOptionType(query_strings);
+				if (req.option == VanillaOptMessage::TYPE_UNKNOWN)
+				{
+					req.option = VanillaOptMessage::CALL;
+				};
+				req.style = msg->ParseOptionStyle(query_strings);
+				if (req.option == VanillaOptMessage::STYLE_UNKNOWN)
+				{
+					req.style == VanillaOptMessage::EUROPEAN;
+				}
+
+				req.barrierType = msg->ParseBarrierType(query_strings);
+				req.method = VanillaOptMessage::MONTE_CARLO;
+				req.rateType = msg->ParseRateType(query_strings);
+				req.volType = VanillaOptMessage::IV;
+			}
+			catch (std::exception& e)
+			{
+				return SendError<FuturesBarrierOptMessage, FuturesBarrierOptMessage::BarrierRequest>(msg, req, e.what());
+			}
+
+			return ProcessMsg<FuturesBarrierOptMessage, FuturesBarrierOptMessage::BarrierRequest>(msg, req);
+		}
+
+		web::json::value HandleFuturesAverageOption(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings)
+		{
+			/// now add request parameters
+			std::shared_ptr<FuturesAverageOptMessage> msg = std::make_shared<FuturesAverageOptMessage>();
+			FuturesAverageOptMessage::AverageOptRequest req;
+			try
+			{
+				msg->ParseSymbol(req, query_strings);
+				req.averageType = msg->ParseAverageType(query_strings);
+				msg->ParseMaturity(req, query_strings);
+				msg->ParseDeliveryDate(req, query_strings);
+				req.option = msg->ParseOptionType(query_strings);
+				if (req.option == VanillaOptMessage::TYPE_UNKNOWN)
+				{
+					req.option = VanillaOptMessage::CALL;
+				};
+				if (req.averageType == FuturesAverageOptMessage::FIXED_STRIKE)
+				{
+					msg->ParseStrike(req, query_strings);
+				}
+				msg->ParseVol(req, query_strings);
+				req.style = msg->ParseOptionStyle(query_strings);
+				if (req.style == VanillaOptMessage::STYLE_UNKNOWN)
+				{
+					req.style == VanillaOptMessage::EUROPEAN;
+				}
+				req.method = msg->ParsePricingMethod(query_strings);
+				if (req.method == VanillaOptMessage::METHOD_UNKNOWN)
+				{
+					req.method = VanillaOptMessage::MONTE_CARLO;
+				}
+				else if (req.method != VanillaOptMessage::MONTE_CARLO)
+				{
+					throw std::invalid_argument("Only monte carlo valuation is supported");
+				}
+				req.rateType = msg->ParseRateType(query_strings);
+				req.volType = VanillaOptMessage::IV;
+			}
+			catch (std::exception& e)
+			{
+				return SendError<FuturesAverageOptMessage, FuturesAverageOptMessage::AverageOptRequest>(msg, req, e.what());
+			}
+
+			return ProcessMsg<FuturesAverageOptMessage, FuturesAverageOptMessage::AverageOptRequest>(msg, req);
+		}
+	
 		web::json::value HandleFXOption(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings)
 		{
 			if (!paths[1].empty() && paths[1].compare(U("Vanilla")) == 0)

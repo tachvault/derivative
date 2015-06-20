@@ -34,13 +34,16 @@ Copyright (C) Nathan Muruganantha 2013 - 2014
 #include "QFRandom.hpp"
 
 #include "ExchangeRateAssetPricer.hpp"
+#include "FuturesAssetPricer.hpp"
+#include "MCAssetPricer.hpp"
+
 
 namespace derivative
 {
-	namespace ExchangeRateVanillaOptionPricer
+	namespace FuturesVanillaOptionPricer
 	{
 		double ValueAmericanWithBinomial(const std::shared_ptr<BlackScholesAssetAdapter>& futures, double rate, \
-			dd::date maturity, double strike, int optType, int N)
+			dd::date maturity, double strike, VanillaOptionType optType, int N)
 		{
 			try
 			{
@@ -72,7 +75,7 @@ namespace derivative
 		};
 
 		double ValueEuropeanWithBinomial(const std::shared_ptr<BlackScholesAssetAdapter>& futures, double rate, \
-			dd::date maturity, double strike, int optType, int N)
+			dd::date maturity, double strike, VanillaOptionType optType, int N)
 		{
 			try
 			{
@@ -97,5 +100,166 @@ namespace derivative
 				throw e;
 			}
 		};
+
+		double ValueEuropeanWithMC(const std::shared_ptr<BlackScholesAssetAdapter>& futures, \
+			std::shared_ptr<TermStructure> term, dd::date maturity, double strike, VanillaOptionType optType, int sim, \
+			size_t N, double ci)
+		{
+			auto dayCount = (maturity - dd::day_clock::local_day()).days();
+			double mat = (double(dayCount)) / 365;
+			// instantiate MCPayoff object
+			MCEuropeanVanilla option(0, mat, 0, strike, optType);
+			std::vector<std::shared_ptr<BlackScholesAssetAdapter> > assets;
+			assets.push_back(futures);
+			//return AntitheticMC(assets, option, term, mat, -1, sim, N, ci, 100000);
+			return QRMC(assets, option, term, mat, -1, sim, N, ci, 100000);
+		}
+
+		double ValueAmericanWithMC(const std::shared_ptr<BlackScholesAssetAdapter>& futures, \
+			std::shared_ptr<TermStructure> term, dd::date maturity, double strike, VanillaOptionType optType, \
+			size_t sim, size_t N, size_t train, int degree, double ci)
+		{
+			try
+			{
+				auto dayCount = (maturity - dd::day_clock::local_day()).days();
+				double mat = (double(dayCount)) / 365;
+				N = (dayCount > N) ? N : dayCount;
+				std::vector<std::shared_ptr<BlackScholesAssetAdapter> > underlying;
+				underlying.push_back(futures);
+				TermStructure& ts = *term;
+
+				int numeraire_index = -1;
+				Array<double, 1> T(N + 1);
+				firstIndex idx;
+				double dt = mat / N;
+				T = idx*dt;
+				GeometricBrownianMotion gbm(underlying);
+				gbm.set_timeline(T);
+				exotics::StandardOption Mput(futures, T(0), mat, strike, ts, -1);
+
+				/// instantiate random number generator
+				std::shared_ptr<ranlib::NormalUnit<double> > normalRNG = std::make_shared<ranlib::NormalUnit<double> >();
+				std::shared_ptr<RandomWrapper<ranlib::NormalUnit<double>, double> > randomWrapper = \
+					std::make_shared<RandomWrapper<ranlib::NormalUnit<double>, double> >(normalRNG);
+				RandomArray<RandomWrapper<ranlib::NormalUnit<double>, double>, double> random_container(randomWrapper, gbm.factors(), gbm.number_of_steps());
+				MCTrainingPaths<GeometricBrownianMotion, RandomArray<RandomWrapper<ranlib::NormalUnit<double>, double>, double> >
+					training_paths(gbm, T, train, random_container, ts, numeraire_index);
+				Payoff put(strike, -1);
+				std::function<double(double)> f;
+				f = std::bind(&Payoff::operator(), &put, std::placeholders::_1);
+				std::function<double(double, const Array<double, 1>&)> payoff = std::bind(LSArrayAdapter, std::placeholders::_1, std::placeholders::_2, f, 0);
+				std::vector<std::function<double(double, const Array<double, 1>&)> > basisfunctions;
+				Array<int, 1> p(1);
+				for (int i = 0; i <= degree; i++)
+				{
+					p(0) = i;
+					add_polynomial_basis_function(basisfunctions, p);
+				}
+
+				std::function<double(double, double)> put_option;
+				put_option = std::bind((static_cast<double (exotics::StandardOption::*)(double, double)>(&exotics::StandardOption::price)), &Mput, std::placeholders::_1, std::placeholders::_2);
+				std::function<double(double, const Array<double, 1>&)> put_option_basis_function = std::bind(LSArrayAdapterT, std::placeholders::_1, std::placeholders::_2, put_option, 0);
+				basisfunctions.push_back(put_option_basis_function);
+				LongstaffSchwartzExerciseBoundary boundary(T, training_paths.state_variables(), training_paths.numeraires(), payoff, basisfunctions);
+				LSExerciseStrategy<LongstaffSchwartzExerciseBoundary> exercise_strategy(boundary);
+				MCMapping<GeometricBrownianMotion, Array<double, 2> > mc_mapping(exercise_strategy, gbm, ts, numeraire_index);
+				std::function<double(Array<double, 2>)> func = std::bind(&MCMapping<GeometricBrownianMotion, Array<double, 2> >::mapping, &mc_mapping, std::placeholders::_1);
+				MCGeneric<Array<double, 2>, double, RandomArray<RandomWrapper<ranlib::NormalUnit<double>, double>, double> > mc(func, random_container, 5000);
+				MCGatherer<double> mcgatherer;
+				boost::math::normal normal;
+				double d = boost::math::quantile(normal, ci);
+				mc.simulate(mcgatherer, sim);
+				return mcgatherer.mean();
+			} // end of try block
+			catch (std::logic_error xcpt)
+			{
+				std::cerr << xcpt.what() << endl;
+			}
+			catch (std::runtime_error xcpt)
+			{
+				std::cerr << xcpt.what() << endl;
+			}
+			catch (...)
+			{
+				std::cerr << "Other exception caught" << endl;
+			}
+		}
+	}
+
+	namespace FuturesBarrierOptionPricer
+	{
+		double ValueWithMC(const std::shared_ptr<BlackScholesAssetAdapter>& futures, std::shared_ptr<TermStructure> term, \
+			int btype, dd::date maturity, double strike, double barrier, int optType, size_t sim, size_t N, double ci)
+		{
+
+			BarrierOptionTypeEnum barrierType = static_cast<BarrierOptionTypeEnum>(btype);
+			auto dayCount = (maturity - dd::day_clock::local_day()).days();
+			double mat = (double(dayCount)) / 365;
+			N = (dayCount > N) ? N : dayCount;
+			TermStructure& ts = *term;
+
+			// set up timeline
+			Array<double, 1> T(N + 1);
+			firstIndex idx;
+			double dt = mat / N;
+			T = idx*dt;
+
+			std::shared_ptr<MCPayoff> barrierOption;
+			if (barrierType == KDI)
+			{
+				barrierOption = std::make_shared<BarrierIn>(T, 0, BarrierIn::DOWN, strike, barrier, optType);
+
+			}
+			else if (barrierType == KUI)
+			{
+				barrierOption = std::make_shared<BarrierIn>(T, 0, BarrierIn::UP, strike, barrier, optType);
+
+			}
+			else if (barrierType == KDO)
+			{
+				barrierOption = std::make_shared<BarrierOut>(T, 0, BarrierOut::DOWN, strike, barrier, optType);
+
+			}
+			else if (barrierType == KUO)
+			{
+				barrierOption = std::make_shared<BarrierOut>(T, 0, BarrierOut::UP, strike, barrier, optType);
+			}
+			std::vector<std::shared_ptr<BlackScholesAssetAdapter> > assets;
+			assets.push_back(futures);
+			return AntitheticMC(assets, *barrierOption, term, mat, -1, sim, N, ci, 50000);
+		}
+	}
+
+	namespace FuturesAverageOptionPricer
+	{
+		double ValueWithMC(const std::shared_ptr<BlackScholesAssetAdapter>& futures, std::shared_ptr<TermStructure> term, \
+			int atype, dd::date maturity, double strike, int optType, size_t sim, size_t N, double ci)
+		{
+			AverageOptionTypeEnum averageType = static_cast<AverageOptionTypeEnum>(atype);
+			auto dayCount = (maturity - dd::day_clock::local_day()).days();
+			double mat = (double(dayCount)) / 365;
+			N = (dayCount > N) ? N : dayCount;
+			// set up timeline
+			Array<double, 1> T(N + 1);
+			firstIndex idx;
+			double dt = mat / N;
+			T = idx*dt;
+			std::shared_ptr<MCPayoff> avgpayoff;
+			if (averageType == FIXED_STRIKE)
+			{
+				avgpayoff = std::make_shared<MCDiscreteArithmeticMeanFixedStrike>(0, T, strike, 1, futures->GetAssetValue()->GetTradePrice(), optType);
+			}
+			else if (averageType == FLOATING_STRIKE)
+			{
+				avgpayoff = std::make_shared<MCDiscreteArithmeticMeanFloatingStrike>(0, T, 1, futures->GetAssetValue()->GetTradePrice(), optType);
+			}
+			else
+			{
+				throw std::logic_error("Invalid option type");
+			}
+			std::vector<std::shared_ptr<BlackScholesAssetAdapter> > assets;
+			assets.push_back(futures);
+			return AntitheticMC(assets, *avgpayoff, term, mat, -1, sim, N, ci, 50000);
+		}
 	}
 }

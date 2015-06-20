@@ -52,8 +52,6 @@ namespace derivative
 		{
 			FuturesRequest()
 			{}
-
-			dd::date deliveryDate;
 		};
 
 		virtual ~FuturesVanillaOptMessage()
@@ -80,11 +78,11 @@ namespace derivative
 		{
 			m_req = req;
 		}
+		
+		inline virtual void ParseDeliveryDate(FuturesVanillaOptMessage::FuturesRequest &req, const std::map<string_t, string_t>& query_strings);
 
 	private:
-		
-		static std::atomic<int> extMsgId;
-
+	
 		FuturesRequest m_req;
 	};
 }

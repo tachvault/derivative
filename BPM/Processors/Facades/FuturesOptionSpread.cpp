@@ -172,7 +172,7 @@ namespace derivative
 	{
 		auto t = double((req.maturity - dd::day_clock::local_day()).days()) / 365;
 		auto rate = PrimaryUtil::getDFToCompoundRate((*m_term)(t), t);
-		auto optType = (req.option == FuturesOptionSpreadMessage::CALL) ? 1 : -1;
+		int optType = (req.option == FuturesOptionSpreadMessage::CALL) ? 1 : -1;
 
 		if (m_vol == nullptr)
 		{
@@ -209,11 +209,13 @@ namespace derivative
 		{
 			if (style == FuturesOptionSpreadMessage::EUROPEAN)
 			{
-				res.optPrice = FuturesVanillaOptionPricer::ValueEuropeanWithBinomial(m_futures, rate, req.maturity, req.strike, optType, 100);
+				res.optPrice = FuturesVanillaOptionPricer::ValueEuropeanWithBinomial(m_futures, rate, req.maturity, \
+					req.strike, static_cast<FuturesVanillaOptionPricer::VanillaOptionType>(optType));
 			}
 			else
 			{
-				res.optPrice = FuturesVanillaOptionPricer::ValueAmericanWithBinomial(m_futures, rate, req.maturity, req.strike, optType, 100);
+				res.optPrice = FuturesVanillaOptionPricer::ValueAmericanWithBinomial(m_futures, rate, req.maturity, \
+					req.strike, static_cast<FuturesVanillaOptionPricer::VanillaOptionType>(optType));
 			}
 		}
 

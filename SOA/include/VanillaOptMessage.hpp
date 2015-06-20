@@ -106,6 +106,9 @@ namespace derivative
 
 			dd::date maturity;
 
+			/// This is specific to Futures.
+			dd::date deliveryDate;
+
 			double strike;
 
 			double vol;

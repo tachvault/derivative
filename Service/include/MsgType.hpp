@@ -14,3 +14,5 @@ Copyright (c) 201, Nathan Muruganantha. All rights reserved.
 #define EQUITY_MARGRABE_OPTION 9
 #define EQUITY_LOOKBACK_OPTION 10
 #define EQUITY_CHOOSER_OPTION 11
+#define FUTURES_BARRIER_OPTION 12
+#define FUTURES_AVERAGE_OPTION 13
