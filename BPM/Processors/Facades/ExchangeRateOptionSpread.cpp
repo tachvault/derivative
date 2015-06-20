@@ -223,11 +223,13 @@ namespace derivative
 		{
 			if (style == ExchangeRateOptionSpreadMessage::EUROPEAN)
 			{
-				res.optPrice = ExchangeRateVanillaOptionPricer::ValueEuropeanWithBinomial(m_exchangeRate, rateLocal, req.maturity, req.strike, optType, 100);
+				res.optPrice = ExchangeRateVanillaOptionPricer::ValueEuropeanWithBinomial(m_exchangeRate, rateLocal, req.maturity, \
+					req.strike, static_cast<ExchangeRateVanillaOptionPricer::VanillaOptionType>(optType));
 			}
 			else
 			{
-				res.optPrice = ExchangeRateVanillaOptionPricer::ValueAmericanWithBinomial(m_exchangeRate, rateLocal, req.maturity, req.strike, optType, 100);
+				res.optPrice = ExchangeRateVanillaOptionPricer::ValueAmericanWithBinomial(m_exchangeRate, rateLocal, req.maturity, \
+					req.strike, static_cast<ExchangeRateVanillaOptionPricer::VanillaOptionType>(optType));
 			}
 		}
 

@@ -92,10 +92,6 @@ namespace derivative
 
 		/// get the pricing method and run 
 		EquityAverageOptMessage::AverageOptResponse res;
-		if (optMsg->GetRequest().averageType == EquityAverageOptMessage::FIXED_STRIKE)
-		{
-			res.optPrice = m_stock->option(t, m_strike, m_termRate, m_optType);
-		}
 		if (optMsg->GetRequest().method == EquityAverageOptMessage::MONTE_CARLO)
 		{
 			res.averageOptPrice = AverageOptionPricer::ValueWithMC(m_stock, \

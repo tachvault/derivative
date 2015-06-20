@@ -35,6 +35,19 @@ namespace derivative
 		}
 	}
 
+	void VanillaOptMessage::ParseDeliveryDate(VanillaOptMessage::Request &req, const std::map<string_t, string_t>& query_strings)
+	{
+		if (query_strings.find(U("_delivery")) != query_strings.end())
+		{
+			auto delivery = conversions::to_utf8string(query_strings.at(U("_delivery")));
+			req.deliveryDate = dd::from_string(delivery);
+		}
+		else
+		{
+			throw std::invalid_argument("No delivery date");
+		}
+	}
+
 	void VanillaOptMessage::ParseStrike(VanillaOptMessage::Request &req, \
 		const std::map<string_t, string_t>& query_strings)
 	{
@@ -171,6 +184,32 @@ namespace derivative
 			{
 				throw std::invalid_argument("Invalid Volatility type parameter");
 			}
+		}
+	}
+
+	void VanillaOptMessage::ParseForeign(VanillaOptMessage::Request &req, \
+		const std::map<string_t, string_t>& query_strings)
+	{
+		if (query_strings.find(U("_foreign")) != query_strings.end())
+		{
+			req.foreign = conversions::to_utf8string(query_strings.at(U("_foreign")));
+		}
+		else
+		{
+			throw std::invalid_argument("No foreign currency");
+		}
+	}
+
+	void VanillaOptMessage::ParseDomestic(VanillaOptMessage::Request &req, \
+		const std::map<string_t, string_t>& query_strings)
+	{
+		if (query_strings.find(U("_domestic")) != query_strings.end())
+		{
+			req.domestic = conversions::to_utf8string(query_strings.at(U("_domestic")));
+		}
+		else
+		{
+			throw std::invalid_argument("No domestic currency");
 		}
 	}
 }

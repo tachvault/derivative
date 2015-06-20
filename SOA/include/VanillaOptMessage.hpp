@@ -103,6 +103,12 @@ namespace derivative
 			VolatilityTypeEnum volType;
 
 			std::string underlying;
+			
+			/// specific to FX options
+			std::string domestic;
+
+			/// specific to FX options
+			std::string foreign;
 
 			dd::date maturity;
 
@@ -213,6 +219,12 @@ namespace derivative
 		inline virtual VanillaOptMessage::RateTypeEnum  ParseRateType(const std::map<string_t, string_t>& query_strings);
 
 		inline virtual VanillaOptMessage::VolatilityTypeEnum  ParseVolType(const std::map<string_t, string_t>& query_strings);
+		
+		inline void ParseDeliveryDate(VanillaOptMessage::Request &req, const std::map<string_t, string_t>& query_strings);
+
+		inline virtual void ParseForeign(VanillaOptMessage::Request &req, const std::map<string_t, string_t>& query_strings);
+
+		inline virtual void ParseDomestic(VanillaOptMessage::Request &req, const std::map<string_t, string_t>& query_strings);
 
 	protected:
 

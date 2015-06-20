@@ -104,9 +104,7 @@ namespace derivative
 		}
 		
 		virtual FuturesBarrierOptMessage::BarrierOptionTypeEnum  ParseBarrierType(const std::map<string_t, string_t>& query_strings);
-		
-		inline void ParseDeliveryDate(FuturesBarrierOptMessage::BarrierRequest &req, const std::map<string_t, string_t>& query_strings);
-
+	
 	private:
 		
 		BarrierRequest m_req;

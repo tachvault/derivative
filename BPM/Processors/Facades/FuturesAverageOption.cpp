@@ -95,10 +95,6 @@ namespace derivative
 
 		/// get the pricing method and run 
 		FuturesAverageOptMessage::AverageOptResponse res;
-		if (optMsg->GetRequest().averageType == FuturesAverageOptMessage::FIXED_STRIKE)
-		{
-			res.optPrice = m_futures->option(t, m_strike, m_termRate, m_optType);
-		}
 		if (optMsg->GetRequest().method == FuturesAverageOptMessage::MONTE_CARLO)
 		{
 			res.averageOptPrice = FuturesAverageOptionPricer::ValueWithMC(m_futures, \

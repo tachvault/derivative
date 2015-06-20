@@ -49,6 +49,10 @@ SET(MESSAGES_SOURCES
         ${PROJECT_SOURCE_DIR}/SOA/include/FuturesBarrierOptMessage.hpp
         ${PROJECT_SOURCE_DIR}/SOA/include/FuturesAverageOptJSONVisitor.hpp
         ${PROJECT_SOURCE_DIR}/SOA/include/FuturesAverageOptMessage.hpp
+        ${PROJECT_SOURCE_DIR}/SOA/include/ExchangeRateBarrierOptJSONVisitor.hpp
+        ${PROJECT_SOURCE_DIR}/SOA/include/ExchangeRateBarrierOptMessage.hpp
+        ${PROJECT_SOURCE_DIR}/SOA/include/ExchangeRateAverageOptJSONVisitor.hpp
+        ${PROJECT_SOURCE_DIR}/SOA/include/ExchangeRateAverageOptMessage.hpp
         VanillaOptMessage.cpp
 	EquityVanillaOptMessage.cpp
 	FuturesVanillaOptMessage.cpp
@@ -76,7 +80,11 @@ SET(MESSAGES_SOURCES
         FuturesBarrierOptJSONVisitor.cpp
         FuturesBarrierOptMessage.cpp
         FuturesAverageOptJSONVisitor.cpp
-        FuturesAverageOptMessage.cpp           
+        FuturesAverageOptMessage.cpp
+        ExchangeRateBarrierOptJSONVisitor.cpp
+        ExchangeRateBarrierOptMessage.cpp
+        ExchangeRateAverageOptJSONVisitor.cpp
+        ExchangeRateAverageOptMessage.cpp                      
 )
 
 # Link shared library paths (Note: This should be added before Add_library !!!)

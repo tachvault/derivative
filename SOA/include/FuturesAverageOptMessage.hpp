@@ -103,8 +103,6 @@ namespace derivative
 
 		inline FuturesAverageOptMessage::AverageTypeEnum ParseAverageType(const std::map<string_t, string_t>& query_strings);
 		
-		inline void ParseDeliveryDate(FuturesAverageOptMessage::AverageOptRequest &req, const std::map<string_t, string_t>& query_strings);
-
 	private:
 
 		AverageOptRequest m_req;

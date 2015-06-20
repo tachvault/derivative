@@ -52,10 +52,6 @@ namespace derivative
 		{
 			ExchangeRateRequest()
 			{}
-
-			std::string domestic;
-
-			std::string foreign;
 		};
 
 		virtual ~ExchangeRateVanillaOptMessage()

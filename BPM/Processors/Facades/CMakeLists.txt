@@ -48,7 +48,13 @@ SET(FACADES_SOURCES
         FuturesBarrierOption.hpp
         FuturesBarrierOption.cpp
         FuturesAverageOption.hpp
-        FuturesAverageOption.cpp                     
+        FuturesAverageOption.cpp
+        ExchangeRateOption.hpp
+        ExchangeRateOption.cpp
+        ExchangeRateBarrierOption.hpp
+        ExchangeRateBarrierOption.cpp
+        ExchangeRateAverageOption.hpp
+        ExchangeRateAverageOption.cpp                     
 )
 
 # Link shared library paths (Note: This should be added before Add_library !!!)
