@@ -45,7 +45,7 @@ namespace derivative
 			json::value legObj = json::value::object();
 			legObj[L"leg"] = json::value::number(i+1);
 			legObj[L"option"] = (leg.option == EquityOptionSpreadMessage::CALL) ? json::value::string(U("call")) : json::value::string(U("put"));
-			legObj[L"naked position"] = (leg.pos == EquityOptionSpreadMessage::LONG) ? json::value::string(U("long")) : json::value::string(U("short"));
+			legObj[L"position"] = (leg.pos == EquityOptionSpreadMessage::LONG) ? json::value::string(U("long")) : json::value::string(U("short"));
 			legObj[L"strike"] = json::value::number(leg.strike);
 			legObj[L"maturityDate"] = json::value::string(utility::conversions::to_string_t(dd::to_simple_string(leg.maturity)));
 			legObj[L"units"] = leg.units;
@@ -70,6 +70,7 @@ namespace derivative
 			legGreekObj[L"delta"] = json::value::number(leg.greeks.delta);
 			legGreekObj[L"gamma"] = json::value::number(leg.greeks.gamma);
 			legGreekObj[L"vega"] = json::value::number(leg.greeks.vega);
+			legGreekObj[L"theta"] = json::value::number(leg.greeks.theta);
 			legObj[L"Greeks"] = legGreekObj;
 			resLegArray[i] = legObj;
 			++i;
@@ -78,6 +79,7 @@ namespace derivative
 		greekObj[L"delta"] = json::value::number(res.greeks.delta);
 		greekObj[L"gamma"] = json::value::number(res.greeks.gamma);
 		greekObj[L"vega"] = json::value::number(res.greeks.vega);
+		greekObj[L"theta"] = json::value::number(res.greeks.theta);
 		resObj[L"greeks"] = greekObj;
 		out[L"request"] = reqObj;
 		out[L"response"] = resObj;
