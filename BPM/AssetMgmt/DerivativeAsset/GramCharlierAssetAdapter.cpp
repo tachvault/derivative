@@ -46,7 +46,7 @@ namespace derivative
 	{
 		/// Get domestic interest rate for the asset exchange
 		auto cntry = dynamic_pointer_cast<IPrimitiveSecurity>(m_asset->GetAsset())->GetExchange().GetCountry().GetCode();
-		dd::date today(dd::day_clock::local_day());		
+		dd::date today(dd::day_clock::local_day());
 		std::shared_ptr<IRCurve> irCurve = BuildIRCurve(IRCurve::LIBOR, cntry, today);
 		auto term = irCurve->GetTermStructure();
 		m_r = PrimaryUtil::getDFToCompoundRate((*term)(m_tenor), m_tenor);
@@ -56,7 +56,7 @@ namespace derivative
 		auto vol_level = xv->volproduct(0, m_tenor, *xv);
 		m_gramCharlierAsset = std::unique_ptr<GramCharlierAsset>(new GramCharlierAsset(xgc, vol_level, \
 			asset->GetTradePrice(), m_tenor));
-		
+
 		/// construct the BlackScholesAdapter from the asset value.
 		m_bsAsset = std::make_shared<BlackScholesAssetAdapter>(m_asset, xv);
 	};
@@ -102,11 +102,19 @@ namespace derivative
 			++i;
 		}
 		i = 0;
-		for (auto &val : futures)
+		try
 		{
-			(*strikes)(i) = m_options[i]->GetStrikePrice();
-			(*vols)(i) = val.get();
-			++i;
+			for (auto &val : futures)
+			{
+				(*strikes)(i) = m_options[i]->GetStrikePrice();
+				(*vols)(i) = val.get();
+				++i;
+			}
+		}
+		catch (std::exception& e)
+		{
+			LOG(ERROR) << "Error occurred while calculating implied vol " << e.what() << endl;
+			throw e;
 		}
 
 		/// Now call the Caliberate function to caliberate the contained GramCharlier asset
@@ -119,7 +127,7 @@ namespace derivative
 	{
 		/// Construct GramCharlierAssetAdapter from given name and register with EntityManager
 		std::shared_ptr<GramCharlierAssetAdapter> value = make_shared<GramCharlierAssetAdapter>(xgc, asset, daysForMaturity, options);
-		
+
 		/// return constructed object if no exception is thrown
 		return value;
 	}

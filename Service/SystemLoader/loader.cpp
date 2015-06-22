@@ -80,13 +80,21 @@ int main(int argc, char** argv)
 	std::shared_ptr<IRESTJSONRequestInterceptor> interceptorJSON = EntityMgrUtil::ConstructEntity<IRESTJSONRequestInterceptor>(nm);
 
 	/// Start processing the message asynchronously in a new thread
-	auto future = std::async(std::launch::async, &IRESTJSONRequestInterceptor::StartInterceptor, interceptorJSON);
+	try
+	{
+		auto future = std::async(std::launch::async, &IRESTJSONRequestInterceptor::StartInterceptor, interceptorJSON);
+	}
+	catch (std::exception & e)
+	{
+		LOG(ERROR) << " Error starting Casablanca web services " << e.what() << endl;
+		throw e;
+	}
 
 	/// Now set the run mode so that rest of the modules can be loaded
 	/// and executed conditionally based on the runmode
 	SystemManager& sysMgr = SystemManager::getInstance();
 	sysMgr.SetRunMode(mode);
-		
+
 	if (mode == runModeEnum::STANDALONE || mode == runModeEnum::APP_SERVER)
 	{
 		/// Start BPMLoader

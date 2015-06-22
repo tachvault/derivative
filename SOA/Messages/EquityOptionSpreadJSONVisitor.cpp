@@ -56,8 +56,8 @@ namespace derivative
 
 		/// adding greeks and response parameters
 		auto res = msg->GetResponse();
-		resObj[L"trade date"] = json::value::string(utility::conversions::to_string_t(dd::to_simple_string(res.underlyingTradeDate)));
-		resObj[L"last price"] = json::value::number(res.underlyingTradePrice);
+		resObj[L"underlying trade date"] = json::value::string(utility::conversions::to_string_t(dd::to_simple_string(res.underlyingTradeDate)));
+		resObj[L"last underlying price"] = json::value::number(res.underlyingTradePrice);
 		resObj[L"spread price"] = json::value::number(res.spreadPrice);
 		i = 0;
 		json::value resLegArray = json::value::array();

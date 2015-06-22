@@ -45,9 +45,17 @@ namespace derivative
 		std::shared_ptr<IMessage>& msg = m_reqQueue.wait_and_pop();
 
 		/// Start processing the message asynchronously in a new thread
-		auto future = std::async(std::launch::async, &MessageDispatcher::Dispatch, this, msg);
+		try
+		{
+			auto future = std::async(std::launch::async, &MessageDispatcher::Dispatch, this, msg);
+		}
+		catch (std::exception& e)
+		{
+			LOG(ERROR) << "Error in facade call " << e.what() << endl;
+			throw e;
+		}
 	}
-	
+
 	void MessageDispatcher::HandleMessage(std::shared_ptr<IMessage>& msg)
 	{
 		/// push the message into the reqQueue for processing
@@ -83,7 +91,7 @@ namespace derivative
 			sysRes.outText = e.what();
 			msg->SetSystemResponse(sysRes);
 		}
-		
+
 		/// now push the message to the response queue
 		m_respQueue.push(msg);
 	}
@@ -106,7 +114,7 @@ namespace derivative
 			lock.lock();
 			m_pool.insert(std::pair<grpType, std::shared_ptr<ObjectPool<IMessageSink> > >(grpId, pool));
 		}
-		
+
 		/// now check if there is a passive processor in the resource pool
 		std::shared_ptr<IMessageSink> sink;
 		if (m_pool.at(grpId)->try_pop(sink))

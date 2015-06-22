@@ -37,8 +37,8 @@ namespace derivative
 		reqObj[L"deliveryDate"] = json::value::string(utility::conversions::to_string_t(dd::to_simple_string(msg->GetRequest().deliveryDate)));
 
 		/// adding greeks and response parameters
-		resObj[L"trade date"] = json::value::string(utility::conversions::to_string_t(dd::to_simple_string(msg->GetResponse().underlyingTradeDate)));
-		resObj[L"last price"] = json::value::number(msg->GetResponse().underlyingTradePrice);
+		resObj[L"underlying trade date"] = json::value::string(utility::conversions::to_string_t(dd::to_simple_string(msg->GetResponse().underlyingTradeDate)));
+		resObj[L"last underlying price"] = json::value::number(msg->GetResponse().underlyingTradePrice);
 		resObj[L"average option price"] = json::value::number(msg->GetResponse().averageOptPrice);
 		if (msg->GetRequest().averageType == FuturesAverageOptMessage::FIXED_STRIKE)
 		{

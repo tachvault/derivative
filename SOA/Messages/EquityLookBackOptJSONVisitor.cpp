@@ -31,8 +31,8 @@ namespace derivative
 	    reqObj[L"maturityDate"] = json::value::string(utility::conversions::to_string_t(dd::to_simple_string(msg->GetRequest().maturity)));
 
 		/// adding greeks and response parameters
-		resObj[L"trade date"] = json::value::string(utility::conversions::to_string_t(dd::to_simple_string(msg->GetResponse().underlyingTradeDate)));
-		resObj[L"last price"] = json::value::number(msg->GetResponse().underlyingTradePrice);
+		resObj[L"underlying trade date"] = json::value::string(utility::conversions::to_string_t(dd::to_simple_string(msg->GetResponse().underlyingTradeDate)));
+		resObj[L"last underlying price"] = json::value::number(msg->GetResponse().underlyingTradePrice);
 		resObj[L"option price"] = json::value::number(msg->GetResponse().lookbackOptPrice);
 		if (msg->GetRequest().lookBackType == EquityLookBackOptMessage::FIXED_STRIKE)
 		{

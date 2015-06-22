@@ -132,9 +132,17 @@ namespace derivative
 				(&MCGeneric<argtype, rettype, random_number_generator_type>::simulate), this, mcgatherer.dimension(), simulations));
 		}
 
-		for (auto &val : futures)
+		try
 		{
-			mcgatherer += *(val.get());
+			for (auto &val : futures)
+			{
+				mcgatherer += *(val.get());
+			}
+		}
+		catch (std::exception& e)
+		{
+			LOG(ERROR) << " Error in Monte-Carlo " << e.what() << endl;
+			throw e;
 		}
 	}
 
@@ -236,9 +244,17 @@ namespace derivative
 				(&MCGeneric<Array<double, 2>&, rettype, random_number_generator_type>::simulate), this, mcgatherer.dimension(), simulations));
 		}
 
-		for (auto &val : futures)
+		try
 		{
-			mcgatherer += *(val.get());
+			for (auto &val : futures)
+			{
+				mcgatherer += *(val.get());
+			}
+		}
+		catch (std::exception& e)
+		{
+			LOG(ERROR) << " Error in Monte-carlo " << e.what() << endl;
+			throw e;
 		}
 	}
 

@@ -255,10 +255,18 @@ namespace derivative
 			}
 		}
 		i = 0;
-		for (auto &val : futures)
+		try
 		{
-			vols(i, 0) = val.get();
-			++i;
+			for (auto &val : futures)
+			{
+				vols(i, 0) = val.get();
+				++i;
+			}
+		}
+		catch (std::exception& e)
+		{
+			LOG(ERROR) << "Error in volatility surface building " << e.what() << endl;
+			throw e;
 		}
 
 		/// now construct DeterministicAsset.
