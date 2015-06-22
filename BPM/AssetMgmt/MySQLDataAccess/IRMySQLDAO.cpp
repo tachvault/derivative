@@ -109,6 +109,7 @@ namespace derivative
 					m_rate = rate;
 				}
 			}
+			res->close();
 		}
 		catch (sql::SQLException &e)
 		{
@@ -116,6 +117,7 @@ namespace derivative
 			LOG(ERROR) << "# ERR: " << e.what();
 			throw e;
 		};
+		m_con = nullptr;
 	};
 
 	void IRMySQLDAO::find(const Name& nm, std::vector<std::shared_ptr<IObject> > & entities)
@@ -163,6 +165,7 @@ namespace derivative
 				rate->SetCountry(cntry);
 				rate->SetRateType(rateType);
 				rate->SetMaturityType(static_cast<Maturity::MaturityType>(maturity));
+				rate = dynamic_pointer_cast<IIR>(EntityMgrUtil::registerObject(rate->GetName(), rate));
 
 				LOG(INFO) << " New InterestRate bject created with Country(" << code \
 					<< ", Rate Type " << rateType \
@@ -170,6 +173,7 @@ namespace derivative
 
 				entities.push_back(rate);
 			}
+			res->close();
 		}
 		catch (sql::SQLException &e)
 		{
@@ -177,6 +181,7 @@ namespace derivative
 			LOG(ERROR) << "# ERR: " << e.what();
 			throw e;
 		};
+		m_con = nullptr;
 	}
 
 } /* namespace derivative */

@@ -150,8 +150,8 @@ TEST_F(DomainTest, IRCurveIRTest)
 		}
 		double Bt = term(_last);
 		double r = PrimaryUtil::getDFToSimpleRate(Bt, _last, 1);
-		double cr = PrimaryUtil::getDFToCompoundRate(term(tindex), tindex);
-		cout << _last << "," << term(_last) << "," << r*100 << "%" << endl;
+		double cr = PrimaryUtil::getDFToCompoundRate(term(_last), _last);
+		cout << _last << "," << term(_last) << "," << r * 100 << "%" << cr * 100 << "%" << endl;
 	}
 	catch(RegistryException& e)
 	{
@@ -165,6 +165,7 @@ TEST_F(DomainTest, IRCurveIRTest)
 	}
 }
 
+/*
 TEST_F(DomainTest, IRCurveBondTest) 
 {
 	/// Test for EntityManager singleton
@@ -207,6 +208,7 @@ TEST_F(DomainTest, IRCurveBondTest)
 	}
 }
 
+*/
 
 int main(int argc, char **argv)
 {

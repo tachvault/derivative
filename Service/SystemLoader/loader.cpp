@@ -92,6 +92,7 @@ int main(int argc, char** argv)
 		/// Start BPMLoader
 		BPMLoader& bpm = BPMLoader::getInstance();
 		bpm.LoadLIBORRates();
+		bpm.LoadRates();
 
 		/// start the dispatcher
 		StartDispatcher();

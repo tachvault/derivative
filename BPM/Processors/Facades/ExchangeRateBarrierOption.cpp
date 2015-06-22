@@ -78,9 +78,11 @@ namespace derivative
 		m_maturity = optMsg->GetRequest().maturity;
 		m_strike = optMsg->GetRequest().strike;
 		m_barrier = optMsg->GetRequest().barrier;
+		m_domestic = optMsg->GetRequest().domestic;
+		m_foreign = optMsg->GetRequest().foreign;
 
 		/// get exchangeRate value.
-		m_exchangeRateVal = PrimaryUtil::getExchangeRateValue(optMsg->GetRequest().domestic, optMsg->GetRequest().foreign);
+		m_exchangeRateVal = PrimaryUtil::getExchangeRateValue(m_domestic, m_foreign);
 		
 		ProcessVol(optMsg);
 		ProcessRate(optMsg);

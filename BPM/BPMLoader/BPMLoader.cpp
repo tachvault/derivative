@@ -13,7 +13,7 @@ Copyright (c) 2015, Nathan Muruganantha. All rights reserved.
 namespace derivative
 {
 	bool BPMLoader::m_initialized = false;
-	std::vector<std::string> BPMLoader::LIBORCurrencies = { "USA" , "CAN"};
+	std::vector<std::string> BPMLoader::Countries = { "USA" , "CAN"};
 
 	/// Supports singleton. But NOT lazy initialization.
 	/// When this DLL is getting loaded, the getInstance should
@@ -45,10 +45,21 @@ namespace derivative
 	{
 		/// Get domestic interest rate for each country
 		dd::date today = dd::day_clock::local_day();
-		for (auto &cntry : LIBORCurrencies)
+		for (auto &cntry : Countries)
 		{
 			std::shared_ptr<IRCurve> irCurve = BuildIRCurve(IRCurve::LIBOR, cntry, today);
-			auto m_term = irCurve->GetTermStructure();
+			auto term = irCurve->GetTermStructure();
+		}
+	}
+
+	void BPMLoader::LoadRates()
+	{
+		/// Get domestic interest rate for each country
+		dd::date today = dd::day_clock::local_day();
+		for (auto &cntry : Countries)
+		{
+			std::shared_ptr<IRCurve> irCurve = BuildIRCurve(IRCurve::YIELD, cntry, today);
+			auto term = irCurve->GetTermStructure();
 		}
 	}
 

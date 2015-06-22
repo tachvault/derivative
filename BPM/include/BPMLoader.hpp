@@ -51,11 +51,11 @@ namespace derivative
 		/// Get the BPMLoader singleton instance
 		static BPMLoader& getInstance();
 
-		/// get and set run mode
+		/// load libor rates
 		void LoadLIBORRates();
 
-		void LoadYield()
-		{}
+		/// load interest rates
+		void LoadRates();
 				
 	private:
 
@@ -76,7 +76,7 @@ namespace derivative
 		/// BPMLoader class members.
 		mutable std::mutex m_mutex;
 
-		static std::vector<std::string> LIBORCurrencies;
+		static std::vector<std::string> Countries;
 	};
 
 } /* namespace derivative */
