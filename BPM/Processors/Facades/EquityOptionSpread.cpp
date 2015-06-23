@@ -165,7 +165,7 @@ namespace derivative
 		EquityOptionSpreadMessage::OptionStyleEnum style, EquityOptionSpreadMessage::VolatilityTypeEnum volType)
 	{
 		auto t = double((req.maturity - dd::day_clock::local_day()).days()) / 365;
-		auto rate = PrimaryUtil::getDFToCompoundRate((*m_term)(t), t);
+		auto rate = m_term->simple_rate(0, t);
 		auto optType = (req.option == EquityOptionSpreadMessage::CALL) ? 1 : -1;
 
 		if (m_vol == nullptr)

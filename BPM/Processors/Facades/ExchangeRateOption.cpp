@@ -104,7 +104,7 @@ namespace derivative
 
 		std::shared_ptr<IRCurve> irCurve = BuildIRCurve(src, vec.begin()->GetCode(), today);
 		m_termLocal = irCurve->GetTermStructure();
-		m_localRate = PrimaryUtil::getDFToCompoundRate((*m_termLocal)(t), t);
+		m_localRate = m_termLocal->simple_rate(0, t);
 
 		/// Get foreign interest rate of the ExchangeRate
 		cntryHolder.GetCountry(optMsg->GetRequest().foreign, vec);
@@ -113,6 +113,6 @@ namespace derivative
 
 		irCurve = BuildIRCurve(src, vec.begin()->GetCode(), today);
 		m_termForeign = irCurve->GetTermStructure();
-		m_foreignRate = PrimaryUtil::getDFToCompoundRate((*m_termForeign)(t), t);
+		m_foreignRate = m_termForeign->simple_rate(0, t);
 	}
 }

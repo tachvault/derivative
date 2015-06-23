@@ -171,7 +171,7 @@ namespace derivative
 		FuturesOptionSpreadMessage::OptionStyleEnum style)
 	{
 		auto t = double((req.maturity - dd::day_clock::local_day()).days()) / 365;
-		auto rate = PrimaryUtil::getDFToCompoundRate((*m_term)(t), t);
+		auto rate = m_term->simple_rate(0, t);
 		int optType = (req.option == FuturesOptionSpreadMessage::CALL) ? 1 : -1;
 
 		if (m_vol == nullptr)

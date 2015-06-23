@@ -186,8 +186,8 @@ namespace derivative
 		ExchangeRateOptionSpreadMessage::OptionStyleEnum style)
 	{
 		auto t = double((req.maturity - dd::day_clock::local_day()).days()) / 365;
-		auto rateLocal = PrimaryUtil::getDFToCompoundRate((*m_termLocal)(t), t);
-		auto rateForeign = PrimaryUtil::getDFToCompoundRate((*m_termForeign)(t), t);
+		auto rateLocal = m_termLocal->simple_rate(0, t);
+		auto rateForeign = m_termForeign->simple_rate(0, t);
 		auto optType = (req.option == ExchangeRateOptionSpreadMessage::CALL) ? 1 : -1;
 
 		if (m_vol == nullptr)

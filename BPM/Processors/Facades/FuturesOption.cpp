@@ -84,7 +84,7 @@ namespace derivative
 			auto exchange = m_futuresVal->GetFutures()->GetExchange();
 			std::shared_ptr<IRCurve> irCurve = BuildIRCurve(IRCurve::LIBOR, exchange.GetCountry().GetCode(), today);
 			m_term = irCurve->GetTermStructure();
-			m_termRate = PrimaryUtil::getDFToCompoundRate((*m_term)(t), t);
+			m_termRate = m_term->simple_rate(0, t);
 		}
 		else
 		{
@@ -92,7 +92,7 @@ namespace derivative
 			auto exchange = m_futuresVal->GetFutures()->GetExchange();
 			std::shared_ptr<IRCurve> irCurve = BuildIRCurve(IRCurve::YIELD, exchange.GetCountry().GetCode(), today);
 			m_term = irCurve->GetTermStructure();
-			m_termRate = PrimaryUtil::getDFToCompoundRate((*m_term)(t), t);
+			m_termRate = m_term->simple_rate(0, t);
 		}
 	}
 }

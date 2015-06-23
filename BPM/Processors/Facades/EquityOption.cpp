@@ -100,14 +100,14 @@ namespace derivative
 			/// Get domestic interest rate of the stock
 			std::shared_ptr<IRCurve> irCurve = BuildIRCurve(IRCurve::LIBOR, m_stockVal->GetStock()->GetCountry().GetCode(), today);
 			m_term = irCurve->GetTermStructure();
-			m_termRate = PrimaryUtil::getDFToCompoundRate((*m_term)(t), t);
+			m_termRate = m_term->simple_rate(0, t);
 		}
 		else
 		{
 			/// Get domestic interest rate of the stock
 			std::shared_ptr<IRCurve> irCurve = BuildIRCurve(IRCurve::YIELD, m_stockVal->GetStock()->GetCountry().GetCode(), today);
 			m_term = irCurve->GetTermStructure();
-			m_termRate = PrimaryUtil::getDFToCompoundRate((*m_term)(t), t);
+			m_termRate = m_term->simple_rate(0, t);
 		}
 	}
 }
