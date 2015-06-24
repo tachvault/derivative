@@ -227,7 +227,7 @@ namespace derivative
 			std::vector<std::shared_ptr<BlackScholesAssetAdapter> > assets;
 			assets.push_back(futures);
 		//	return AntitheticMC(assets, *barrierOption, term, mat, -1, sim, N, ci, 50000);
-			return QRMC(assets, *barrierOption, term, mat, -1, sim, N, ci, 50000);
+			return QRMC(assets, *barrierOption, term, mat, -1, sim, N, ci, 25000);
 		}
 	}
 
@@ -261,7 +261,7 @@ namespace derivative
 			std::vector<std::shared_ptr<BlackScholesAssetAdapter> > assets;
 			assets.push_back(futures);
 			//return AntitheticMC(assets, *avgpayoff, term, mat, -1, sim, N, ci, 50000);
-			return QRMC(assets, *avgpayoff, term, mat, -1, sim, N, ci, 50000);
+			return QRMC(assets, *avgpayoff, term, mat, -1, sim, N, ci, 25000);
 		}
 	}
 }

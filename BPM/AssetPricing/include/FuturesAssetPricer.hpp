@@ -54,7 +54,7 @@ namespace derivative
 
 		PRICINGENGINE_DLL_API double ValueAmericanWithMC(const std::shared_ptr<BlackScholesAssetAdapter>& futures, \
 			std::shared_ptr<TermStructure> term, dd::date maturity, double strike, VanillaOptionType optType, \
-			size_t sim = 25000, size_t N = 100, size_t train = 100, int degree = 2, double ci = 0.95);
+			size_t sim = 100000, size_t N = 100, size_t train = 100, int degree = 2, double ci = 0.95);
 	}
 
 	namespace FuturesBarrierOptionPricer
