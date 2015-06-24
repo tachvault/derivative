@@ -161,7 +161,7 @@ namespace derivative
 				LSExerciseStrategy<LongstaffSchwartzExerciseBoundary> exercise_strategy(boundary);
 				MCMapping<GeometricBrownianMotion, Array<double, 2> > mc_mapping(exercise_strategy, gbm, ts, numeraire_index);
 				std::function<double(Array<double, 2>)> func = std::bind(&MCMapping<GeometricBrownianMotion, Array<double, 2> >::mapping, &mc_mapping, std::placeholders::_1);
-				MCGeneric<Array<double, 2>, double, RandomArray<RandomWrapper<ranlib::NormalUnit<double>, double>, double> > mc(func, random_container, 5000);
+				MCGeneric<Array<double, 2>, double, RandomArray<RandomWrapper<ranlib::NormalUnit<double>, double>, double> > mc(func, random_container, 20000);
 				MCGatherer<double> mcgatherer;
 				boost::math::normal normal;
 				double d = boost::math::quantile(normal, ci);
@@ -223,7 +223,8 @@ namespace derivative
 			}
 			std::vector<std::shared_ptr<BlackScholesAssetAdapter> > assets;
 			assets.push_back(stock);
-			return AntitheticMC(assets, *barrierOption, term, mat, -1, sim, N, ci, 50000);
+			//return AntitheticMC(assets, *barrierOption, term, mat, -1, sim, N, ci, 50000);
+			return QRMC(assets, *barrierOption, term, mat, -1, sim, N, ci, 100000);
 		}
 	}
 
@@ -256,7 +257,8 @@ namespace derivative
 			}
 			std::vector<std::shared_ptr<BlackScholesAssetAdapter> > assets;
 			assets.push_back(stock);
-			return AntitheticMC(assets, *avgpayoff, term, mat, -1, sim, N, ci, 50000);
+			//return AntitheticMC(assets, *avgpayoff, term, mat, -1, sim, N, ci, 50000);
+			return QRMC(assets, *avgpayoff, term, mat, -1, sim, N, ci, 100000);
 		}
 	}
 
@@ -289,7 +291,8 @@ namespace derivative
 			} 
 			std::vector<std::shared_ptr<BlackScholesAssetAdapter> > assets;
 			assets.push_back(stock);
-			return AntitheticMC(assets, *lbpayoff, term, mat, -1, sim, N, ci, 50000);
+			//return AntitheticMC(assets, *lbpayoff, term, mat, -1, sim, N, ci, 50000);
+			return QRMC(assets, *lbpayoff, term, mat, -1, sim, N, ci, 100000);
 		}
 	}
 
@@ -312,7 +315,7 @@ namespace derivative
 			std::vector<std::shared_ptr<BlackScholesAssetAdapter> > assets;
 			assets.push_back(stock1);
 			assets.push_back(stock2);
-			return QRMC(assets, *payoffs, term, mat, -1, sim, N, ci, 50000);
+			return QRMC(assets, *payoffs, term, mat, -1, sim, N, ci, 100000);
 		    // return AntitheticMC(assets, *payoffs, term, mat, 1, sim, N, ci, 50000);
 			//return GeneralMC(assets, *payoffs, term, mat, -1, sim, N, ci, 50000);
 		}
@@ -413,7 +416,8 @@ namespace derivative
 			std::shared_ptr<MCPayoff> payoff = std::make_shared<MCChooser>(0, mat, 0, strike);
 			std::vector<std::shared_ptr<BlackScholesAssetAdapter> > assets;
 			assets.push_back(stock);
-			return AntitheticMC(assets, *payoff, term, mat, -1, sim, N, ci, 50000);
+			//return AntitheticMC(assets, *payoff, term, mat, -1, sim, N, ci, 50000);
+			return QRMC(assets, *payoff, term, mat, -1, sim, N, ci, 100000);
 		}
 	}
 }

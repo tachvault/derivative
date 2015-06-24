@@ -54,7 +54,7 @@ namespace derivative
 
 		PRICINGENGINE_DLL_API double ValueAmericanWithMC(const std::shared_ptr<BlackScholesAssetAdapter>& stock, \
 			std::shared_ptr<TermStructure> term, dd::date maturity, double strike, VanillaOptionType optType, \
-			size_t sim = 25000, size_t N = 100, size_t train = 100, int degree = 2, double ci = 0.95);
+			size_t sim = 100000, size_t N = 100, size_t train = 100, int degree = 2, double ci = 0.95);
 	}
 	
 	namespace BarrierOptionPricer
@@ -93,11 +93,11 @@ namespace derivative
 
 		PRICINGENGINE_DLL_API double ValueEuropeanWithMC(const std::shared_ptr<BlackScholesAssetAdapter>& stock1, const std::shared_ptr<BlackScholesAssetAdapter>& stock2, \
 			std::shared_ptr<TermStructure> term, dd::date maturity, double strike, int optType, \
-			size_t sim = 1000000, size_t N = 2, double ci = 0.95);
+			size_t sim = 500000, size_t N = 2, double ci = 0.95);
 
 		PRICINGENGINE_DLL_API double ValueAmericanWithMC(const std::shared_ptr<BlackScholesAssetAdapter>& stock1, const std::shared_ptr<BlackScholesAssetAdapter>& stock2, \
 			std::shared_ptr<TermStructure> term, dd::date maturity, double strike, int optType, \
-			size_t sim = 5000, size_t N =100, size_t train = 100, int degree = 10, double ci = 0.95);		
+			size_t sim = 100000, size_t N =100, size_t train = 100, int degree = 10, double ci = 0.95);		
 	}
 
 	namespace ChooserOptionPricer

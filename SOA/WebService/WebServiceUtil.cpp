@@ -187,9 +187,9 @@ namespace derivative
 				};
 
 				req.style = msg->ParseOptionStyle(query_strings);
-				if (req.option == VanillaOptMessage::STYLE_UNKNOWN)
+				if (req.style == VanillaOptMessage::STYLE_UNKNOWN)
 				{
-					req.style == VanillaOptMessage::EUROPEAN;
+					req.style = VanillaOptMessage::EUROPEAN;
 				}
 
 				req.method = msg->ParsePricingMethod(query_strings);
@@ -235,9 +235,9 @@ namespace derivative
 					req.option = VanillaOptMessage::CALL;
 				};
 				req.style = msg->ParseOptionStyle(query_strings);
-				if (req.option == VanillaOptMessage::STYLE_UNKNOWN)
+				if (req.style == VanillaOptMessage::STYLE_UNKNOWN)
 				{
-					req.style == VanillaOptMessage::EUROPEAN;
+					req.style = VanillaOptMessage::EUROPEAN;
 				}
 
 				req.barrierType = msg->ParseBarrierType(query_strings);
@@ -276,7 +276,7 @@ namespace derivative
 				req.style = msg->ParseOptionStyle(query_strings);
 				if (req.style == VanillaOptMessage::STYLE_UNKNOWN)
 				{
-					req.style == VanillaOptMessage::EUROPEAN;
+					req.style = VanillaOptMessage::EUROPEAN;
 				}			
 				req.method = msg->ParsePricingMethod(query_strings);
 				if (req.method == VanillaOptMessage::METHOD_UNKNOWN)
@@ -320,7 +320,7 @@ namespace derivative
 				req.style = msg->ParseOptionStyle(query_strings);
 				if (req.style == VanillaOptMessage::STYLE_UNKNOWN)
 				{
-					req.style == VanillaOptMessage::EUROPEAN;
+					req.style = VanillaOptMessage::EUROPEAN;
 				}
 				else if (req.style == VanillaOptMessage::AMERICAN)
 				{
@@ -361,9 +361,9 @@ namespace derivative
 					req.option = VanillaOptMessage::CALL;
 				};
 				req.style = msg->ParseOptionStyle(query_strings);
-				if (req.option == VanillaOptMessage::STYLE_UNKNOWN)
+				if (req.style == VanillaOptMessage::STYLE_UNKNOWN)
 				{
-					req.style == VanillaOptMessage::EUROPEAN;
+					req.style = VanillaOptMessage::EUROPEAN;
 				}
 
 				req.method = VanillaOptMessage::MONTE_CARLO;
@@ -469,9 +469,9 @@ namespace derivative
 				};
 
 				req.style = msg->ParseOptionStyle(query_strings);
-				if (req.option == VanillaOptMessage::STYLE_UNKNOWN)
+				if (req.style == VanillaOptMessage::STYLE_UNKNOWN)
 				{
-					req.style == VanillaOptMessage::EUROPEAN;
+					req.style = VanillaOptMessage::EUROPEAN;
 				}
 
 				req.method = msg->ParsePricingMethod(query_strings);
@@ -518,9 +518,9 @@ namespace derivative
 					req.option = VanillaOptMessage::CALL;
 				};
 				req.style = msg->ParseOptionStyle(query_strings);
-				if (req.option == VanillaOptMessage::STYLE_UNKNOWN)
+				if (req.style == VanillaOptMessage::STYLE_UNKNOWN)
 				{
-					req.style == VanillaOptMessage::EUROPEAN;
+					req.style = VanillaOptMessage::EUROPEAN;
 				}
 
 				req.barrierType = msg->ParseBarrierType(query_strings);
@@ -560,7 +560,7 @@ namespace derivative
 				req.style = msg->ParseOptionStyle(query_strings);
 				if (req.style == VanillaOptMessage::STYLE_UNKNOWN)
 				{
-					req.style == VanillaOptMessage::EUROPEAN;
+					req.style = VanillaOptMessage::EUROPEAN;
 				}
 				req.method = msg->ParsePricingMethod(query_strings);
 				if (req.method == VanillaOptMessage::METHOD_UNKNOWN)
@@ -621,9 +621,9 @@ namespace derivative
 				};
 
 				req.style = msg->ParseOptionStyle(query_strings);
-				if (req.option == VanillaOptMessage::STYLE_UNKNOWN)
+				if (req.style == VanillaOptMessage::STYLE_UNKNOWN)
 				{
-					req.style == VanillaOptMessage::EUROPEAN;
+					req.style = VanillaOptMessage::EUROPEAN;
 				}
 
 				req.method = msg->ParsePricingMethod(query_strings);
@@ -670,9 +670,9 @@ namespace derivative
 					req.option = VanillaOptMessage::CALL;
 				};
 				req.style = msg->ParseOptionStyle(query_strings);
-				if (req.option == VanillaOptMessage::STYLE_UNKNOWN)
+				if (req.style == VanillaOptMessage::STYLE_UNKNOWN)
 				{
-					req.style == VanillaOptMessage::EUROPEAN;
+					req.style = VanillaOptMessage::EUROPEAN;
 				}
 
 				req.barrierType = msg->ParseBarrierType(query_strings);
@@ -712,7 +712,7 @@ namespace derivative
 				req.style = msg->ParseOptionStyle(query_strings);
 				if (req.style == VanillaOptMessage::STYLE_UNKNOWN)
 				{
-					req.style == VanillaOptMessage::EUROPEAN;
+					req.style = VanillaOptMessage::EUROPEAN;
 				}
 				req.method = msg->ParsePricingMethod(query_strings);
 				if (req.method == VanillaOptMessage::METHOD_UNKNOWN)

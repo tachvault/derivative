@@ -56,7 +56,7 @@ namespace derivative
 	{
 	public:
 
-		enum { TYPEID = CLASS_EQUITYOPTIONSPREAD_TYPE };
+		enum { TYPEID = CLASS_EXCHANGERATEOPTIONSPREAD_TYPE };
 
 		//// define option price resulted from MC
 		struct MCValue

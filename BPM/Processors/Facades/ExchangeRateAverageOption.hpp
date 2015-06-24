@@ -2,8 +2,8 @@
 Copyright (c) 2015, Nathan Muruganantha. All rights reserved.
 */
 
-#ifndef _DERIVATIVE_EQUITYAVERAGEOPTION_H_
-#define _DERIVATIVE_EQUITYAVERAGEOPTION_H_
+#ifndef _DERIVATIVE_EXCHANGERATEAVERAGEOPTION_H_
+#define _DERIVATIVE_EXCHANGERATEAVERAGEOPTION_H_
 
 #include "Global.hpp"
 #include "Name.hpp"
@@ -54,7 +54,7 @@ namespace derivative
 	{
 	public:
 
-		enum { TYPEID = CLASS_EQUITYAVERAGEOPTION_TYPE };
+		enum { TYPEID = CLASS_EXCHANGERATEAVERAGEOPTION_TYPE };
 
 		/// Constructor with Exemplar for the Creator ExchangeRateAverageOption object
 		ExchangeRateAverageOption(const Exemplar &ex);
@@ -88,4 +88,4 @@ namespace derivative
 
 /* namespace derivative */
 
-#endif /* _DERIVATIVE_EQUITYAVERAGEOPTION_H_ */
+#endif /* _DERIVATIVE_EXCHANGERATEAVERAGEOPTION_H_ */

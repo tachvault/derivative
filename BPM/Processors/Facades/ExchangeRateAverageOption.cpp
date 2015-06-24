@@ -97,6 +97,7 @@ namespace derivative
 
 		/// get the pricing method and run 
 		ExchangeRateAverageOptMessage::AverageOptResponse res;
+		res.optPrice = m_exchangeRate->option(t, m_strike, m_localRate, m_optType);
 		if (optMsg->GetRequest().method == ExchangeRateAverageOptMessage::MONTE_CARLO)
 		{
 			res.averageOptPrice = ExchangeRateAverageOptionPricer::ValueWithMC(m_exchangeRate, \
