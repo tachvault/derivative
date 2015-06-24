@@ -32,6 +32,7 @@ Copyright (C) Nathan Muruganantha 2013 - 2014
 #include "MCGeneric.hpp"
 #include "MExotics.hpp"
 #include "QFRandom.hpp"
+#include "PseudoRandomArray.hpp"
 
 #include "ExchangeRateAssetPricer.hpp"
 #include "FuturesAssetPricer.hpp"
@@ -138,15 +139,12 @@ namespace derivative
 				exotics::StandardOption Mput(futures, T(0), mat, strike, ts, -1);
 
 				/// instantiate random number generator
-				std::shared_ptr<ranlib::NormalUnit<double> > normalRNG = std::make_shared<ranlib::NormalUnit<double> >();
-				std::shared_ptr<RandomWrapper<ranlib::NormalUnit<double>, double> > randomWrapper = \
-					std::make_shared<RandomWrapper<ranlib::NormalUnit<double>, double> >(normalRNG);
-				RandomArray<RandomWrapper<ranlib::NormalUnit<double>, double>, double> random_container(randomWrapper, gbm.factors(), gbm.number_of_steps());
-				MCTrainingPaths<GeometricBrownianMotion, RandomArray<RandomWrapper<ranlib::NormalUnit<double>, double>, double> >
+				PseudoRandomArray<PseudoRandom<ranlib::NormalUnit<double>, double>, double> random_container(gbm.factors(), gbm.number_of_steps());
+				MCTrainingPaths<GeometricBrownianMotion, PseudoRandomArray<PseudoRandom<ranlib::NormalUnit<double>, double>, double> >
 					training_paths(gbm, T, train, random_container, ts, numeraire_index);
-				Payoff put(strike, -1);
+				Payoff option(strike, optType);
 				std::function<double(double)> f;
-				f = std::bind(&Payoff::operator(), &put, std::placeholders::_1);
+				f = std::bind(&Payoff::operator(), &option, std::placeholders::_1);
 				std::function<double(double, const Array<double, 1>&)> payoff = std::bind(LSArrayAdapter, std::placeholders::_1, std::placeholders::_2, f, 0);
 				std::vector<std::function<double(double, const Array<double, 1>&)> > basisfunctions;
 				Array<int, 1> p(1);
@@ -164,7 +162,7 @@ namespace derivative
 				LSExerciseStrategy<LongstaffSchwartzExerciseBoundary> exercise_strategy(boundary);
 				MCMapping<GeometricBrownianMotion, Array<double, 2> > mc_mapping(exercise_strategy, gbm, ts, numeraire_index);
 				std::function<double(Array<double, 2>)> func = std::bind(&MCMapping<GeometricBrownianMotion, Array<double, 2> >::mapping, &mc_mapping, std::placeholders::_1);
-				MCGeneric<Array<double, 2>, double, RandomArray<RandomWrapper<ranlib::NormalUnit<double>, double>, double> > mc(func, random_container, 5000);
+				MCGeneric<Array<double, 2>, double, PseudoRandomArray<PseudoRandom<ranlib::NormalUnit<double>, double>, double> > mc(func, random_container, 10000);
 				MCGatherer<double> mcgatherer;
 				boost::math::normal normal;
 				double d = boost::math::quantile(normal, ci);
@@ -226,7 +224,7 @@ namespace derivative
 			}
 			std::vector<std::shared_ptr<BlackScholesAssetAdapter> > assets;
 			assets.push_back(futures);
-		//	return AntitheticMC(assets, *barrierOption, term, mat, -1, sim, N, ci, 50000);
+			//	return AntitheticMC(assets, *barrierOption, term, mat, -1, sim, N, ci, 50000);
 			return QRMC(assets, *barrierOption, term, mat, -1, sim, N, ci, 25000);
 		}
 	}

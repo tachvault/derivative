@@ -63,7 +63,7 @@ namespace derivative
 		enum BarrierOptionTypeEnum { KDI = 0, KDO = 2, KUI = 3, KUO = 4 };
 
 		PRICINGENGINE_DLL_API double ValueWithMC(const std::shared_ptr<BlackScholesAssetAdapter>& futures, std::shared_ptr<TermStructure> term, \
-			int BarrierType, dd::date maturity, double strike, double barrier, int optType, size_t sim = 100000, size_t N = 100, double ci = 0.95);
+			int BarrierType, dd::date maturity, double strike, double barrier, int optType, size_t sim = 50000, size_t N = 100, double ci = 0.95);
 	}
 
 	namespace FuturesAverageOptionPricer
