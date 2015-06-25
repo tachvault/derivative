@@ -90,7 +90,7 @@ namespace derivative
 		}
 		for (i = 0; i < cnt.extent(firstDim); i++)
 		{
-			for (j = 0; j < cnt.extent(secondDim); j++) cnt(i, j) = rng.random();
+			for (j = 0; j < cnt.extent(secondDim); j++) cnt(i, j) = rngGen.random();
 		}
 	}
 

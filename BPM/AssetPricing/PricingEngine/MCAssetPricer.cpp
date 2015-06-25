@@ -57,7 +57,7 @@ namespace derivative
 			MCMapping<GeometricBrownianMotion, Array<double, 2> > mc_mapping(payoff, gbm, ts, numeraire_index);
 			std::function<double(Array<double, 2>)> func = std::bind(&MCMapping<GeometricBrownianMotion, Array<double, 2> >::mapping, &mc_mapping, std::placeholders::_1);
 			// instantiate generic Monte Carlo algorithm object
-			MCGeneric<Array<double, 2>, double, PseudoRandomArray<PseudoRandom<ranlib::NormalUnit<double>, double>, double> > mc(func, random_container, max_sim);
+			MCGeneric<Array<double, 2>&, double, PseudoRandomArray<PseudoRandom<ranlib::NormalUnit<double>, double>, double> > mc(func, random_container, max_sim);
 			// run Monte Carlo
 			mc.simulate(mcgatherer, sim);
 			return mcgatherer.mean();
@@ -99,14 +99,14 @@ namespace derivative
 			/// instantiate random number generator
 			PseudoRandomArray<PseudoRandom<ranlib::NormalUnit<double>, double>, double> random_container(gbm.factors(), gbm.number_of_steps());
 			//  convert random variates to their antithetics (instantiated from template)
-			std::function<Array<double, 2>(Array<double, 2>)> antithetic = normal_antithetic < Array<double, 2> > ;
+			std::function<void(Array<double, 2>&, Array<double, 2>&)> antithetic = normal_antithetic_reference < Array<double, 2> >;
 			// instantiate MCGatherer objects to collect simulation results
 			MCGatherer<double> mcgatherer_antithetic;
 			// instantiate MCMapping and bind to functor
 			MCMapping<GeometricBrownianMotion, Array<double, 2> > mc_mapping(payoff, gbm, ts, numeraire_index);
 			std::function<double(Array<double, 2>)> func = std::bind(&MCMapping<GeometricBrownianMotion, Array<double, 2> >::mapping, &mc_mapping, std::placeholders::_1);
 			// instantiate generic Monte Carlo algorithm object
-			MCGeneric<Array<double, 2>, double, PseudoRandomArray<PseudoRandom<ranlib::NormalUnit<double>, double>, double> > mc_antithetic(func, random_container, antithetic, max_sim);
+			MCGeneric<Array<double, 2>&, double, PseudoRandomArray<PseudoRandom<ranlib::NormalUnit<double>, double>, double> > mc_antithetic(func, random_container, antithetic, max_sim);
 			// run Monte Carlo paths for antithetic
 			mc_antithetic.simulate(mcgatherer_antithetic, sim);
 			return mcgatherer_antithetic.mean();

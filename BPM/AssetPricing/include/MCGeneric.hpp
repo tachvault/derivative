@@ -177,7 +177,7 @@ namespace derivative
 		inline MCGeneric(std::function<rettype(Array<double, 2>&)> func, random_number_generator_type& rng, size_t max_sim = 100000)
 			: f(func), random_number_generator(rng), max_simulation(max_sim)
 		{ };
-		inline MCGeneric(std::function<rettype(Array<double, 2>&)> func, random_number_generator_type& rng, std::function<Array<double, 2>&(Array<double, 2>&)> antifunc, size_t max_sim = 100000)
+		inline MCGeneric(std::function<rettype(Array<double, 2>&)> func, random_number_generator_type& rng, std::function<void(Array<double, 2>&, Array<double, 2>&)> antifunc, size_t max_sim = 100000)
 			: f(func), random_number_generator(rng), antithetic(antifunc), max_simulation(max_sim)
 		{ };
 		inline void set_antithetic(std::function<rettype(Array<double, 2>&)> antifunc)
@@ -195,7 +195,7 @@ namespace derivative
 	private:
 		boost::math::normal                                     N;
 		std::function<rettype(Array<double, 2>&)>                      f;  ///< Functor mapping a draw of the random variable to the Monte Carlo payoff(s).
-		std::function<Array<double, 2>&(Array<double, 2>&)>             antithetic;  ///< Functor mapping a draw of the random variable to their antithetic values.
+		std::function<void(Array<double, 2>&, Array<double, 2>&)>             antithetic;  ///< Functor mapping a draw of the random variable to their antithetic values.
 		random_number_generator_type      random_number_generator;
 
 		/// represents maximum simulations per one async call
@@ -208,6 +208,7 @@ namespace derivative
 		std::shared_ptr<MCGatherer<rettype> > gatherer = std::make_shared<MCGatherer<rettype> >(dim);
 		random_number_generator_type random_number_generator_copy = random_number_generator;
 		Array<double, 2> cnt;
+		Array<double, 2> anti_cnt;
 		if (!antithetic)
 		{
 			for (long long i = 0; i < number_of_simulations; i++)
@@ -222,7 +223,12 @@ namespace derivative
 			{
 				random_number_generator_copy.random_reference(cnt);
 				rettype res = f(cnt);
-				res = 0.5 * (res + f(antithetic(cnt)));
+				if (anti_cnt.extent(firstDim) != cnt.extent(firstDim) && anti_cnt.extent(secondDim) != cnt.extent(secondDim))
+				{
+					anti_cnt.resize(cnt.extent(firstDim), cnt.extent(secondDim));
+				}
+				antithetic(cnt, anti_cnt);
+				res = 0.5 * (res + f(anti_cnt));
 				*gatherer += res;
 			}
 		}

@@ -97,7 +97,7 @@ namespace derivative
 
 		PRICINGENGINE_DLL_API double ValueAmericanWithMC(const std::shared_ptr<BlackScholesAssetAdapter>& stock1, const std::shared_ptr<BlackScholesAssetAdapter>& stock2, \
 			std::shared_ptr<TermStructure> term, dd::date maturity, double strike, int optType, \
-			size_t sim = 100000, size_t N =100, size_t train = 100, int degree = 10, double ci = 0.95);		
+			size_t sim = 20000, size_t N =100, size_t train = 100, int degree = 10, double ci = 0.95);		
 	}
 
 	namespace ChooserOptionPricer

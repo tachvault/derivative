@@ -155,7 +155,7 @@ namespace derivative
 				LSExerciseStrategy<LongstaffSchwartzExerciseBoundary> exercise_strategy(boundary);
 				MCMapping<GeometricBrownianMotion, Array<double, 2> > mc_mapping(exercise_strategy, gbm, ts, numeraire_index);
 				std::function<double(Array<double, 2>)> func = std::bind(&MCMapping<GeometricBrownianMotion, Array<double, 2> >::mapping, &mc_mapping, std::placeholders::_1);
-				MCGeneric<Array<double, 2>, double, PseudoRandomArray<PseudoRandom<ranlib::NormalUnit<double>, double>, double> > mc(func, random_container, 25000);
+				MCGeneric<Array<double, 2>&, double, PseudoRandomArray<PseudoRandom<ranlib::NormalUnit<double>, double>, double> > mc(func, random_container, 25000);
 				MCGatherer<double> mcgatherer;
 				boost::math::normal normal;
 				double d = boost::math::quantile(normal, ci);
@@ -251,7 +251,7 @@ namespace derivative
 			}
 			std::vector<std::shared_ptr<BlackScholesAssetAdapter> > assets;
 			assets.push_back(stock);
-			//return AntitheticMC(assets, *avgpayoff, term, mat, -1, sim, N, ci, 50000);
+			//return AntitheticMC(assets, *avgpayoff, term, mat, -1, sim, N, ci, 25000);
 			return QRMC(assets, *avgpayoff, term, mat, -1, sim, N, ci, 25000);
 		}
 	}
@@ -365,7 +365,7 @@ namespace derivative
 				LSExerciseStrategy<RegressionExerciseBoundary> exercise_strategy(boundary);
 				MCMapping<GeometricBrownianMotion, Array<double, 2> > mc_mapping(exercise_strategy, gbm, ts, numeraire_index);
 				std::function<double(Array<double, 2>)> func = std::bind(&MCMapping<GeometricBrownianMotion, Array<double, 2> >::mapping, &mc_mapping, std::placeholders::_1);
-				MCGeneric<Array<double, 2>, double, PseudoRandomArray<PseudoRandom<ranlib::NormalUnit<double>, double>, double> > mc(func, random_container, 25000);
+				MCGeneric<Array<double, 2>&, double, PseudoRandomArray<PseudoRandom<ranlib::NormalUnit<double>, double>, double> > mc(func, random_container, 5000);
 				MCGatherer<double> mcgatherer;
 				boost::math::normal normal;
 				double d = boost::math::quantile(normal, ci);

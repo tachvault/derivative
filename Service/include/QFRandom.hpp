@@ -166,9 +166,16 @@ namespace derivative
 
 	/// Antithetic variables mirrored around zero.
 	template <class T>
-	T normal_antithetic(T arg)
+	inline T normal_antithetic(T arg)
 	{
 		return T(-arg);
+	}
+
+	/// Antithetic variables mirrored around zero.
+	template <class T>
+	inline void normal_antithetic_reference(T arg, T result)
+	{
+		result = T(-arg);
 	}
 
 	/// Antithetic for uniform [0,1].
