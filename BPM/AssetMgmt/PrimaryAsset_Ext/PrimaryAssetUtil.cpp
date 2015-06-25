@@ -94,6 +94,9 @@ namespace derivative
 			std::shared_ptr<IExchangeRate> exchangeRate;
 			std::shared_ptr<IExchangeRateValue> exchangeRateVal;
 
+			/// in milliseconds
+			static long long g_accessDur = 1200000;
+
 			/// find the exchange rate from MySQL
 			Name exchangeRateName = IExchangeRate::ConstructName(domestic, foreign);
 			exchangeRate = dynamic_pointer_cast<IExchangeRate>(EntityMgrUtil::findObject(exchangeRateName));
@@ -101,6 +104,13 @@ namespace derivative
 			/// find current exchange rate value from YAHOO data source
 			Name exchangeRateValName = IExchangeRateValue::ConstructName(domestic, foreign);
 			exchangeRateVal = dynamic_pointer_cast<IExchangeRateValue>(EntityMgrUtil::findObject(exchangeRateValName, YAHOO));
+			
+			pt::ptime now = pt::second_clock::local_time();
+			pt::time_duration diff = now - exchangeRateVal->GetAccessTime();
+			if (diff.total_milliseconds() > g_accessDur)
+			{
+				EntityMgrUtil::refreshObject(exchangeRateVal, YAHOO);
+			}
 			exchangeRateVal->SetExchangeRate(exchangeRate);
 			return exchangeRateVal;
 		}

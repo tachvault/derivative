@@ -63,6 +63,13 @@ namespace derivative
 			return m_name;
 		}
 
+		/// The time, data accessed from external system
+		virtual pt::ptime GetAccessTime() const
+		{
+			std::lock_guard<SpinLock> lock(m_lock);
+			return m_accessTime;
+		}
+
 		/// return last asking price
 		double GetAskingPrice() const
 		{
@@ -149,6 +156,12 @@ namespace derivative
 			return m_exchangeRate;
 		}
 
+		virtual void SetAccessTime(const pt::ptime& t)
+		{
+			std::lock_guard<SpinLock> lock(m_lock);
+			m_accessTime = t;
+		}
+
 		void SetAskingPrice(double ask)
 		{
 			m_priceAsk = ask;
@@ -213,6 +226,8 @@ namespace derivative
 		}		
 
 	private:
+
+		pt::ptime m_accessTime;
 
 		/// ask price of the stock. 
 		/// yahoo symbol 'a'

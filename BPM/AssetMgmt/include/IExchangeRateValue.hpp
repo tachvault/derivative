@@ -42,6 +42,9 @@ namespace derivative
 			foreign = boost::any_cast<std::string>(j->second);
 		}
 
+		/// The time, data accessed from external system
+		virtual pt::ptime GetAccessTime() const = 0;
+
 		/// return last asking price
 		/// yahoo symbol 
 		virtual double GetAskingPrice() const = 0;
@@ -85,6 +88,8 @@ namespace derivative
 		//// Return the time this stock was last traded.
 		/// yahoo symbol  
 		virtual pt::ptime   GetTradeTime() const = 0;
+
+		virtual void SetAccessTime(const pt::ptime& t) = 0;
 
 		/// Get the associated stock
 		virtual std::shared_ptr<const IExchangeRate> GetExchangeRate() const = 0;
