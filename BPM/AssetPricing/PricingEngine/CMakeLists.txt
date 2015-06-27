@@ -90,7 +90,7 @@ ADD_LIBRARY(PRICINGENGINE SHARED ${PRICINGENGINE_SOURCE})
 # Specify libraries or flags to use when linking a given target.
 # In VC++, it is # Properties->Linker->Input->Additional Dependencies
 target_link_libraries (PRICINGENGINE ${GLOG_LIBRARY})
-target_link_libraries (PRICINGENGINE ${GFLAG_LIBRARY})
+target_link_libraries (PRICINGENGINE debug ${GFLAG_DEBUG_LIBRARY} optimized ${GFLAG_REL_LIBRARY})
 target_link_libraries (PRICINGENGINE ENTITYMGMT)
 target_link_libraries (PRICINGENGINE FINUTILITY)
 target_link_libraries (PRICINGENGINE SERVICEUTIL)

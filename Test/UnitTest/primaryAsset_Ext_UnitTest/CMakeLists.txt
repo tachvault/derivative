@@ -29,8 +29,8 @@ add_executable(PRIMARYASSET_EXT_UNITTEST ${PRIMARYASSET_EXT_UNITTEST_SOURCES})
 # Specify libraries or flags to use when linking a given target.
 # In VC++, it is # Properties->Linker->Input->Additional Dependencies
 target_link_libraries (PRIMARYASSET_EXT_UNITTEST ${GLOG_LIBRARY})
-target_link_libraries (PRIMARYASSET_EXT_UNITTEST ${GFLAG_LIBRARY})
-target_link_libraries (PRIMARYASSET_EXT_UNITTEST ${GTEST_LIBRARY})
+target_link_libraries (PRIMARYASSET_EXT_UNITTEST debug ${GFLAG_DEBUG_LIBRARY} optimized ${GFLAG_REL_LIBRARY})
+target_link_libraries (PRIMARYASSET_EXT_UNITTEST debug ${GTEST_DEBUG_LIBRARY} optimized ${GTEST_REL_LIBRARY})
 target_link_libraries (PRIMARYASSET_EXT_UNITTEST ENTITYMGMT)
 target_link_libraries (PRIMARYASSET_EXT_UNITTEST SERVICEUTIL)
 target_link_libraries (PRIMARYASSET_EXT_UNITTEST FINUTILITY)

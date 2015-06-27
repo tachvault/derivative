@@ -45,6 +45,6 @@ ADD_LIBRARY(ASSET_PROPERTIES SHARED ${ASSET_PROPERTIES_SOURCE})
 # Specify libraries or flags to use when linking a given target.
 # In VC++, it is # Properties->Linker->Input->Additional Dependencies
 target_link_libraries (ASSET_PROPERTIES ${GLOG_LIBRARY})
-target_link_libraries (ASSET_PROPERTIES ${GFLAG_LIBRARY})
+target_link_libraries (ASSET_PROPERTIES debug ${GFLAG_DEBUG_LIBRARY} optimized ${GFLAG_REL_LIBRARY})
 target_link_libraries (ASSET_PROPERTIES SERVICEUTIL)
 

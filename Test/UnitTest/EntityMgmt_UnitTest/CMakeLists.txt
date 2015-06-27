@@ -35,8 +35,8 @@ add_executable(ENTITYMGMT_UNITTEST ${ENTITY_MGMT_SOURCES})
 # Specify libraries or flags to use when linking a given target.
 # In VC++, it is # Properties->Linker->Input->Additional Dependencies
 target_link_libraries (ENTITYMGMT_UNITTEST ${GLOG_LIBRARY})
-target_link_libraries (ENTITYMGMT_UNITTEST ${GFLAG_LIBRARY})
-target_link_libraries (ENTITYMGMT_UNITTEST ${GTEST_LIBRARY})
+target_link_libraries (ENTITYMGMT_UNITTEST debug ${GFLAG_DEBUG_LIBRARY} optimized ${GFLAG_REL_LIBRARY})
+target_link_libraries (ENTITYMGMT_UNITTEST debug ${GTEST_DEBUG_LIBRARY} optimized ${GTEST_REL_LIBRARY})
 target_link_libraries (ENTITYMGMT_UNITTEST ${GMOCK_LIBRARY})
 target_link_libraries (ENTITYMGMT_UNITTEST ENTITYMGMT)
 target_link_libraries (ENTITYMGMT_UNITTEST SERVICEUTIL)

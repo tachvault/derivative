@@ -69,8 +69,7 @@ ADD_LIBRARY(FACADES SHARED ${FACADES_SOURCES})
 # Specify libraries or flags to use when linking a given target.
 # In VC++, it is # Properties->Linker->Input->Additional Dependencies
 target_link_libraries (FACADES ${GLOG_LIBRARY})
-target_link_libraries (FACADES ${GFLAG_LIBRARY})
-target_link_libraries (FACADES ${RESTSDK_LIBRARY})
+target_link_libraries (FACADES debug ${GFLAG_DEBUG_LIBRARY} optimized ${GFLAG_REL_LIBRARY})
 target_link_libraries (FACADES ENTITYMGMT)
 target_link_libraries (FACADES SERVICEUTIL)
 target_link_libraries (FACADES MESSAGEDISPATCHER)

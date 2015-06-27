@@ -28,6 +28,6 @@ ADD_LIBRARY(DATASOURCE_MYSQL SHARED ${DATASOURCE_MYSQL_SOURCE})
 # Specify libraries or flags to use when linking a given target.
 # In VC++, it is # Properties->Linker->Input->Additional Dependencies
 target_link_libraries (DATASOURCE_MYSQL ${GLOG_LIBRARY})
-target_link_libraries (DATASOURCE_MYSQL ${GFLAG_LIBRARY})
+target_link_libraries (DATASOURCE_MYSQL debug ${GFLAG_DEBUG_LIBRARY} optimized ${GFLAG_REL_LIBRARY})
 target_link_libraries (DATASOURCE_MYSQL ENTITYMGMT)
 target_link_libraries (DATASOURCE_MYSQL SERVICEUTIL)

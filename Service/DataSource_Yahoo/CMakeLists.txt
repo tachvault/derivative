@@ -28,5 +28,5 @@ ADD_LIBRARY(DATASOURCE_YAHOO SHARED ${DATASOURCE_YAHOO_SOURCE})
 # Specify libraries or flags to use when linking a given target.
 # In VC++, it is # Properties->Linker->Input->Additional Dependencies
 target_link_libraries (DATASOURCE_YAHOO ${GLOG_LIBRARY})
-target_link_libraries (DATASOURCE_YAHOO ${GFLAG_LIBRARY})
+target_link_libraries (DATASOURCE_YAHOO debug ${GFLAG_DEBUG_LIBRARY} optimized ${GFLAG_REL_LIBRARY})
 target_link_libraries (DATASOURCE_YAHOO ENTITYMGMT)

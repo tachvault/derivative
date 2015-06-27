@@ -30,9 +30,8 @@ add_executable(BINOMIAL_FUNCTEST ${BINOMIAL_FUNCTEST_SOURCES})
 # Specify libraries or flags to use when linking a given target.
 # In VC++, it is # Properties->Linker->Input->Additional Dependencies
 target_link_libraries (BINOMIAL_FUNCTEST ${GLOG_LIBRARY})
-target_link_libraries (BINOMIAL_FUNCTEST ${GFLAG_LIBRARY})
-target_link_libraries (BINOMIAL_FUNCTEST ${GTEST_LIBRARY})
-#target_link_libraries (BINOMIAL_FUNCTEST ${GTEST_MAIN_LIBRARY})
+target_link_libraries (BINOMIAL_FUNCTEST debug ${GFLAG_DEBUG_LIBRARY} optimized ${GFLAG_REL_LIBRARY})
+target_link_libraries (BINOMIAL_FUNCTEST debug ${GTEST_DEBUG_LIBRARY} optimized ${GTEST_REL_LIBRARY})
 target_link_libraries (BINOMIAL_FUNCTEST ENTITYMGMT)
 target_link_libraries (BINOMIAL_FUNCTEST SERVICEUTIL)
 target_link_libraries (BINOMIAL_FUNCTEST FINUTILITY)

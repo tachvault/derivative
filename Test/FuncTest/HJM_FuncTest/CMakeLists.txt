@@ -30,9 +30,8 @@ add_executable(HJM_FUNCTEST ${HJM_FUNCTEST_SOURCES})
 # Specify libraries or flags to use when linking a given target.
 # In VC++, it is # Properties->Linker->Input->Additional Dependencies
 target_link_libraries (HJM_FUNCTEST ${GLOG_LIBRARY})
-target_link_libraries (HJM_FUNCTEST ${GFLAG_LIBRARY})
-target_link_libraries (HJM_FUNCTEST ${GTEST_LIBRARY})
-#target_link_libraries (HJM_FUNCTEST ${GTEST_MAIN_LIBRARY})
+target_link_libraries (HJM_FUNCTEST debug ${GFLAG_DEBUG_LIBRARY} optimized ${GFLAG_REL_LIBRARY})
+target_link_libraries (HJM_FUNCTEST debug ${GTEST_DEBUG_LIBRARY} optimized ${GTEST_REL_LIBRARY})
 target_link_libraries (HJM_FUNCTEST ENTITYMGMT)
 target_link_libraries (HJM_FUNCTEST SERVICEUTIL)
 target_link_libraries (HJM_FUNCTEST FINUTILITY)

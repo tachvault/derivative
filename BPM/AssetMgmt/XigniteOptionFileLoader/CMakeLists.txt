@@ -43,8 +43,8 @@ add_executable(XIGNITEOPTIONFILELOADER ${XIGNITEOPTIONFILELOADER_SOURCES})
 # Specify libraries or flags to use when linking a given target.
 # In VC++, it is # Properties->Linker->Input->Additional Dependencies
 target_link_libraries (XIGNITEOPTIONFILELOADER ${GLOG_LIBRARY})
-target_link_libraries (XIGNITEOPTIONFILELOADER ${GFLAG_LIBRARY})
-target_link_libraries (XIGNITEOPTIONFILELOADER ${RESTSDK_LIBRARY})
+target_link_libraries (XIGNITEOPTIONFILELOADER debug ${GFLAG_DEBUG_LIBRARY} optimized ${GFLAG_REL_LIBRARY})
+target_link_libraries (XIGNITEOPTIONFILELOADER debug ${RESTSDK_DEBUG_LIBRARY} optimized ${RESTSDK_REL_LIBRARY})
 target_link_libraries (XIGNITEOPTIONFILELOADER ENTITYMGMT)
 target_link_libraries (XIGNITEOPTIONFILELOADER SERVICEUTIL)
 target_link_libraries (XIGNITEOPTIONFILELOADER FINUTILITY)

@@ -37,8 +37,8 @@ ADD_LIBRARY(XIGNITEDATAACCESS SHARED ${XIGNITEDATAACCESS_SOURCE})
 # Specify libraries or flags to use when linking a given target.
 # In VC++, it is # Properties->Linker->Input->Additional Dependencies
 target_link_libraries (XIGNITEDATAACCESS ${GLOG_LIBRARY})
-target_link_libraries (XIGNITEDATAACCESS ${GFLAG_LIBRARY})
-target_link_libraries (XIGNITEDATAACCESS ${RESTSDK_LIBRARY})
+target_link_libraries (XIGNITEDATAACCESS debug ${GFLAG_DEBUG_LIBRARY} optimized ${GFLAG_REL_LIBRARY})
+target_link_libraries (XIGNITEDATAACCESS debug ${RESTSDK_DEBUG_LIBRARY} optimized ${RESTSDK_REL_LIBRARY})
 target_link_libraries (XIGNITEDATAACCESS ENTITYMGMT)
 target_link_libraries (XIGNITEDATAACCESS SERVICEUTIL)
 target_link_libraries (XIGNITEDATAACCESS DATASOURCE_REST)

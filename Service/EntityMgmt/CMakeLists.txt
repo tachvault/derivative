@@ -37,4 +37,4 @@ ADD_LIBRARY(ENTITYMGMT SHARED ${ENTITY_MGMT_SOURCES})
 # Specify libraries or flags to use when linking a given target.
 # In VC++, it is # Properties->Linker->Input->Additional Dependencies
 target_link_libraries (ENTITYMGMT ${GLOG_LIBRARY})
-target_link_libraries (ENTITYMGMT ${GFLAG_LIBRARY})
+target_link_libraries (ENTITYMGMT debug ${GFLAG_DEBUG_LIBRARY} optimized ${GFLAG_REL_LIBRARY})

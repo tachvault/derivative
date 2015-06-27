@@ -88,7 +88,7 @@ ADD_LIBRARY(PRIMARYASSET SHARED ${PRIMARYASSET_SOURCE})
 # Specify libraries or flags to use when linking a given target.
 # In VC++, it is # Properties->Linker->Input->Additional Dependencies
 target_link_libraries (PRIMARYASSET ${GLOG_LIBRARY})
-target_link_libraries (PRIMARYASSET ${GFLAG_LIBRARY})
+target_link_libraries (PRIMARYASSET debug ${GFLAG_DEBUG_LIBRARY} optimized ${GFLAG_REL_LIBRARY})
 target_link_libraries (PRIMARYASSET ASSET_PROPERTIES)
 target_link_libraries (PRIMARYASSET ENTITYMGMT)
 target_link_libraries (PRIMARYASSET FINUTILITY)
