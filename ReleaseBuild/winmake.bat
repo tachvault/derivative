@@ -1,0 +1,10 @@
+set MYSQL_CONN_DIR=C:\Program Files (x86)\MySQL\Connector.C++ 1.1\
+set MYSQL_DIR=C:\Program Files (x86)\MySQL\MySQL Server 5.6\
+set GLOG_ROOT=%cd%\..\common\vc11\glog-0.3.3\
+set GFLAG_ROOT=%cd%\..\common\vc11\gflags-2.0\
+set BLITZ_DIR=%cd%\..\common\vc11\blitz-0.10\
+set GTEST_ROOT=%cd%\..\common\vc11\gtest-1.7.0\
+set GMOCK_ROOT=%cd%\..\common\vc11\gmock-1.7.0\
+set CASABLANCA=C:\Users\murugan\Documents\GitHub\casablanca
+set POCO_DIR=C:\poco-1.6.0
+cmake ../ -G "Visual Studio 12 2013" -DCMAKE_BUILD_TYPE=Release
