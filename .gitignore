@@ -93,6 +93,9 @@ dlldata.c
 *.pidb
 *.svclog
 *.scc
+*.vcxproj
+*.vcxproj.filters
+*.sln
 
 # Chutzpah Test files
 _Chutzpah*
@@ -229,5 +232,5 @@ FakesAssemblies/
 CMakeCache.txt
 CMakeFiles
 Makefile
-cmake_install.cmake
+cmake_install.*
 install_manifest.txt
