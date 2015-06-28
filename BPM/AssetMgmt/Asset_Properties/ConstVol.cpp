@@ -10,9 +10,9 @@ Initial version: Copyright 2003, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012,
 namespace derivative
 {	
 	/// clone this object
-    std::shared_ptr<DeterministicAssetVol> ConstVol::Clone()
+    std::shared_ptr<DeterministicAssetVol> ConstVol::Clone() const
 	{
-		std::shared_ptr<DeterministicAssetVol> obj = std::make_shared<ConstVol>(std::forward<Array<double,1> >(lvl));
+		std::shared_ptr<DeterministicAssetVol> obj = std::make_shared<ConstVol>(lvl);
 		return obj;
 	}
 	
@@ -25,6 +25,11 @@ namespace derivative
 	{
 		Array<double,1> result(dt*lvl);
 		return result;
+	}
+
+	void ConstVol::integral(double t, double dt, Array<double, 1>& result) const
+	{
+		result = dt*lvl;
 	}
 
 	std::shared_ptr<DeterministicAssetVol> ConstVol::component_vol(int i) const

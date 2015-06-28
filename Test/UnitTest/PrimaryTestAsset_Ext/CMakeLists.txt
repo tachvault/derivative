@@ -32,7 +32,7 @@ ADD_LIBRARY(PRIMARYTESTASSET_EXT ${PRIMARYTESTASSET_EXT_SOURCE})
 # Specify libraries or flags to use when linking a given target.
 # In VC++, it is # Properties->Linker->Input->Additional Dependencies
 target_link_libraries (PRIMARYTESTASSET_EXT ${GLOG_LIBRARY})
-target_link_libraries (PRIMARYTESTASSET_EXT ${GFLAG_LIBRARY})
+target_link_libraries (PRIMARYTESTASSET_EXT debug ${GTEST_DEBUG_LIBRARY} optimized ${GTEST_REL_LIBRARY})
 target_link_libraries (PRIMARYTESTASSET_EXT ENTITYMGMT)
 target_link_libraries (PRIMARYTESTASSET_EXT FINUTILITY)
 target_link_libraries (PRIMARYTESTASSET_EXT SERVICEUTIL)

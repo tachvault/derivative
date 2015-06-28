@@ -35,8 +35,8 @@ ADD_LIBRARY(WEBSERVICE SHARED ${WEBSERVICE_SOURCES})
 # Specify libraries or flags to use when linking a given target.
 # In VC++, it is # Properties->Linker->Input->Additional Dependencies
 target_link_libraries (WEBSERVICE ${GLOG_LIBRARY})
-target_link_libraries (WEBSERVICE ${GFLAG_LIBRARY})
-target_link_libraries (WEBSERVICE ${RESTSDK_LIBRARY})
+target_link_libraries (WEBSERVICE debug ${GFLAG_DEBUG_LIBRARY} optimized ${GFLAG_REL_LIBRARY})
+target_link_libraries (WEBSERVICE debug ${RESTSDK_DEBUG_LIBRARY} optimized ${RESTSDK_REL_LIBRARY})
 target_link_libraries (WEBSERVICE ENTITYMGMT)
 target_link_libraries (WEBSERVICE ESB)
 target_link_libraries (WEBSERVICE MESSAGES)

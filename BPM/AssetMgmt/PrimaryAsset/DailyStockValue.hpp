@@ -49,17 +49,20 @@ namespace derivative
 
 		const Name& GetName()
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_name;
 		}
 
 		void SetName(const Name& nm)
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			m_name = nm;
 		}
 
 		//// Return the date this stock was last traded.
 		boost::gregorian::date   GetTradeDate() const
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_tradeDate;
 		}
 
@@ -101,17 +104,20 @@ namespace derivative
 		/// return stock.
 		std::shared_ptr<IAsset> GetAsset() const
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_stock;
 		}
 
 		/// return stock.
 		std::shared_ptr<const IStock> GetStock() const
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_stock;
 		}
 
 		void SetTradeDate(const boost::gregorian::date& d)
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			m_tradeDate = d;
 		}
 
@@ -139,10 +145,10 @@ namespace derivative
 			m_priceLow = price;
 		}
 
-		/// no last reported value for historical data
+		/// now last reported value for historical data
 		double GetTradePrice() const
 		{
-			return 0;
+			return m_priceClose;
 		}
 
 		/// set day's adjusted close price
@@ -158,30 +164,31 @@ namespace derivative
 
 		void SetStock(std::shared_ptr<IStock> stock)
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			m_stock = stock;
 		}
 
 	private:
 
 		/// open price of the stock. 
-		double m_priceOpen;
+		std::atomic<double> m_priceOpen;
 
 		/// The closing price of the stock.
-		double   m_priceClose;
+		std::atomic<double>   m_priceClose;
 
 		/// High price on the day. 
-		double    m_priceHigh;
+		std::atomic<double>    m_priceHigh;
 
 		/// Low price on the day. 
-		double    m_priceLow;
+		std::atomic<double>    m_priceLow;
 
 		/// Adjusted closing price on the day. 
-		double    m_priceAdjustedClose;
+		std::atomic<double>    m_priceAdjustedClose;
 
 		/// The date this stock value.
 		dd::date m_tradeDate;
 
-		double m_divYield;
+		std::atomic<double> m_divYield;
 
 		/// Name(DailyStockValue::TYPEID, std::hash<std::string>() \
 		///  (string(symbol + m_tradedate)))
@@ -190,6 +197,8 @@ namespace derivative
 		Name m_name;
 
 		std::shared_ptr<IStock> m_stock;
+
+		mutable SpinLock m_lock;
 	};
 }
 

@@ -28,7 +28,7 @@ namespace derivative
         return *_instance;      
 	}
 
-	void EntityManager::registerObject(const Name& nm, const std::shared_ptr<IObject> &obj)
+	std::shared_ptr<IObject> EntityManager::registerObject(const Name& nm, const std::shared_ptr<IObject> &obj)
 	{
 		/// lock the mutex and keep it locked until
 		/// call is made to EntityGroup
@@ -45,7 +45,7 @@ namespace derivative
 			/// unlock so that it other entity groups
 			/// can access the registry
 			unique_lock.unlock();
-			entityGroup->registerObject(nm, obj);			
+			return entityGroup->registerObject(nm, obj);			
 		}
 		/// the entity group already there in registry
 		else 
@@ -54,11 +54,11 @@ namespace derivative
 			LOG(INFO) << "EntityGroup already exists for " << nm << endl;
 			/// delegate processing the object to the entity group having same type
 			unique_lock.unlock();
-			entityGroup->registerObject(nm, obj);
+			return entityGroup->registerObject(nm, obj);
 		}
 	}
 
-	void EntityManager::registerObjects(const std::deque<const std::shared_ptr<IObject> > &objs)
+	void EntityManager::registerObjects(const std::vector<std::shared_ptr<IObject> > &objs)
 	{
 		///return if objs empty
 		if (objs.empty())

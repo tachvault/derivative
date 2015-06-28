@@ -19,7 +19,7 @@ Copyright (c) 2013, Nathan Muruganantha. All rights reserved.
 #include "IStock.hpp"
 #include "EntityMgrUtil.hpp"
 #include "PrimaryAssetUtil.hpp"
-#include "RESTConnectionUtil.hpp"
+#include "QFUtil.hpp"
 
 using namespace utility;
 using namespace web::http;
@@ -31,11 +31,12 @@ namespace derivative
 	GROUP_REGISTER(StockValueYahooDAO);
 	DAO_REGISTER(IStockValue, YAHOO, StockValueYahooDAO);
 
+	const int StockValueYahooDAO::MaxCount = 100;
 	std::shared_ptr<IMake> StockValueYahooDAO::Make(const Name &nm)
 	{
 		/// Construct StockValueYahooDAO from given name and register with EntityManager
 		std::shared_ptr<StockValueYahooDAO> dao = make_shared<StockValueYahooDAO>(nm);
-		EntityMgrUtil::registerObject(nm, dao);
+		dao = dynamic_pointer_cast<StockValueYahooDAO>(EntityMgrUtil::registerObject(nm, dao));
 		LOG(INFO) << " StockValueYahooDAO  " << nm << " is constructed and registered with EntityManager" << endl;
 
 		/// return constructed object if no exception is thrown
@@ -92,12 +93,12 @@ namespace derivative
 		/// Once have a builder instance, you can modify its components one by one:
 		builder.set_path(U("d/quotes.csv"));
 
-		std::string symbolStr = RESTConnectionUtil::GetTickerSymbol(YAHOO, m_stockVal->GetStock());
+		std::string symbolStr = PrimaryUtil::GetTickerSymbol(YAHOO, m_stockVal->GetStock());
 		utility::string_t symbol = utility::conversions::to_string_t(symbolStr);
 		builder.append_query(L"s=" + symbol);
 		builder.append_query(U("f=abopl1c1p2ydghjkd1t1c1p2exrj2v"));
 
-		http_client client(U("http://finance.yahoo.com/d/"));
+		http_client client(U("http://finance.yahoo.com"));
 		client.request(methods::GET, builder.to_string()).then([&](http_response response)
 		{
 			Concurrency::streams::container_buffer<std::string> instringbuffer;
@@ -111,6 +112,8 @@ namespace derivative
 		}).wait();
 
 		/// now return m_stockVal
+		m_stockVal = dynamic_pointer_cast<IStockValue>(EntityMgrUtil::registerObject(m_stockVal->GetName(), m_stockVal));
+		m_stockVal->SetAccessTime(pt::second_clock::local_time());
 		return m_stockVal;
 	}
 
@@ -141,7 +144,7 @@ namespace derivative
 
 		builder.append_query(U("f=abopl1c1p2ydghjkd1t1c1p2exrj2v"));
 
-		http_client client(U("http://finance.yahoo.com/d/"));
+		http_client client(U("http://finance.yahoo.com"));
 		client.request(methods::GET, builder.to_string()).then([&](http_response response)
 		{
 			Concurrency::streams::container_buffer<std::string> instringbuffer;
@@ -153,7 +156,7 @@ namespace derivative
 			istringstream istr(line);
 			istr >> stockVal;
 		}).wait();
-
+		stockVal->SetAccessTime(pt::second_clock::local_time());
 		return true;
 	}
 

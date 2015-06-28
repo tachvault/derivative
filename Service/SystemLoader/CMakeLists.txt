@@ -8,6 +8,7 @@ include_directories("${GFLAG_ROOT}/src/windows")
 # derivatives include_directories
 include_directories("${PROJECT_SOURCE_DIR}/Service/include")
 include_directories("${PROJECT_SOURCE_DIR}/SOA/include")
+include_directories("${PROJECT_SOURCE_DIR}/BPM/include")
 
 SET(SYSTEMLOADER_SOURCES
     	Loader.cpp
@@ -24,11 +25,12 @@ add_executable(SYSTEMLOADER ${SYSTEMLOADER_SOURCES})
 # Specify libraries or flags to use when linking a given target.
 # In VC++, it is # Properties->Linker->Input->Additional Dependencies
 target_link_libraries (SYSTEMLOADER ${GLOG_LIBRARY})
-target_link_libraries (SYSTEMLOADER ${GFLAG_LIBRARY})
+target_link_libraries (SYSTEMLOADER debug ${GFLAG_DEBUG_LIBRARY} optimized ${GFLAG_REL_LIBRARY})
 target_link_libraries (SYSTEMLOADER ENTITYMGMT)
 target_link_libraries (SYSTEMLOADER SERVICEUTIL)
 target_link_libraries (SYSTEMLOADER MESSAGEDISPATCHER)
 target_link_libraries (SYSTEMLOADER ESB)
+target_link_libraries (SYSTEMLOADER BPMLOADER)
 target_link_libraries (SYSTEMLOADER WEBSERVICE)
 
 # Set the preprocessor definition for _VARIADIC_MAX=10

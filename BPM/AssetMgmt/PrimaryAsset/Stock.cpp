@@ -48,11 +48,10 @@ namespace derivative
 
 	std::shared_ptr<IMake> Stock::Make(const Name &nm)
 	{
-		/// Construct Stock from given name and register with EntityManager
+		std::lock_guard<SpinLock> lock(m_lock);
+		/// Construct Stock from given name
+		/// The caller required to register the constructed with object with EntityManager
 		std::shared_ptr<Stock> stock = make_shared<Stock>(nm);
-		EntityMgrUtil::registerObject(nm, stock);		
-		LOG(INFO) << " Stock  " << nm << " is constructed and registered with EntityManager" << endl;
-
 		/// return constructed object if no exception is thrown
 		return stock;
 	}

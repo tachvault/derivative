@@ -99,7 +99,6 @@ namespace derivative
 		static double EPS;
 		static double EPSS;
 		int degree;
-		complex<double> Laguerre(complex<double> x,const Array<complex<double>,1>& xc) const;
 		void calc_roots();         
 	};
 

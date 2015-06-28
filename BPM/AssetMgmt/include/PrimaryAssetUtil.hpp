@@ -41,6 +41,7 @@ namespace derivative
 {
 	class IIRValue;
 	class IAssetValue;
+	class IStock;
 	class IStockValue;
 	class IExchangeRateValue;
 	class IDailyEquityOptionValue;
@@ -81,35 +82,37 @@ namespace derivative
 			return obj;
 		};
 
-		template <typename T>
-		void FindOptionValues(const string& symbol, const dd::date& tdate, int maturity, std::vector<std::shared_ptr<T> > & options, double strike = 0)
+		template <typename derived, typename parent>
+		void FindOptionValues(const string& symbol, const dd::date& tdate, int maturity, std::vector<std::shared_ptr<parent> > & options, double strike = 0)
 		{
 			/// Get option data for apple with trade date as today
 			dd::date maturityDate = tdate + dd::date_duration(maturity);
-			T::OptionType opt = T::OptionType::VANILLA_CALL;
-			Name nm = T::ConstructName(symbol, tdate, opt, maturityDate, strike);
+			derived::OptionType opt = derived::OptionType::VANILLA_CALL;
+			Name nm = derived::ConstructName(symbol, tdate, opt, maturityDate, strike);
 
 			std::vector<std::shared_ptr<IObject> > objects;
 			EntityMgrUtil::findObjects(nm, objects);
+			if (objects.empty()) throw std::domain_error("No option data found");
+			EntityMgrUtil::registerObjects(objects);			
 			for (std::shared_ptr<IObject> obj : objects)
 			{
-				std::shared_ptr<T> option = dynamic_pointer_cast<T>(obj);
+				std::shared_ptr<parent> option = dynamic_pointer_cast<parent>(obj);
 				options.push_back(option);
 			}
 		}
 
-		template <typename T>
-		void FindOptionValues(const string& symbol, const dd::date& tdate, const dd::date& maturityDate, std::vector<std::shared_ptr<T> > & options, double strike = 0)
+		template <typename derived, typename parent>
+		void FindOptionValues(const string& symbol, const dd::date& tdate, const dd::date& maturityDate, std::vector<std::shared_ptr<parent> > & options, double strike = 0)
 		{
 			/// Get option data for apple with trade date as today
-			T::OptionType opt = T::OptionType::VANILLA_CALL;
-			Name nm = T::ConstructName(symbol, tdate, opt, maturityDate, strike);
+			derived::OptionType opt = derived::OptionType::VANILLA_CALL;
+			Name nm = derived::ConstructName(symbol, tdate, opt, maturityDate, strike);
 
 			std::vector<std::shared_ptr<IObject> > objects;
 			EntityMgrUtil::findObjects(nm, objects);
 			for (std::shared_ptr<IObject> obj : objects)
 			{
-				std::shared_ptr<T> option = dynamic_pointer_cast<T>(obj);
+				std::shared_ptr<parent> option = dynamic_pointer_cast<parent>(obj);
 				options.push_back(option);
 			}
 		}
@@ -121,6 +124,8 @@ namespace derivative
 		PRIMARYASSET_EXT_API double getCompoundRateToDF(double rate, double tenor);
 
 		PRIMARYASSET_EXT_API double getDFToCompoundRate(double df, double tenor);
+
+		PRIMARYASSET_EXT_API std::string GetTickerSymbol(unsigned short src, std::shared_ptr<IStock> stock);
 
 		PRIMARYASSET_EXT_API std::shared_ptr<IStockValue> getStockValue(const std::string& symbol);
 

@@ -30,9 +30,8 @@ add_executable(GCEMPIRICAL_FUNCTTEST ${GCEMPIRICAL_FUNCTTEST_SOURCES})
 # Specify libraries or flags to use when linking a given target.
 # In VC++, it is # Properties->Linker->Input->Additional Dependencies
 target_link_libraries (GCEMPIRICAL_FUNCTTEST ${GLOG_LIBRARY})
-target_link_libraries (GCEMPIRICAL_FUNCTTEST ${GFLAG_LIBRARY})
-target_link_libraries (GCEMPIRICAL_FUNCTTEST ${GTEST_LIBRARY})
-#target_link_libraries (GCEMPIRICAL_FUNCTTEST ${GTEST_MAIN_LIBRARY})
+target_link_libraries (GCEMPIRICAL_FUNCTTEST debug ${GFLAG_DEBUG_LIBRARY} optimized ${GFLAG_REL_LIBRARY})
+target_link_libraries (GCEMPIRICAL_FUNCTTEST debug ${GTEST_DEBUG_LIBRARY} optimized ${GTEST_REL_LIBRARY})
 target_link_libraries (GCEMPIRICAL_FUNCTTEST ENTITYMGMT)
 target_link_libraries (GCEMPIRICAL_FUNCTTEST SERVICEUTIL)
 target_link_libraries (GCEMPIRICAL_FUNCTTEST FINUTILITY)

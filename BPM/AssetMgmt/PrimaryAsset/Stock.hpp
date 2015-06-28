@@ -5,6 +5,8 @@ Copyright (c) 2013 - 2014, Nathan Muruganantha. All rights reserved.
 #ifndef _DERIVATIVE_STOCK_H_
 #define _DERIVATIVE_STOCK_H_
 
+#include <atomic>
+#include "SpinLock.hpp"
 #include "IMake.hpp"
 #include "IStock.hpp"
 #include "Name.hpp"
@@ -45,11 +47,13 @@ namespace derivative
 
 		const std::string& GetSymbol() const
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_symbol;
 		}
 
 		const std::string& GetDescription() const
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_description;
 		}
 
@@ -85,6 +89,7 @@ namespace derivative
 
 		void SetSymbol(const std::string& sym)
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			m_symbol = sym;
 		}
 
@@ -95,6 +100,7 @@ namespace derivative
 
 		void SetDescription(const std::string& des)
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			m_description = des;
 		}
 
@@ -122,7 +128,7 @@ namespace derivative
 
 		/// Name(TYPEID, std::hash<std::string>()(ticker symbol))
 		/// Key[0] => "symbol"
-		Name m_name;
+		const Name m_name;
 
 		std::string m_symbol;
 
@@ -135,9 +141,11 @@ namespace derivative
 
 		Country m_country;
 
-		double m_impliedVol;
+		std::atomic<double> m_impliedVol;
 
-		double m_histVol;
+		std::atomic<double> m_histVol;
+
+		mutable SpinLock m_lock;
 	};
 }
 

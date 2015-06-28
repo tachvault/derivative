@@ -91,6 +91,14 @@ namespace derivative
 			throw DataSourceException("IDAO::update(..) not applicable for ZeroCouponBondValue entity");
 		}
 
+		virtual int GetMaxDAOCount() const
+		{
+			return MaxCount;
+		}
+
+		virtual void Passivate()
+		{}
+
 	private:
 
 		std::shared_ptr<IZeroCouponBondValue> constructEntity(const Name& nm);
@@ -106,6 +114,8 @@ namespace derivative
 		sql::Driver *m_driver;
 
 		std::unique_ptr<sql::Connection> m_con;
+
+		static const int MaxCount;
 	};
 }
 

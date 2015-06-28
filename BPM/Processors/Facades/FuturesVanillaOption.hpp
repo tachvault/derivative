@@ -11,6 +11,7 @@ Copyright (c) 2015, Nathan Muruganantha. All rights reserved.
 #include "IMessageSink.hpp"
 #include "IObject.hpp"
 #include "IMake.hpp"
+#include "FuturesOption.hpp"
 
 #if defined _WIN32 || defined __CYGWIN__
 #ifdef FACADES_EXPORTS
@@ -47,7 +48,8 @@ namespace derivative
 	class DeterministicAssetVol;
 
 	/// Create the FuturesVanillaOption class
-	class FACADES_DLL_API FuturesVanillaOption : virtual public IObject,
+	class FACADES_DLL_API FuturesVanillaOption : virtual public FuturesOption,
+		virtual public IObject,
 		virtual public IMake,
 		virtual public IMessageSink
 	{
@@ -77,57 +79,12 @@ namespace derivative
 
 		virtual std::shared_ptr<IMake> Make(const Name &nm, const std::deque<boost::any>& agrs);
 
-		virtual void Activate(const std::deque<boost::any>& agrs);
-
-		/// Nothing to do here.
-		virtual void Passivate();
-
 		virtual void Dispatch(std::shared_ptr<IMessage>& msg);
-
-		/// Evalue American call option with Binomial
-		virtual void ValueAmericanWithBinomial(int N = 1000);
-
-		virtual void ValueEuropeanWithBinomial(int N = 1000);
 		
 	private:
 
 		/// name
 		Name m_name;
-
-		/// futures symbol
-		std::string m_symbol;
-
-		/// option type is either CALL=1 or PUT=-1
-		int m_optType;
-
-		/// underlying value
-		std::shared_ptr<IFuturesValue> m_futuresVal;
-
-		/// BlackScholesAssetAdapter class
-		std::shared_ptr<BlackScholesAssetAdapter> m_futures;
-
-		std::shared_ptr<DeterministicAssetVol>  m_vol;
-
-		/// term strucure corresponding to the
-		/// country of underlying.
-		std::shared_ptr<TermStructure> m_term;
-
-		/// interest rate resulted from term structure interpolation
-		double m_termRate;
-
-		/// strike price
-		double m_strike;
-
-		/// maturity date
-		dd::date m_maturity;
-
-		/// delivery date
-		dd::date m_delivery;
-
-		/// option values resulted from different pricing models.
-		double m_binomial;
-		
-		double m_closedForm;
 	};
 }
 

@@ -17,11 +17,12 @@ namespace derivative
 	GROUP_REGISTER(HistoricalStockInfoMySQLDAO);
 	DAO_REGISTER(HistoricalStockInfo, MYSQL, HistoricalStockInfoMySQLDAO);
 
+	const int HistoricalStockInfoMySQLDAO::MaxCount = 100;
 	std::shared_ptr<IMake> HistoricalStockInfoMySQLDAO::Make(const Name &nm)
 	{
 		/// Construct HistoricalStockInfoMySQLDAO from given name and register with EntityManager
 		std::shared_ptr<HistoricalStockInfoMySQLDAO> dao = make_shared<HistoricalStockInfoMySQLDAO>(nm);
-		EntityMgrUtil::registerObject(nm, dao);
+		dao = dynamic_pointer_cast<HistoricalStockInfoMySQLDAO>(EntityMgrUtil::registerObject(nm, dao));
 		LOG(INFO) << " HistoricalStockInfoMySQLDAO  " << nm << " is constructed and registered with EntityManager" << endl;
 
 		/// return constructed object if no exception is thrown
@@ -203,6 +204,7 @@ namespace derivative
 				/// make DailyStockInfo
 				std::shared_ptr<IDailyStockValue> dailyStockVal = ConstructDailyStockValue(stock, exemplar, symbolStr, dateStr, \
 					open, high, low, close, adjClose);
+				dailyStockVal = dynamic_pointer_cast<IDailyStockValue>(EntityMgrUtil::registerObject(dailyStockVal->GetName(), dailyStockVal));
 				data.push_back(dailyStockVal);
 
 			}

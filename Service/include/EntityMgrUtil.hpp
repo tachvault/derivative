@@ -67,11 +67,11 @@ namespace derivative
 		/// register an object that implements IObject pure virtual class.
 		/// if the given object is already registered with the name
 		/// then it will propogate RegistryException
-		static void registerObject(const Name& nm, const std::shared_ptr<IObject> &obj);
+		static std::shared_ptr<IObject> registerObject(const Name& nm, const std::shared_ptr<IObject> &obj);
 
 		/// register a set of objects together.
 		/// Useful routine when registering streaming data
-		static void registerObjects(const std::deque<const std::shared_ptr<IObject> > &objs);
+		static void registerObjects(const std::vector<std::shared_ptr<IObject> > &objs);
 
 		/// get the MySQL DataSource object
 		static std::shared_ptr<IDataSource> getDataSourceHandler(const Name& nm,unsigned short source);
@@ -91,7 +91,7 @@ namespace derivative
 
 		/// refresh and object that is in the memory.
 		/// if the object is not in the memory in return false.
-		static bool refreshObject(shared_ptr<IObject>& obj, unsigned short source);
+		static bool refreshObject(shared_ptr<IObject> obj, unsigned short source);
 
 		/// Unbind an Entity in memory (with he EntityMgrUtil).
 		/// If the unound object is referenced by other objects then

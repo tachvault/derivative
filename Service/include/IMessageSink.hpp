@@ -5,6 +5,7 @@ Copyright (c) 2013, Nathan Muruganantha. All rights reserved.
 #ifndef _DERIVATIVE_IMESSAGESINK_H_
 #define _DERIVATIVE_IMESSAGESINK_H_
 
+#include <boost/any.hpp>
 #include "global.hpp"
 #include "IObject.hpp"
 #include "ClassType.hpp"

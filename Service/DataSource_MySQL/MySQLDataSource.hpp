@@ -7,7 +7,9 @@ Copyright (c) 2013, Nathan Muruganantha. All rights reserved.
 
 #include <memory>
 #include "IDataSource.hpp"
+#include "ObjectPool.hpp"
 #include "Name.hpp"
+#include "SpinLock.hpp"
 
 #if defined _WIN32 || defined __CYGWIN__
   #ifdef DATASOURCE_MYSQL_EXPORTS
@@ -95,6 +97,12 @@ namespace derivative
 		Name m_name;
 
 		const unsigned short m_source;
+
+		/// declare the Data access object pool. For each entity type (Ex: IStock) 
+		/// there will be a object pool of DAOs. 
+		std::map<grpType, std::shared_ptr<ObjectPool<IDAO> > > m_pool;
+
+		mutable SpinLock m_lock;
 	};
 }
 

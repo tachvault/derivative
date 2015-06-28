@@ -19,11 +19,12 @@ namespace derivative
 	GROUP_REGISTER(LIBORValueMySQLDAO);
 	DAO_REGISTER(IIBORValue, MYSQL, LIBORValueMySQLDAO);
 
+	const int LIBORValueMySQLDAO::MaxCount = 100;
 	std::shared_ptr<IMake> LIBORValueMySQLDAO::Make(const Name &nm)
 	{
 		/// Construct LIBORValueMySQLDAO from given name and register with EntityManager
 		std::shared_ptr<LIBORValueMySQLDAO> dao = make_shared<LIBORValueMySQLDAO>(nm);
-		EntityMgrUtil::registerObject(nm, dao);
+		dao = dynamic_pointer_cast<LIBORValueMySQLDAO>(EntityMgrUtil::registerObject(nm, dao));
 		LOG(INFO) << " LIBORValueMySQLDAO  " << nm << " is constructed and registered with EntityManager" << endl;
 
 		/// return constructed object if no exception is thrown
@@ -152,6 +153,7 @@ namespace derivative
 				auto rate = res->getDouble("_rate");
 				m_value->SetLastRate(rate);
 				m_value->SetReportedDate(boost::any_cast<dd::date>(dd::from_simple_string(lastDate)));
+				m_value = dynamic_pointer_cast<IIBORValue>(EntityMgrUtil::registerObject(m_value->GetName(), m_value));
 				LOG(INFO) << " Interest rate value " << m_value->GetName() \
 					<< " constructed with " << rate << endl;
 			}

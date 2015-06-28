@@ -19,7 +19,7 @@ Copyright (c) 2013 - 2014, Nathan Muruganantha. All rights reserved.
 #include "IDataSource.hpp"
 #include "CountryHolder.hpp"
 #include "IIR.hpp"
-#include "RESTConnectionUtil.hpp"
+#include "QFUtil.hpp"
 
 using namespace utility;
 using namespace web;

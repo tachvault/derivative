@@ -39,6 +39,9 @@ SET(SERVICE_UTIL_SOURCES
 	${PROJECT_SOURCE_DIR}/Service/include/ThreadSafeQueue.hpp
 	${PROJECT_SOURCE_DIR}/Service/include/utilities.h
 	${PROJECT_SOURCE_DIR}/Service/include/SystemUtil.hpp
+	${PROJECT_SOURCE_DIR}/Service/include/RootFinder.h
+        ${PROJECT_SOURCE_DIR}/Service/include/PseudoRandom.hpp
+        ${PROJECT_SOURCE_DIR}/Service/include/PseudoRandomArray.hpp
 	CSV2Array.cpp
 	cubature.c
 	cumnorm1.cpp
@@ -58,6 +61,7 @@ SET(SERVICE_UTIL_SOURCES
 	StringForm.cpp
 	utilities.cpp
 	SystemUtil.cpp
+	RootFinder.cpp
 )
 
 # Link shared library paths (Note: This should be added before Add_library !!!)
@@ -72,7 +76,7 @@ ADD_LIBRARY(SERVICEUTIL SHARED ${SERVICE_UTIL_SOURCES})
 # Specify libraries or flags to use when linking a given target.
 # In VC++, it is # Properties->Linker->Input->Additional Dependencies
 target_link_libraries (SERVICEUTIL ${GLOG_LIBRARY})
-target_link_libraries (SERVICEUTIL ${GFLAG_LIBRARY})
+target_link_libraries (SERVICEUTIL debug ${GFLAG_DEBUG_LIBRARY} optimized ${GFLAG_REL_LIBRARY})
 target_link_libraries (SERVICEUTIL ${CLAPACK_LIBRARY})
 target_link_libraries (SERVICEUTIL ${BLAS_LIBRARY})
 target_link_libraries (SERVICEUTIL ${LIBF77_LIBRARY})

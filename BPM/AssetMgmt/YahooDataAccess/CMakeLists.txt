@@ -37,8 +37,8 @@ ADD_LIBRARY(YAHOODATAACCESS SHARED ${YAHOODATAACCESS_SOURCE})
 # Specify libraries or flags to use when linking a given target.
 # In VC++, it is # Properties->Linker->Input->Additional Dependencies
 target_link_libraries (YAHOODATAACCESS ${GLOG_LIBRARY})
-target_link_libraries (YAHOODATAACCESS ${GFLAG_LIBRARY})
-target_link_libraries (YAHOODATAACCESS ${RESTSDK_LIBRARY})
+target_link_libraries (YAHOODATAACCESS debug ${GFLAG_DEBUG_LIBRARY} optimized ${GFLAG_REL_LIBRARY})
+target_link_libraries (YAHOODATAACCESS debug ${RESTSDK_DEBUG_LIBRARY} optimized ${RESTSDK_REL_LIBRARY})
 target_link_libraries (YAHOODATAACCESS ENTITYMGMT)
 target_link_libraries (YAHOODATAACCESS SERVICEUTIL)
 target_link_libraries (YAHOODATAACCESS FINUTILITY)

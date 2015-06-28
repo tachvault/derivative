@@ -61,7 +61,7 @@ namespace derivative
 		}
 	}
 
-	void BuildHistoricalStockInfo(ushort source, const const std::string& symbol, const dd::date& start, const dd::date& end)
+	std::shared_ptr<HistoricalStockInfo> BuildHistoricalStockInfo(ushort source, const const std::string& symbol, const dd::date& start, const dd::date& end)
 	{
 		/// register the exemplar here until the bug on visual C++ is fixed.
 		GroupRegister StockValGrp(HistoricalStockInfo::TYPEID,  std::make_shared<HistoricalStockInfo>(Exemplar())); 
@@ -77,7 +77,7 @@ namespace derivative
 		/// check if the object is already registered with EntityManager
 		try
 		{
-			obj = entMgr.findObject(nm);
+			obj = entMgr.findObject(nm);			
 		}
 		catch(RegistryException& e)
 		{
@@ -99,7 +99,13 @@ namespace derivative
 
 			/// now build the DailyStockInfo
 			std::shared_ptr<IObject> obj = EntityMgrUtil::fetch(nm, source);
+			histStockInfo = dynamic_pointer_cast<HistoricalStockInfo>(obj);
 		}
+		else
+		{
+			histStockInfo = dynamic_pointer_cast<HistoricalStockInfo>(obj);
+		}
+		return histStockInfo;
 	}
 
 	void StoreHistoricalStockInfo(ushort source, const std::shared_ptr<HistoricalStockInfo> & histStock)

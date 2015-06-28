@@ -90,6 +90,17 @@ namespace derivative
 			throw DataSourceException("IDAO::update(..) not applicable for FuturesValue entity");
 		}
 
+		virtual int GetMaxDAOCount() const
+		{
+			return MaxCount;
+		}
+
+		virtual void Passivate()
+		{
+			m_futures = nullptr;
+			m_futuresVal = nullptr;
+		}
+
 	private:
 
 		/// Populate the futuresVal specific attributes
@@ -107,6 +118,7 @@ namespace derivative
 		// Associated futures entity
 		std::shared_ptr<IFutures> m_futures;
 
+		static const int MaxCount;
 	};
 }
 

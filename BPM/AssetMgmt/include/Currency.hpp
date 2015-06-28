@@ -12,9 +12,12 @@
 #include <memory>
 #include <string>
 #include <iostream>
+#include <mutex>
+
 #include "ClassType.hpp"
 #include "IObject.hpp"
 #include "Name.hpp"
+#include "SpinLock.hpp"
 
 #if defined _WIN32 || defined __CYGWIN__
   #ifdef FINUTILITY_EXPORTS
@@ -68,22 +71,22 @@ namespace derivative
         Currency& operator=(const Currency& rhs);
 
 		/// currency name, e.g, "U.S. Dollar"
-		const std::string& GetCurrName() const;
+		inline const std::string& GetCurrName() const;
 
 		/// ISO 4217 three-letter code, e.g, "USD"
-		const std::string& GetCode() const;
+		inline const std::string& GetCode() const;
 
 		/// ISO 4217 numeric code, e.g, "840"
-		ushort GetNumericCode() const;
+		inline ushort GetNumericCode() const;
 
 		/// symbol, e.g, "$"
-		const std::string& GetSymbol() const;
+		inline const std::string& GetSymbol() const;
 
 		/// fraction symbol, e.g, "¢"
-		const std::string& GetFractionSymbol() const;
+		inline const std::string& GetFractionSymbol() const;
 
 		/// number of fractionary parts in a unit, e.g, 100
-		ushort GetFractionsPerUnit() const;
+		inline ushort GetFractionsPerUnit() const;
 
 	private:
 		
@@ -102,6 +105,8 @@ namespace derivative
 
 		ushort m_fractionUnits;
 
+		mutable SpinLock m_lock;
+
 		friend std::ostream& operator<<(std::ostream& os, const Currency& curr);
 	};
 
@@ -117,31 +122,37 @@ namespace derivative
 	// inline definitions    
 	inline const std::string& Currency::GetCurrName() const
 	{
+		std::lock_guard<SpinLock> lock(m_lock);
 		return m_currName;
 	}
 
 	inline const std::string& Currency::GetCode() const 
 	{
+		std::lock_guard<SpinLock> lock(m_lock);
 		return m_code;
 	}
 
 	inline ushort Currency::GetNumericCode() const
 	{
+		std::lock_guard<SpinLock> lock(m_lock);
 		return m_numbericCode;
 	}
 
 	inline const std::string& Currency::GetSymbol() const
 	{
+		std::lock_guard<SpinLock> lock(m_lock);
 		return m_symbol;
 	}
 
 	inline const std::string& Currency::GetFractionSymbol() const
 	{
+		std::lock_guard<SpinLock> lock(m_lock);
 		return m_fractionSymbol;
 	}
 
 	inline ushort Currency::GetFractionsPerUnit() const 
 	{
+		std::lock_guard<SpinLock> lock(m_lock);
 		return m_fractionUnits;
 	}
 

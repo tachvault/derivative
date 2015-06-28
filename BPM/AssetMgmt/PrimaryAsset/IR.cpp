@@ -38,11 +38,12 @@ namespace derivative
 
 	std::shared_ptr<IMake> IR::Make(const Name &nm)
 	{
-		/// Construct IR from given name and register with EntityManager
-		std::shared_ptr<IR> ir = make_shared<IR>(nm);
-		EntityMgrUtil::registerObject(nm, ir);		
-		LOG(INFO) << " IR  " << nm << " is constructed and registered with EntityManager" << endl;
+		std::lock_guard<SpinLock> lock(m_lock);
 
+		/// Construct IR from given name
+		/// The caller required to register the constructed with object with EntityManager
+		std::shared_ptr<IR> ir = make_shared<IR>(nm);
+		
 		/// return constructed object if no exception is thrown
 		return ir;
 	}

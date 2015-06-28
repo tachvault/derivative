@@ -18,11 +18,12 @@ namespace derivative
 	GROUP_REGISTER(FixedRateBondValueMySQLDAO);
 	DAO_REGISTER(IFixedRateBondValue, MYSQL, FixedRateBondValueMySQLDAO);
 
+	const int FixedRateBondValueMySQLDAO::MaxCount = 100;
 	std::shared_ptr<IMake> FixedRateBondValueMySQLDAO::Make(const Name &nm)
 	{
 		/// Construct FixedRateBondValueMySQLDAO from given name and register with EntityManager
 		std::shared_ptr<FixedRateBondValueMySQLDAO> dao = make_shared<FixedRateBondValueMySQLDAO>(nm);
-		EntityMgrUtil::registerObject(nm, dao);
+		dao = dynamic_pointer_cast<FixedRateBondValueMySQLDAO>(EntityMgrUtil::registerObject(nm, dao));
 		LOG(INFO) << " FixedRateBondValueMySQLDAO  " << nm << " is constructed and registered with EntityManager" << endl;
 
 		/// return constructed object if no exception is thrown
@@ -218,6 +219,7 @@ namespace derivative
 				bond->SetYield(yield);
 				bond->SetTradePrice(tPrice);
 				bond->SetQuotedPrice(qPrice);
+				bond = dynamic_pointer_cast<IFixedRateBondValue>(EntityMgrUtil::registerObject(bond->GetName(), bond));
 				LOG(INFO) << " FixedRateBondValue " << symbol << " with trade date " << tDate << " constructed with " \
 					<< "maturity date" << mDate \
 					<< "trade date" << tDate \

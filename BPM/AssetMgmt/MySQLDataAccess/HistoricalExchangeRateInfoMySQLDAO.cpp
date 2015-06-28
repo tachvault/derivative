@@ -17,11 +17,12 @@ namespace derivative
 	GROUP_REGISTER(HistoricalExchangeRateInfoMySQLDAO);
 	DAO_REGISTER(HistoricalExchangeRateInfo, MYSQL, HistoricalExchangeRateInfoMySQLDAO);
 	
+	const int HistoricalExchangeRateInfoMySQLDAO::MaxCount = 100;
 	std::shared_ptr<IMake> HistoricalExchangeRateInfoMySQLDAO::Make(const Name &nm)
 	{
 		/// Construct HistoricalExchangeRateInfoMySQLDAO from given name and register with EntityManager
 		std::shared_ptr<HistoricalExchangeRateInfoMySQLDAO> dao = make_shared<HistoricalExchangeRateInfoMySQLDAO>(nm);
-		EntityMgrUtil::registerObject(nm, dao);
+		dao = dynamic_pointer_cast<HistoricalExchangeRateInfoMySQLDAO>(EntityMgrUtil::registerObject(nm, dao));
 		LOG(INFO) << " HistoricalExchangeRateInfoMySQLDAO  " << nm << " is constructed and registered with EntityManager" << endl;
 
 		/// return constructed object if no exception is thrown
@@ -204,6 +205,7 @@ namespace derivative
 				/// make DailyExchangeRateInfo
 				std::shared_ptr<IDailyExchangeRateValue> dailyExchangeRateVal = ConstructDailyExchangeRateValue(exchangeRate, exemplar, \
 					forex_id, dateStr, open, high, low, close);
+				dailyExchangeRateVal = dynamic_pointer_cast<IDailyExchangeRateValue>(EntityMgrUtil::registerObject(dailyExchangeRateVal->GetName(), dailyExchangeRateVal));
 				data.push_back(dailyExchangeRateVal);
 
 			}

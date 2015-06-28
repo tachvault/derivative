@@ -39,16 +39,19 @@ namespace derivative
 
 		const Name& GetName()
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_name;
 		}
 
 		const std::string& GetSymbol() const
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_symbol;
 		}
 
 		const std::string& GetDescription() const
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_description;
 		}
 
@@ -79,6 +82,7 @@ namespace derivative
 
 		void SetSymbol(const std::string& sym)
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			m_symbol = sym;
 		}
 
@@ -89,6 +93,7 @@ namespace derivative
 
 		void SetDescription(const std::string& des)
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			m_description = des;
 		}
 
@@ -122,9 +127,11 @@ namespace derivative
 		/// the primary exchange that the Futures is traded
 		Exchange m_exchange; 
 
-		double m_impliedVol;
+		std::atomic<double> m_impliedVol;
 
-		double m_histVol;
+		std::atomic<double> m_histVol;
+
+		mutable SpinLock m_lock;
 	};
 }
 

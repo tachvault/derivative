@@ -20,6 +20,8 @@ Copyright (c) 2015, Nathan Muruganantha. All rights reserved.
 #include "FuturesVanillaOptMessage.hpp"
 #include "IMessageSink.hpp"
 #include "MsgProcessorManager.hpp"
+#include "EquityGARCH.hpp"
+#include "ExchangeRateGARCH.hpp"
 
 using namespace derivative;
 using namespace derivative::SystemUtil;
@@ -122,6 +124,37 @@ TEST_F(FacadesTest, LoadLibraries) {
 	/// Cannot continue if not load correctly.
 	ASSERT_TRUE(retValue == true);
 }
+
+
+TEST_F(FacadesTest, FacadesHistoricVolTest)
+{
+	/// get the  historic vol.
+	dd::date today = dd::day_clock::local_day();
+	std::shared_ptr<EquityGARCH> garch = BuildEquityGARCH("AAPL", today);
+	std::shared_ptr<DeterministicAssetVol> vol;
+	try
+	{
+		// first try Vol surface
+		vol = garch->GetVolatility();
+	}
+	catch (std::domain_error& e)
+	{
+		cout << "Error " << e.what() << endl;
+	}
+
+	/// get the  historic vol.
+	std::shared_ptr<GARCH> garchfx = BuildExchangeRateGARCH("CAD", "USD", today);
+	std::shared_ptr<DeterministicAssetVol> volfx;
+	try
+	{
+		// first try Vol surface
+		volfx = garchfx->GetVolatility();
+	}
+	catch (std::domain_error& e)
+	{
+		cout << "Error " << e.what() << endl;
+	}
+};
 
 TEST_F(FacadesTest, FacadesEquityCallTest) 
 {

@@ -35,6 +35,10 @@ Initial version: Copyright 2003, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012,
 
 namespace derivative
 {   
+	using blitz::firstIndex;
+	using blitz::Range;
+	using blitz::toEnd;
+
 	class PRICINGENGINE_DLL_API TSEuropeanInstrument 
 	{
 	public:
@@ -111,6 +115,92 @@ namespace derivative
 		double      lvl;
 		double notional;
 		double    delta;  ///< Length of accrual period.
+	};
+
+	class Floorlet : public TSEuropeanInstrument {
+	private:
+		double      lvl;
+		double notional;
+		double    delta;  ///< Length of accrual period.
+	public:
+		inline Floorlet(double xp, double xt, double xT, double xlvl, double xdelta, double xnotional = 1.0)
+			: TSEuropeanInstrument(xp, xt, xT), lvl(xlvl), notional(xnotional), delta(xdelta) { };
+		virtual double payoff(const TermStructure& ts);
+	};
+
+	class Swaption : public TSEuropeanInstrument {
+	private:
+		double            lvl;
+		double       notional;
+		Array<double, 1> tenor;  ///< Tenor structure of underlying swap
+		int              sign;  ///< -1 = payer, 1 = receiver swaption
+	public:
+		Swaption(double xp, double xt, double xT, double xlvl, double xdelta, int nperiods, int xsign = 1, double xnotional = 1.0);
+		virtual double payoff(const TermStructure& ts);
+	};
+
+	class TSBermudanInstrument 
+	{
+	private:
+		double          p; ///< Current price.
+		double          t; ///< Time at which this price is valid.
+	protected:
+		Array<double, 1> T; ///< Exercise dates.
+	public:
+		inline TSBermudanInstrument(double xp, double xt, int n) : p(xp), t(xt), T(n) 
+		{ };
+		virtual double payoff(double continuation_value, const TermStructure& ts) = 0;
+		inline double& price()
+		{ 
+			return p; 
+		};
+		inline double price() const 
+		{ 
+			return p; 
+		};
+		inline const Array<double, 1>& maturity() const 
+		{
+			return T; 
+		};
+		inline Array<double, 1>& maturity() 
+		{ 
+			return T;
+		};
+		inline double& today() 
+		{ 
+			return t; 
+		};
+		inline double today() const 
+		{ 
+			return t;
+		};
+		int exercise_date(double now) const;
+	};
+
+	/// Bermudan swaption: the assumption is that it can be exercised at any reset date of the underlying swap.
+	class BermudanSwaption : public TSBermudanInstrument 
+	{
+	private:
+		double            lvl;
+		double       notional;
+		Array<double, 1> tenor;  ///< Tenor structure of underlying swap
+		int              sign;  ///< -1 = payer, 1 = receiver swaption
+	public:
+		BermudanSwaption(double xp, double xt, double xT, double xlvl, double xdelta, int nperiods, int xsign = 1, double xnotional = 1.0);
+		virtual double payoff(double continuation_value, const TermStructure& ts);
+	};
+
+	/// Knock-out barrier instrument
+	class BarrierInstrument : public TSBermudanInstrument 
+	{
+	private:
+		TSEuropeanInstrument&            instrument;
+		double                              barrier;
+		double                          barrier_ttm; ///< Time to maturity of barrier rate
+		int                               direction; ///< Up: 1; Down: -1
+	public:
+		BarrierInstrument(double xp, double xt, TSEuropeanInstrument& xinstrument, const Array<double, 1>& barrier_monitoring_dates, double xbarrier, double xbarrier_ttm, int xdirection);
+		virtual double payoff(double continuation_value, const TermStructure& ts);
 	};
 
 } /* namespace derivative */

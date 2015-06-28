@@ -61,7 +61,7 @@ namespace derivative
 		virtual std::shared_ptr<DeterministicAssetVol> component_vol(int i) const = 0;
 
 		/// clone this object
-		virtual std::shared_ptr<DeterministicAssetVol>  Clone() = 0;
+		virtual std::shared_ptr<DeterministicAssetVol>  Clone()  const = 0;
 
 		virtual void output() const
 		{}
@@ -72,8 +72,12 @@ namespace derivative
 
 		virtual Array<double,1> integral(double t,double dt) const = 0;
 
+		virtual void integral(double t, double dt, Array<double, 1>& result) const = 0;
+
 		/// Dimension of the volatility vector.
 		virtual int factors() const = 0;
+
+		virtual double timeframe() const = 0;
 
 		virtual int type() const;
 

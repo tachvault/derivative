@@ -23,7 +23,6 @@ SET(ASSET_PROPERTIES_SOURCE
 	${PROJECT_SOURCE_DIR}/BPM/assetmgmt/include/DeterministicVolMediator.hpp
 	${PROJECT_SOURCE_DIR}/BPM/assetmgmt/include/ExponentialVol.hpp
 	${PROJECT_SOURCE_DIR}/BPM/assetmgmt/include/PiecewiseVol.hpp
-	${PROJECT_SOURCE_DIR}/BPM/assetmgmt/include/VolatilitySmile.hpp
 	ConstVol.cpp
 	DeterministicAssetVolDiff.cpp
 	DeterministicCashflow.cpp
@@ -31,7 +30,6 @@ SET(ASSET_PROPERTIES_SOURCE
 	DeterministicVolMediator.cpp
 	ExponentialVol.cpp
 	PiecewiseVol.cpp
-	VolatilitySmile.cpp
 	Asset_Properties.cpp
 )
 
@@ -47,6 +45,6 @@ ADD_LIBRARY(ASSET_PROPERTIES SHARED ${ASSET_PROPERTIES_SOURCE})
 # Specify libraries or flags to use when linking a given target.
 # In VC++, it is # Properties->Linker->Input->Additional Dependencies
 target_link_libraries (ASSET_PROPERTIES ${GLOG_LIBRARY})
-target_link_libraries (ASSET_PROPERTIES ${GFLAG_LIBRARY})
+target_link_libraries (ASSET_PROPERTIES debug ${GFLAG_DEBUG_LIBRARY} optimized ${GFLAG_REL_LIBRARY})
 target_link_libraries (ASSET_PROPERTIES SERVICEUTIL)
 

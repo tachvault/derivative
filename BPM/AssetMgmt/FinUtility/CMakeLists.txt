@@ -18,7 +18,8 @@ include_directories("${PROJECT_SOURCE_DIR}/BPM/AssetMgmt/include")
 add_definitions(-DFINUTILITY_EXPORTS)
 
 SET(FINUTILITY_SOURCE
-    ${PROJECT_SOURCE_DIR}/BPM/assetmgmt/include/Country.hpp
+    ${PROJECT_SOURCE_DIR}/Service/include/SpinLock.hpp
+	${PROJECT_SOURCE_DIR}/BPM/assetmgmt/include/Country.hpp
 	${PROJECT_SOURCE_DIR}/BPM/assetmgmt/include/CountryHolder.hpp
 	${PROJECT_SOURCE_DIR}/BPM/assetmgmt/include/Currency.hpp
 	${PROJECT_SOURCE_DIR}/BPM/assetmgmt/include/Exchange.hpp
@@ -60,7 +61,7 @@ ADD_LIBRARY(FINUTILITY SHARED ${FINUTILITY_SOURCE})
 # Specify libraries or flags to use when linking a given target.
 # In VC++, it is # Properties->Linker->Input->Additional Dependencies
 target_link_libraries (FINUTILITY ${GLOG_LIBRARY})
-target_link_libraries (FINUTILITY ${GFLAG_LIBRARY})
+target_link_libraries (FINUTILITY debug ${GFLAG_DEBUG_LIBRARY} optimized ${GFLAG_REL_LIBRARY})
 target_link_libraries (FINUTILITY ${MYSQL_LIBRARY})
 target_link_libraries (FINUTILITY ${MYSQL_CONN_LIBRARY})
 target_link_libraries (FINUTILITY ENTITYMGMT)

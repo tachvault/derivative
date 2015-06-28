@@ -5,7 +5,7 @@ Copyright (c) 2013-2014 Nathan Muruganantha. All rights reserved.
 #include "StockValue.hpp"
 #include "GroupRegister.hpp"
 #include "EntityMgrUtil.hpp"
-#include "RESTConnectionUtil.hpp"
+#include "QFUtil.hpp"
 #include "DException.hpp"
 
 namespace derivative
@@ -30,15 +30,15 @@ namespace derivative
 
 	std::shared_ptr<IMake> StockValue::Make(const Name &nm)
 	{
-		/// Construct Stock from given name and register with EntityManager
+		std::lock_guard<SpinLock> lock(m_lock);
+		/// Construct Stock from given name
+		/// The caller required to register the constructed with object with EntityManager
 		std::shared_ptr<StockValue> stockVal = make_shared<StockValue>(nm);
-		EntityMgrUtil::registerObject(nm, stockVal);		
-		LOG(INFO) << " Stock  " << nm << " is constructed and registered with EntityManager" << endl;
-
+		
 		/// return constructed object if no exception is thrown
 		return stockVal;
 	}
-
+	
 	std::shared_ptr<IMake> StockValue::Make(const Name &nm, const std::deque<boost::any>& agrs)
 	{
 		throw std::logic_error("Invalid factory method call");
@@ -46,6 +46,8 @@ namespace derivative
 
 	void StockValue::convert( istringstream  &input)
 	{ 
+		std::lock_guard<SpinLock> lock(m_lock);
+
 		std::string elem;
 		if (std::getline(input, elem,','))  m_priceAsk = atof(elem.c_str()); else throw YahooSrcException("Invalid data");
 		if (std::getline(input, elem,','))  m_priceBid = atof(elem.c_str()); else throw YahooSrcException("Invalid data");
@@ -69,7 +71,7 @@ namespace derivative
 		else throw YahooSrcException("Invalid data");
 		if (std::getline(input, elem,','))
 		{
-			m_tradeTime = pt::ptime(m_tradeDate) + RESTConnectionUtil::get_duration_from_string(elem);
+			m_tradeTime = pt::ptime(m_tradeDate) + get_duration_from_string(elem);
 			LOG(INFO) << "Last trade reported time " << pt::to_simple_string(m_tradeTime) <<endl;
 		}
 		else throw YahooSrcException("Invalid data");

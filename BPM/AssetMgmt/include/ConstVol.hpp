@@ -68,7 +68,7 @@ namespace derivative
 		virtual std::shared_ptr<DeterministicAssetVol> component_vol(int i) const;
 
 		/// clone this object
-		virtual std::shared_ptr<DeterministicAssetVol>  Clone();
+		virtual std::shared_ptr<DeterministicAssetVol>  Clone() const;
 
 		/// Get constant volatility levels over time interval [t,T]. Returns false if volatility
 		/// is not constant over this interval.
@@ -78,6 +78,8 @@ namespace derivative
 
 		virtual Array<double,1> integral(double t,double dt) const;
 
+		virtual void integral(double t, double dt, Array<double, 1>& result) const;
+
 		virtual void interpolate(const std::shared_ptr<DeterministicAssetVol>& neibor, double factor)
 		{
 			throw std::logic_error("not supported");
@@ -85,6 +87,11 @@ namespace derivative
 
 		/// Dimension of the volatility vector.
 		virtual int factors() const;
+
+		virtual double timeframe() const
+		{
+			throw std::logic_error("not applicable");
+		}
 
 		virtual double FwdBondVol(double t,double T1,double T2) const;
 

@@ -38,11 +38,12 @@ namespace derivative
 
 	std::shared_ptr<IMake> LIBOR::Make(const Name &nm)
 	{
-		/// Construct LIBOR from given name and register with EntityManager
-		std::shared_ptr<LIBOR> libor = make_shared<LIBOR>(nm);
-		EntityMgrUtil::registerObject(nm, libor);		
-		LOG(INFO) << " LIBOR  " << nm << " is constructed and registered with EntityManager" << endl;
+		std::lock_guard<SpinLock> lock(m_lock);
 
+		/// Construct LIBOR from given name
+		/// The caller required to register the constructed with object with EntityManager
+		std::shared_ptr<LIBOR> libor = make_shared<LIBOR>(nm);
+		
 		/// return constructed object if no exception is thrown
 		return libor;
 	}

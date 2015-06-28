@@ -7,11 +7,13 @@ Initial versions: Copyright (c) 2008, Frances Y. Kuo and Stephen Joe
 #ifndef _DERIVATIVE_QFQUASIRANDOM_H_
 #define _DERIVATIVE_QFQUASIRANDOM_H_
 
+#include <mutex>
 #include <boost/shared_ptr.hpp>
 #include <boost/math/distributions/normal.hpp>
 #include <blitz/array.h>
 
 #include "ClassType.hpp"
+#include "SpinLock.hpp"
 
 #if defined _WIN32 || defined __CYGWIN__
   #ifdef SERVICEUTIL_EXPORTS
@@ -41,6 +43,8 @@ Initial versions: Copyright (c) 2008, Frances Y. Kuo and Stephen Joe
 namespace derivative 
 {
 	using blitz::Array;
+	using blitz::firstDim;
+	using blitz::secondDim;
 
 	const char default_direction_number_file[] =  "new-joe-kuo-6.21201.dat";
 
@@ -119,6 +123,7 @@ namespace derivative
 		{  };
 		/// Returns an array of draws from Sobol sequence.
 		inline Array<double,2>& random();
+		inline void random_reference(Array<double, 2>& cnt);
 		inline Array<double,2>& random(Array<double,2>& shift);
 		inline void reset() { rng.reset();
 		};
@@ -137,6 +142,7 @@ namespace derivative
 		boost::math::normal  normal;
 		int                       n;
 		const double        epsilon;
+		mutable SpinLock m_lock;
 	};
 
 	inline Array<double,2>& SobolArrayNormal::random()
@@ -155,6 +161,29 @@ namespace derivative
 			}
 		}
 		return contents;
+	}
+
+	void SobolArrayNormal::random_reference(Array<double, 2>& cnt)
+	{
+		std::lock_guard<SpinLock> lock(m_lock);
+		if ((contents.extent(firstDim) != cnt.extent(firstDim)) || (contents.extent(secondDim) != cnt.extent(secondDim)))
+		{
+			cnt.resize(contents.extent(firstDim), contents.extent(secondDim));
+		}
+
+		int i, j, k;
+		Array<double, 1> rnd(rng.random());
+		k = 0;
+		for (i = 0; i<contents.extent(blitz::firstDim); i++)
+		{
+			for (j = 0; j<contents.extent(blitz::secondDim); j++)
+			{
+				double x = rnd(k);
+				if (x == 0) x = epsilon;
+				cnt(i, j) = boost::math::quantile(normal, x);
+				k++;
+			}
+		}
 	}
 
 	inline Array<double,2>& SobolArrayNormal::random(Array<double,2>& shift)

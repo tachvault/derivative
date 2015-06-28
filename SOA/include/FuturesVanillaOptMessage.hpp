@@ -48,17 +48,11 @@ namespace derivative
 
 		enum { MSGID = FUTURES_VANILLA_OPTION };
 
-		struct FuturesRequest : public Request
+		struct MESSAGES_DLL_API FuturesRequest : public Request
 		{
 			FuturesRequest()
 			{}
-
-			dd::date deliveryDate;
 		};
-
-		FuturesVanillaOptMessage()
-			:VanillaOptMessage(extMsgId)
-		{}
 
 		virtual ~FuturesVanillaOptMessage()
 		{}
@@ -84,11 +78,11 @@ namespace derivative
 		{
 			m_req = req;
 		}
+		
+		inline virtual void ParseDeliveryDate(FuturesVanillaOptMessage::FuturesRequest &req, const std::map<string_t, string_t>& query_strings);
 
 	private:
-		
-		static std::atomic<int> extMsgId;
-
+	
 		FuturesRequest m_req;
 	};
 }

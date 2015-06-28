@@ -112,6 +112,8 @@ TEST_F(EntityManagerTest, StockFindTest) {
 		/// the stock data from database, construct stock
 		/// and register with entity manager.
 		stockPtr = dynamic_pointer_cast<IStock>(EntityMgrUtil::findObject(stockName));
+		std::cout << stockPtr->GetName() << "," << stockPtr->GetDomesticCurrency().GetCode() << "," << stockPtr->GetDescription() \
+			<< "," << stockPtr->GetExchange().GetCountry().GetCode() << endl;
 	}
 	catch(RegistryException& e)
 	{

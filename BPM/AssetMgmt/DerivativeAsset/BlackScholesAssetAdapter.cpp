@@ -42,8 +42,8 @@ namespace derivative
 
 	BlackScholesAssetAdapter::BlackScholesAssetAdapter(const BlackScholesAssetAdapter& xasset) 		 
 	{
-		*m_backScholesAsset = *xasset.m_backScholesAsset;
-		*m_asset = *xasset.m_asset;
+		m_backScholesAsset = std::unique_ptr<BlackScholesAsset>(new BlackScholesAsset(*xasset.m_backScholesAsset));
+		m_asset = xasset.m_asset;
 	};
 
 	BlackScholesAssetAdapter& BlackScholesAssetAdapter::operator=(const BlackScholesAssetAdapter& xasset)
@@ -53,8 +53,8 @@ namespace derivative
 			return *this;
 		}
 
-		*m_backScholesAsset = *xasset.m_backScholesAsset;
-		*m_asset = *xasset.m_asset;
+		m_backScholesAsset = std::unique_ptr<BlackScholesAsset>(new BlackScholesAsset(*xasset.m_backScholesAsset));
+		m_asset = xasset.m_asset;
 
 		return *this;
 	}

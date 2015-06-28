@@ -39,16 +39,19 @@ namespace derivative
 
 	const std::string& Exchange::GetExchangeName() const
 	{
+		std::lock_guard<SpinLock> lock(m_lock);
 		return m_exchangeName;
 	}
         
 	const Country& Exchange::GetCountry() const
 	{
+		std::lock_guard<SpinLock> lock(m_lock);
 		return m_country;
 	}
 
 	void Exchange::Clone(const Exchange& src)
 	{
+		std::lock_guard<SpinLock> lock(m_lock);
 		m_exchangeName = src.m_exchangeName;
 		m_country = src.m_country;
 		m_timeOffSet = src.m_timeOffSet;

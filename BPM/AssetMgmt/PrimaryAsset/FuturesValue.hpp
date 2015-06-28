@@ -48,6 +48,7 @@ namespace derivative
 
 		const Name& GetName()
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_name;
 		}
 
@@ -83,11 +84,13 @@ namespace derivative
 
 		virtual dd::date GetTradeDate() const
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_tradeDate;
 		}
 
 		virtual dd::date GetDeliveryDate() const
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_deliveryDate;
 		}
 
@@ -104,12 +107,14 @@ namespace derivative
 
 		virtual std::shared_ptr<IAsset> GetAsset() const
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_futures;
 		}
 
 		/// return futures.
 		virtual shared_ptr<IFutures> GetFutures() const
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_futures;
 		}
 
@@ -165,6 +170,7 @@ namespace derivative
 
 		void SetFutures(std::shared_ptr<IFutures> futures)
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			m_futures = futures;
 		}
 
@@ -175,31 +181,33 @@ namespace derivative
 				
 	private:
 
-		double m_priceHigh;
+		std::atomic<double> m_priceHigh;
 
-		double m_priceLow;
+		std::atomic<double> m_priceLow;
 
-		double   m_priceOpen;
+		std::atomic<double>   m_priceOpen;
 
-		double    m_priceClose;
+		std::atomic<double>    m_priceClose;
 
-		double m_priceTrade;
+		std::atomic<double> m_priceTrade;
 
 		dd::date m_tradeDate;
 
 		dd::date m_deliveryDate;
 
-		int    m_volume;
+		std::atomic<int>    m_volume;
 
-		int    m_openInterest;
+		std::atomic<int>    m_openInterest;
 
-		double m_settledPrice;
+		std::atomic<double> m_settledPrice;
 
 		/// Name(TYPEID, std::hash<std::string>()(symbol)) 
 		/// Key[0] => "symbol"
 		Name m_name;
 
 		std::shared_ptr<IFutures> m_futures;
+
+		mutable SpinLock m_lock;
 	};
 }
 

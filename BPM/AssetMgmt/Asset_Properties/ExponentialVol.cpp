@@ -10,10 +10,10 @@ namespace derivative
 {
 
 	/// clone this object
-    std::shared_ptr<DeterministicAssetVol> ExponentialVol::Clone()
+    std::shared_ptr<DeterministicAssetVol> ExponentialVol::Clone() const
 	{
 		std::shared_ptr<DeterministicAssetVol> obj = \
-			std::make_shared<ExponentialVol>(std::forward<Array<double,1> >(lvl), std::forward<Array<double,1> >(decay));
+			std::make_shared<ExponentialVol>(lvl, decay);
 		return obj;
 	}
 
@@ -37,6 +37,11 @@ namespace derivative
 	{
 		Array<double,1> result(lvl/decay * exp(decay*t) * (exp(decay*dt)-1.0));
 		return result;
+	}
+
+	void ExponentialVol::integral(double t, double dt, Array<double, 1>& result) const
+	{
+		result = (lvl / decay * exp(decay*t) * (exp(decay*dt) - 1.0));
 	}
 
 	int ExponentialVol::factors() const

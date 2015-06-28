@@ -48,7 +48,7 @@ namespace derivative
 			);
 
 		/// clone this object
-		virtual std::shared_ptr<DeterministicAssetVol>  Clone();
+		virtual std::shared_ptr<DeterministicAssetVol>  Clone() const;
 
 		virtual ~PiecewiseConstVol()
 		{
@@ -64,10 +64,14 @@ namespace derivative
 
 		virtual Array<double,1> integral(double t,double dt) const;
 
+		virtual void integral(double t, double dt, Array<double, 1>& result) const;
+
 		virtual void interpolate(const std::shared_ptr<DeterministicAssetVol>& neibor, double factor);
 
 		/// Dimension of the volatility vector.
 		virtual int factors() const;
+
+		virtual double timeframe() const;
 
 		/// Division of time period into segments over which volatility is constant.
 		virtual Array<double,1> segments(double t,double dt) const;
@@ -119,6 +123,13 @@ namespace derivative
 
 		/// disallow the copy constructor and operator= functions
 		DISALLOW_COPY_AND_ASSIGN(PiecewiseConstVol);
+
+	private:
+
+		/// Local function variables
+		mutable Array<double, 1> lvl;
+
+		mutable Array<double, 1> temp;
 	};
 
 } /* namespace derivative */

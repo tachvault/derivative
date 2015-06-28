@@ -46,27 +46,32 @@ namespace derivative
 
 		const Name& GetName()
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_name;
 		}
 
 		void SetName(const Name& nm)
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			m_name = nm;
 		}
 
 		OptionType GetOptionType() const 
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_optType;
 		}
 
 		//// Return the date this option was last traded.
 		dd::date   GetTradeDate() const
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_tradeDate;
 		}
 
 		dd::date  GetMaturityDate() const
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_maturityDate;
 		}
 
@@ -103,33 +108,39 @@ namespace derivative
 		/// return option.
 		std::shared_ptr<IAsset> GetAsset() const
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_stock;
 		}
 		
 		/// return option.
 		std::shared_ptr<const IStock> GetStock() const
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_stock;
 		}
 
 		void SetTradeDate(const boost::gregorian::date& d)
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			m_tradeDate = d;
 		}
 
 		/// no last reported value for historical data
 		double GetTradePrice() const
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_tradePrice;
 		}
 
 		void SetMaturityDate(const boost::gregorian::date& d)
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			m_maturityDate = d;
 		}
 
 		void SetOptionType(const OptionType& optType)
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			m_optType = optType;
 		}
 
@@ -166,6 +177,7 @@ namespace derivative
 
 		void SetOption(std::shared_ptr<IStock> stock)
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			m_stock = stock;
 		}
 
@@ -174,21 +186,21 @@ namespace derivative
 		OptionType m_optType;
 
 		/// current price for the day
-		double m_tradePrice;
+		std::atomic<double> m_tradePrice;
 
-		double m_strikePrice;
+		std::atomic<double> m_strikePrice;
 
 		/// asking price. 
-		double m_askingPrice;
+		std::atomic<double> m_askingPrice;
 
 		/// The bid price.
-		double   m_bidPrice;
+		std::atomic<double>   m_bidPrice;
 
 		/// volume. 
-		int  m_volume;
+		std::atomic<int>  m_volume;
 
 		/// open interest 
-		double m_openInt;
+		std::atomic<double> m_openInt;
 
 		/// The date this option value.
 		dd::date m_tradeDate;
@@ -205,6 +217,8 @@ namespace derivative
 		Name m_name;
 
 		std::shared_ptr<IStock> m_stock;
+
+		mutable SpinLock m_lock;
 	};
 }
 

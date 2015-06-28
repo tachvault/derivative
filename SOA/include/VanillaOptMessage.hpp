@@ -6,9 +6,12 @@ Copyright (c) 2013, Nathan Muruganantha. All rights reserved.
 #define _DERIVATIVE_VANILLAOPTMESSAGE_H_
 
 #include <atomic>
+#include <cpprest/filestream.h>
 #include <cpprest/json.h>
 #include "IMessage.hpp"
 #include "IVisitor.hpp"
+
+using namespace utility;
 
 #if defined _WIN32 || defined __CYGWIN__
 #ifdef MESSAGES_EXPORTS
@@ -45,13 +48,15 @@ namespace derivative
 	{
 	public:
 
-		enum OptionTypeEnum { CALL = 0, PUT = 1 };
+		enum OptionTypeEnum { CALL = 0, PUT = 1, TYPE_UNKNOWN = 2 };
 
-		enum PricingMethodEnum { CLOSED = 0, LATTICE = 1, MONTE_CARLO = 2 };
+		enum PricingMethodEnum { CLOSED = 0, LATTICE = 1, MONTE_CARLO = 2, METHOD_UNKNOWN = 3 };
 
-		enum OptionStyleEnum { EUROPEAN = 0, AMERICAN = 1 };
+		enum OptionStyleEnum { EUROPEAN = 0, AMERICAN = 1, STYLE_UNKNOWN = 2 };
 
-		enum RateTypeEnum { YIELD = 0, LIBOR = 1 };
+		enum RateTypeEnum { YIELD = 0, LIBOR = 1, RATE_UNKNOWN = 2 };
+
+		enum VolatilityTypeEnum { IV = 0, HV = 1, VOL_UNKNOWN = 2 };
 
 		struct Greeks
 		{
@@ -68,10 +73,23 @@ namespace derivative
 			double theta;
 		};
 
+		struct MonteCarlo
+		{
+			size_t sim;
+
+			int steps;
+		};
+
 		struct Request
 		{
 			Request()
-				:style(EUROPEAN), method(LATTICE), rateType(YIELD), strike(0.0), vol(0.0)
+				:style(EUROPEAN),
+				method(LATTICE),
+				rateType(LIBOR),
+				option(TYPE_UNKNOWN),
+				volType(IV),
+				strike(0.0),
+				vol(0.0)
 			{}
 
 			OptionTypeEnum option;
@@ -82,19 +100,44 @@ namespace derivative
 
 			RateTypeEnum rateType;
 
+			VolatilityTypeEnum volType;
+
 			std::string underlying;
+			
+			/// specific to FX options
+			std::string domestic;
+
+			/// specific to FX options
+			std::string foreign;
 
 			dd::date maturity;
+
+			/// This is specific to Futures.
+			dd::date deliveryDate;
 
 			double strike;
 
 			double vol;
+
+			MonteCarlo monte;
+
+			bool validate()
+			{
+				if (option == OptionTypeEnum::TYPE_UNKNOWN || \
+					maturity.is_not_a_date() || \
+					(fabs(strike) < std::numeric_limits<double>::epsilon()))
+				{
+					return false;
+				}
+				return true;
+			}
 		};
 
 		struct Response
 		{
 			Response()
-				:optPrice(0.0)
+				:optPrice(0.0),
+				underlyingTradePrice(0.0)
 			{}
 
 			dd::date underlyingTradeDate;
@@ -106,8 +149,8 @@ namespace derivative
 			Greeks greeks;
 		};
 
-		VanillaOptMessage(int extMsgId)
-			:m_msgSeq(++extMsgId)
+		VanillaOptMessage()
+			:m_msgSeq(++g_msgSeq)
 		{}
 
 		virtual ~VanillaOptMessage()
@@ -159,6 +202,30 @@ namespace derivative
 
 		virtual json::value AsJSON() = 0;
 
+		inline virtual void ParseSymbol(VanillaOptMessage::Request &req, const std::map<string_t, string_t>& query_strings);
+
+		inline virtual void ParseMaturity(VanillaOptMessage::Request &req, const std::map<string_t, string_t>& query_strings);
+
+		inline virtual void ParseStrike(VanillaOptMessage::Request &req, const std::map<string_t, string_t>& query_strings);
+
+		inline virtual void ParseVol(VanillaOptMessage::Request &req, const std::map<string_t, string_t>& query_strings);
+
+		inline virtual VanillaOptMessage::OptionTypeEnum ParseOptionType(const std::map<string_t, string_t>& query_strings);
+
+		inline virtual VanillaOptMessage::OptionStyleEnum  ParseOptionStyle(const std::map<string_t, string_t>& query_strings);
+
+		inline virtual VanillaOptMessage::PricingMethodEnum  ParsePricingMethod(const std::map<string_t, string_t>& query_strings);
+
+		inline virtual VanillaOptMessage::RateTypeEnum  ParseRateType(const std::map<string_t, string_t>& query_strings);
+
+		inline virtual VanillaOptMessage::VolatilityTypeEnum  ParseVolType(const std::map<string_t, string_t>& query_strings);
+		
+		inline void ParseDeliveryDate(VanillaOptMessage::Request &req, const std::map<string_t, string_t>& query_strings);
+
+		inline virtual void ParseForeign(VanillaOptMessage::Request &req, const std::map<string_t, string_t>& query_strings);
+
+		inline virtual void ParseDomestic(VanillaOptMessage::Request &req, const std::map<string_t, string_t>& query_strings);
+
 	protected:
 
 		MsgSequence m_msgSeq;
@@ -168,6 +235,10 @@ namespace derivative
 		Response m_res;
 
 		SystemResponse m_sysRes;
+
+	private:
+
+		static std::atomic<long> g_msgSeq;
 	};
 }
 /* namespace derivative */

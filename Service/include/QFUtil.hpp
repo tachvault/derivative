@@ -9,6 +9,9 @@ Initial version: Copyright 2003, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012,
 #include <string>
 #include <iostream>
 #include <vector>
+#include <regex>
+
+#include "Global.hpp"
 
 #if defined _WIN32 || defined __CYGWIN__
   #ifdef SERVICEUTIL_EXPORTS
@@ -40,7 +43,7 @@ namespace derivative
 	bool SERVICE_UTIL_DLL_API verify_compare(double x,double y,double eps);
 
 	void SERVICE_UTIL_DLL_API load_file(std::string& s, std::istream& is);
-
+	
 	template <class T>
 	bool between(const T& x,const T& a,const T& b)
 	{
@@ -63,6 +66,12 @@ namespace derivative
 		if (i==vec.size()) i = -1; // not found
 		return i;
 	}
+	
+	SERVICE_UTIL_DLL_API void splitLine(const std::string& line, std::vector<std::string>& vec, char delim = ',');
+
+	SERVICE_UTIL_DLL_API pt::time_duration get_duration_from_string(std::string& str);
+
+	SERVICE_UTIL_DLL_API dd::date getDateFromString(const std::wstring& input);
 }
 
 /* namespace derivative */

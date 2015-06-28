@@ -72,12 +72,12 @@ namespace derivative
 		static EntityManager& getInstance();
 
 		/// Register an object with the entity manager
-		void registerObject(const Name& nm, const std::shared_ptr<IObject> &obj);
+		std::shared_ptr<IObject> registerObject(const Name& nm, const std::shared_ptr<IObject> &obj);
 
 		/// Register multiple objects together.
 		/// This more efficient when streaming data is
 		/// registered together from external data sources.
-		void registerObjects(const std::deque<const std::shared_ptr<IObject> > &objs);
+		void registerObjects(const std::vector<std::shared_ptr<IObject> > &objs);
 
 		/// Register alias with the concerete Id.
 		void registerAlias(grpType concreteId, grpType aliasId);

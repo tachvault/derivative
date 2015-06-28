@@ -6,6 +6,8 @@ Copyright (c) 2013, Nathan Muruganantha. All rights reserved.
 #define _DERIVATIVE_MESSAGEDISPATCHER_H_
 
 #include <atomic>
+#include <mutex>
+
 #include <boost/asio.hpp>
 #include <boost/asio.hpp>
 
@@ -14,10 +16,11 @@ Copyright (c) 2013, Nathan Muruganantha. All rights reserved.
 #include "EntityManager.hpp"
 #include "ClassType.hpp"
 #include "IMessage.hpp"
-#include "ThreadSafeQueue.hpp"
+#include "ObjectPool.hpp"
 #include "ThreadSafeRespQueue.hpp"
 #include "IMake.hpp"
 #include "IMessageSink.hpp"
+#include "SpinLock.hpp"
 
 #if defined _WIN32 || defined __CYGWIN__
 #ifdef MESSAGEDISPATCHER_EXPORTS
@@ -56,16 +59,15 @@ namespace derivative
 		public:
 
 			ConnectionPool(grpType id)
-				:m_grpId(id)
-			{
-				m_connections = defaultCntInit;
-			}
+				:m_grpId(id),
+				m_connections(0)
+			{}
 
 			/// group id of a Message proessor type
 			const grpType m_grpId;
 
 			/// number of connections
-		    int m_connections;
+			int m_connections;
 
 			/// thread safe queue to pool passive resources.
 			threadsafe_queue<IMessageSink> m_queue;
@@ -77,7 +79,7 @@ namespace derivative
 
 		/// Constructor with Exemplar
 		MessageDispatcher(const Exemplar &ex);
-		
+
 		/// constructor for the message dispatcher, called by the Create 
 		/// member function. If the socket is empty then no TCP message
 		/// server will be created and initialized.
@@ -115,17 +117,17 @@ namespace derivative
 		/// declare the connection pool. For each msgId there will be a 
 		/// message pool of processors setup. The maximum number
 		/// of processors setup 
-		std::map<msgType, std::shared_ptr<ConnectionPool> > m_pool;
-		
+		std::map<msgType, std::shared_ptr<ObjectPool<IMessageSink> > > m_pool;
+
 		/// A thread safe queue to allocate to queue incoming req messages
 		threadsafe_queue<IMessage> m_reqQueue;
 
 		/// A thread safe queue to allocate to queue outgoing resp messages
 		threadsafe_resp_queue m_respQueue;
 
-		const static int defaultCntInit;
-
 		const static int defaultCntMax;
+
+		SpinLock m_lock;
 	};
 
 	/// utility function to build MessageDispatcher given a name

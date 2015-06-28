@@ -21,6 +21,13 @@ namespace derivative
 		return blitz::sum(lvl*v2.integral(t,dt));
 	}
 
+	double DeterministicVolMediator::volproduct_ConstVol(double t, double dt, const Array<double, 1>& lvl, \
+		const DeterministicAssetVol& v2, Array<double, 1>& temp)
+	{
+		v2.integral(t, dt, temp);
+		return blitz::sum(lvl*temp);
+	}
+
 	double DeterministicVolMediator::volproduct_ExponentialVol(double t,double dt,const Array<double,1>& lvl,const Array<double,1>& decay,const ExponentialVol& v1,const DeterministicAssetVol& v2)
 	{
 		switch (v2.type()) {

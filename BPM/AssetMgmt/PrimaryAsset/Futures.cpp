@@ -44,11 +44,12 @@ namespace derivative
 
 	std::shared_ptr<IMake> Futures::Make(const Name &nm)
 	{
-		/// Construct Futures from given name and register with EntityManager
-		std::shared_ptr<Futures> futures = make_shared<Futures>(nm);
-		EntityMgrUtil::registerObject(nm, futures);		
-		LOG(INFO) << " Futures  " << nm << " is constructed and registered with EntityManager" << endl;
+		std::lock_guard<SpinLock> lock(m_lock);
 
+		/// Construct Futures from given name
+		/// The caller required to register the constructed with object with EntityManager
+		std::shared_ptr<Futures> futures = make_shared<Futures>(nm);
+		
 		/// return constructed object if no exception is thrown
 		return futures;
 	}

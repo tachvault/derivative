@@ -19,6 +19,13 @@ namespace derivative
 		enum {TYPEID = INTERFACE_DAO_TYPE};
 
 	public:
+		
+		/// max DAO objects allowed per a DAO type (concrete type)
+		virtual int GetMaxDAOCount() const = 0;
+
+		/// once serviced, DAO need to be cleared of any member variable
+		/// references.
+		virtual void Passivate() = 0;
 
 		/// insert associated entity into the data source
 		virtual void insert() = 0;

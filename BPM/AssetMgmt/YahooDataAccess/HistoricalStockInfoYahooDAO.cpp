@@ -38,6 +38,7 @@ namespace derivative
 	GROUP_REGISTER(HistoricalStockInfoYahooDAO);
 	DAO_REGISTER(HistoricalStockInfo, YAHOO, HistoricalStockInfoYahooDAO);
 
+	const int HistoricalStockInfoYahooDAO::MaxCount = 100;
 	std::shared_ptr<IMake> HistoricalStockInfoYahooDAO::ConstructExemplar()
 	{
 		/// First get the StockValue exemplar object from the registry
@@ -84,7 +85,7 @@ namespace derivative
 	{
 		/// Construct HistoricalStockInfoYahooDAO from given name and register with EntityManager
 		std::shared_ptr<HistoricalStockInfoYahooDAO> dao = make_shared<HistoricalStockInfoYahooDAO>(nm);
-		EntityMgrUtil::registerObject(nm, dao);
+		dao = dynamic_pointer_cast<HistoricalStockInfoYahooDAO>(EntityMgrUtil::registerObject(nm, dao));
 		LOG(INFO) << " HistoricalStockInfoYahooDAO  " << nm << " is constructed and registered with EntityManager" << endl;
 
 		/// return constructed object if no exception is thrown
@@ -128,6 +129,10 @@ namespace derivative
 		dd::date startDate;
 		dd::date endDate;
 		HistoricalStockInfo::GetKeys(nm, symbolStr, startDate, endDate);
+
+		/// append symbol
+		utility::string_t symbol = utility::conversions::to_string_t(symbolStr);
+		builder.append_query(L"s=" + symbol);
 
 		/// append start date
 		builder.append_query(L"a=" + std::to_wstring((startDate.month() - 1)));
@@ -184,7 +189,6 @@ namespace derivative
 			/// getting all into string and read from string?
 			for (std::string line; std::getline(input, line); )
 			{
-				LOG(INFO) << "Processing: " << line << endl;			
 				boost::tokenizer<boost::char_separator<char> >  tokens(line, sep); 
 				auto it = tokens.begin();
 				if (it != tokens.end()) dateStr = line;  else break;
@@ -214,6 +218,7 @@ namespace derivative
 			// Wait for the entire response body to be de-serialized.
 			.wait();
 
+		m_stockInfo = dynamic_pointer_cast<HistoricalStockInfo>(EntityMgrUtil::registerObject(m_stockInfo->GetName(), m_stockInfo));
 		return m_stockInfo;
 	}	
 

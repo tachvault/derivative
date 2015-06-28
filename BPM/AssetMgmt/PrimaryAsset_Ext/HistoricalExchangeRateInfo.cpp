@@ -68,7 +68,7 @@ namespace derivative
 		}
 	}
 
-	void BuildHistoricalExchangeRateInfo(ushort source, const const std::string& domCurrCode, std::string& foreignCurrCode, \
+	std::shared_ptr<HistoricalExchangeRateInfo> BuildHistoricalExchangeRateInfo(ushort source, const const std::string& domCurrCode, std::string& foreignCurrCode, \
 		                                const dd::date& start, const dd::date& end)
 	{
 		/// register the exemplar here until the bug in visual C++ is fixed.
@@ -103,11 +103,16 @@ namespace derivative
 			{
 				LOG(ERROR) << "Throw exception.. The object not in registry and unable to register or build" << endl;
 				LOG(ERROR) << e.what();
+				throw e;
 			}
 			
 			/// now build the DailyExchangeRateInfo
-			std::shared_ptr<IObject> obj = EntityMgrUtil::fetch(nm, source);
+			obj = EntityMgrUtil::fetch(nm, source);
 		}
+		
+		if (obj == nullptr) throw std::domain_error("Error in getting exchange rates");
+		std::shared_ptr<HistoricalExchangeRateInfo> rate = dynamic_pointer_cast<HistoricalExchangeRateInfo>(obj);
+		return rate;
 	}
 
 	void StoreHistoricalExchangeRateInfo(ushort source, const std::shared_ptr<HistoricalExchangeRateInfo> & histExchangeRate)

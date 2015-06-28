@@ -15,6 +15,8 @@ Copyright (C) Nathan Muruganantha 2013 - 2014
 #include "IRCurve.hpp"
 #include "IFutures.hpp"
 #include "IFuturesValue.hpp"
+#include "Exchange.hpp"
+#include "ExchangeExt.hpp"
 
 namespace derivative
 {
@@ -46,6 +48,9 @@ namespace derivative
 
 		std::shared_ptr<IStockValue> getStockValue(const std::string& symbol)
 		{
+			/// in milliseconds
+			static long long g_accessDur = 30000;
+
 			std::shared_ptr<IStock> stock;
 			std::shared_ptr<IStockValue> stockVal;
 
@@ -56,7 +61,15 @@ namespace derivative
 			/// find current stock value from YAHOO data source
 			Name stockValName = IStockValue::ConstructName(symbol);
 			stockVal = dynamic_pointer_cast<IStockValue>(EntityMgrUtil::findObject(stockValName, YAHOO));
+
+			pt::ptime now = pt::second_clock::local_time();
+			pt::time_duration diff = now - stockVal->GetAccessTime();
+			if (diff.total_milliseconds() > g_accessDur)
+			{
+				EntityMgrUtil::refreshObject(stockVal, YAHOO);
+			}
 			stockVal->SetStock(stock);
+
 			return stockVal;
 		}
 
@@ -81,6 +94,9 @@ namespace derivative
 			std::shared_ptr<IExchangeRate> exchangeRate;
 			std::shared_ptr<IExchangeRateValue> exchangeRateVal;
 
+			/// in milliseconds
+			static long long g_accessDur = 1200000;
+
 			/// find the exchange rate from MySQL
 			Name exchangeRateName = IExchangeRate::ConstructName(domestic, foreign);
 			exchangeRate = dynamic_pointer_cast<IExchangeRate>(EntityMgrUtil::findObject(exchangeRateName));
@@ -88,6 +104,13 @@ namespace derivative
 			/// find current exchange rate value from YAHOO data source
 			Name exchangeRateValName = IExchangeRateValue::ConstructName(domestic, foreign);
 			exchangeRateVal = dynamic_pointer_cast<IExchangeRateValue>(EntityMgrUtil::findObject(exchangeRateValName, YAHOO));
+			
+			pt::ptime now = pt::second_clock::local_time();
+			pt::time_duration diff = now - exchangeRateVal->GetAccessTime();
+			if (diff.total_milliseconds() > g_accessDur)
+			{
+				EntityMgrUtil::refreshObject(exchangeRateVal, YAHOO);
+			}
 			exchangeRateVal->SetExchangeRate(exchangeRate);
 			return exchangeRateVal;
 		}
@@ -129,6 +152,25 @@ namespace derivative
 
 			double Bt = term(tenor);
 			return PrimaryUtil::getDFToSimpleRate(Bt, tenor, 1);
+		}
+		
+		std::string GetTickerSymbol(unsigned short src, std::shared_ptr<IStock> stock)
+		{
+			/// get the exchange corresponding to the ticker symbol
+			ExchangeExt& symMap = ExchangeExt::getInstance();
+			auto exchange = stock->GetExchange();
+
+			/// using the exchange, get the extension
+			auto ext = symMap.GetExchangeExt(src, exchange.GetExchangeName());
+
+			/// now construct the complete symbol used by the given Data source
+			if (ext.empty())
+			{
+				return stock->GetSymbol();
+			}
+
+			std::string symbol = stock->GetSymbol() + std::string(".") + ext;
+			return symbol;
 		}
 	}
 }

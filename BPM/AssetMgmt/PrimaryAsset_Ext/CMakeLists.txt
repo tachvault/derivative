@@ -27,9 +27,8 @@ SET(PRIMARYASSET_EXT_SOURCE
 	${PROJECT_SOURCE_DIR}/BPM/assetmgmt/include/TSLinear.hpp
 	${PROJECT_SOURCE_DIR}/BPM/assetmgmt/include/TSLogLinear.hpp
 	${PROJECT_SOURCE_DIR}/BPM/assetmgmt/include/TSPayoff.hpp
-	${PROJECT_SOURCE_DIR}/BPM/assetmgmt/include/RESTConnectionUtil.hpp
 	${PROJECT_SOURCE_DIR}/BPM/assetmgmt/include/IRCurve.hpp
-	${PROJECT_SOURCE_DIR}/BPM/assetmgmt/include/PrimaryAssetUtil.hpp
+        ${PROJECT_SOURCE_DIR}/BPM/assetmgmt/include/PrimaryAssetUtil.hpp
 	CSVReader.cpp
 	dllmain.cpp
 	FlatTermStructure.cpp
@@ -56,7 +55,7 @@ ADD_LIBRARY(PRIMARYASSET_EXT SHARED ${PRIMARYASSET_EXT_SOURCE})
 # Specify libraries or flags to use when linking a given target.
 # In VC++, it is # Properties->Linker->Input->Additional Dependencies
 target_link_libraries (PRIMARYASSET_EXT ${GLOG_LIBRARY})
-target_link_libraries (PRIMARYASSET_EXT ${GFLAG_LIBRARY})
+target_link_libraries (PRIMARYASSET_EXT debug ${GFLAG_DEBUG_LIBRARY} optimized ${GFLAG_REL_LIBRARY})
 target_link_libraries (PRIMARYASSET_EXT ENTITYMGMT)
 target_link_libraries (PRIMARYASSET_EXT FINUTILITY)
 target_link_libraries (PRIMARYASSET_EXT SERVICEUTIL)

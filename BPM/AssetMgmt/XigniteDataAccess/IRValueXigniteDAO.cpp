@@ -19,7 +19,7 @@ Copyright (c) 2013 - 2014, Nathan Muruganantha. All rights reserved.
 #include "IDataSource.hpp"
 #include "CountryHolder.hpp"
 #include "IIR.hpp"
-#include "RESTConnectionUtil.hpp"
+#include "QFUtil.hpp"
 #include "PrimaryAssetUtil.hpp"
 
 using namespace utility;
@@ -33,11 +33,12 @@ namespace derivative
 	GROUP_REGISTER(IRValueXigniteDAO);
 	DAO_REGISTER(IIRValue, XIGNITE, IRValueXigniteDAO);
 
+	const int IRValueXigniteDAO::MaxCount = 100;
 	std::shared_ptr<IMake> IRValueXigniteDAO::Make(const Name &nm)
 	{
 		/// Construct IRValueXigniteDAO from given name and register with EntityManager
 		std::shared_ptr<IRValueXigniteDAO> dao = make_shared<IRValueXigniteDAO>(nm);
-		EntityMgrUtil::registerObject(nm, dao);
+		dao = dynamic_pointer_cast<IRValueXigniteDAO>(EntityMgrUtil::registerObject(nm, dao));
 		LOG(INFO) << " IRValueXigniteDAO  " << nm << " is constructed and registered with EntityManager" << endl;
 
 		/// return constructed object if no exception is thrown
@@ -85,6 +86,7 @@ namespace derivative
 		findIRValue(date);
 
 		/// now return m_interestRate
+		m_value = dynamic_pointer_cast<IIRValue>(EntityMgrUtil::registerObject(m_value->GetName(), m_value));
 		return m_value;
 	}
 
@@ -157,8 +159,8 @@ namespace derivative
 				auto dateStr = dateIter->second.as_string();
 
 				/// get date from DESTConnectionUtil
-				auto repDate = RESTConnectionUtil::getDateFromString(dateStr);
-				m_value->SetReportedDate(repDate);
+				auto repDate = getDateFromString(dateStr);
+				m_value->SetReportedDate(repDate);			
 			}
 			catch (const http_exception& e)
 			{

@@ -19,11 +19,12 @@ namespace derivative
 	GROUP_REGISTER(DailyEquityOptionValueMySQLDAO);
 	DAO_REGISTER(IDailyEquityOptionValue, MYSQL, DailyEquityOptionValueMySQLDAO);
 
+	const int DailyEquityOptionValueMySQLDAO::MaxCount = 100;
 	std::shared_ptr<IMake> DailyEquityOptionValueMySQLDAO::Make(const Name &nm)
 	{
 		/// Construct DailyEquityOptionValueMySQLDAO from given name and register with EntityManager
 		std::shared_ptr<DailyEquityOptionValueMySQLDAO> dao = make_shared<DailyEquityOptionValueMySQLDAO>(nm);
-		EntityMgrUtil::registerObject(nm, dao);
+		dao = std::dynamic_pointer_cast<DailyEquityOptionValueMySQLDAO>(EntityMgrUtil::registerObject(nm, dao));
 		LOG(INFO) << " DailyEquityOptionValueMySQLDAO  " << nm << " is constructed and registered with EntityManager" << endl;
 
 		/// return constructed object if no exception is thrown
@@ -204,6 +205,8 @@ namespace derivative
 				option->SetVolume(retvol);
 				option->SetOpenInterest(retopenInt);
 
+				option = std::dynamic_pointer_cast<IDailyEquityOptionValue>(EntityMgrUtil::registerObject(option->GetName(), option));
+
 				LOG(INFO) << " DailyEquityOptionValue " << symbol << " with trade date " << tradeDate << " constructed with " \
 					<< "maturity date" << matDate \
 					<< "strike price" << strike \
@@ -306,7 +309,7 @@ namespace derivative
 						option->SetVolume(retvol);
 						option->SetOpenInterest(retopenInt);
 
-						LOG(INFO) << " DailyFuturesOptionValue " << symbol << " with trade date " << traddate << " constructed with " \
+					    LOG(INFO) << " DailyFuturesOptionValue " << symbol << " with trade date " << traddate << " constructed with " \
 							<< "maturity date" << matDate \
 							<< "strike price" << strike \
 							<< "trade price date" << rettradePrice << endl;

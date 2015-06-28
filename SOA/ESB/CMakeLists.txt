@@ -50,10 +50,9 @@ ADD_LIBRARY(ESB SHARED ${ESB_SOURCES})
 # Specify libraries or flags to use when linking a given target.
 # In VC++, it is # Properties->Linker->Input->Additional Dependencies
 target_link_libraries (ESB ${GLOG_LIBRARY})
-target_link_libraries (ESB ${GFLAG_LIBRARY})
+target_link_libraries (ESB debug ${GFLAG_DEBUG_LIBRARY} optimized ${GFLAG_REL_LIBRARY})
 target_link_libraries (ESB ${MYSQL_LIBRARY})
 target_link_libraries (ESB ${MYSQL_CONN_LIBRARY})
-target_link_libraries (ESB ${RESTSDK_LIBRARY})
 target_link_libraries (ESB ENTITYMGMT)
 target_link_libraries (ESB SERVICEUTIL)
 target_link_libraries (ESB MESSAGEDISPATCHER)

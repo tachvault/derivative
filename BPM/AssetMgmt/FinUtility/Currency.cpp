@@ -43,6 +43,8 @@ namespace derivative
 
 	void Currency::Clone(const Currency& src)
 	{
+		std::lock_guard<SpinLock> lock(m_lock);
+
 		m_currName = src.m_currName;
 		m_code = src.m_code;
 		m_numbericCode = src.m_numbericCode;

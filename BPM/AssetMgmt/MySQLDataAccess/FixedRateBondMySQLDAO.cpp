@@ -20,11 +20,12 @@ namespace derivative
 	GROUP_REGISTER(FixedRateBondMySQLDAO);
 	DAO_REGISTER(IFixedRateBond, MYSQL, FixedRateBondMySQLDAO);
 
+	const int FixedRateBondMySQLDAO::MaxCount = 100;
 	std::shared_ptr<IMake> FixedRateBondMySQLDAO::Make(const Name &nm)
 	{
 		/// Construct FixedRateBondMySQLDAO from given name and register with EntityManager
 		std::shared_ptr<FixedRateBondMySQLDAO> dao = make_shared<FixedRateBondMySQLDAO>(nm);
-		EntityMgrUtil::registerObject(nm, dao);
+		dao = std::dynamic_pointer_cast<FixedRateBondMySQLDAO>(EntityMgrUtil::registerObject(nm, dao));
 		LOG(INFO) << " FixedRateBondMySQLDAO  " << nm << " is constructed and registered with EntityManager" << endl;
 
 		/// return constructed object if no exception is thrown
@@ -110,6 +111,7 @@ namespace derivative
 					rate->SetCategory(category);
 					rate->SetCouponPeriod(couponPeriod);
 					rate->SetCouponRate(couponRate);
+					rate = dynamic_pointer_cast<IFixedRateBond>(EntityMgrUtil::registerObject(rate->GetName(), rate));
 
 					LOG(INFO) << " New FixedRateBond object created for << description " << endl;
 

@@ -31,11 +31,12 @@ namespace derivative
 	GROUP_REGISTER(ExchangeRateValueYahooDAO);
 	DAO_REGISTER(IExchangeRateValue, YAHOO, ExchangeRateValueYahooDAO);
 	
+	const int ExchangeRateValueYahooDAO::MaxCount = 100;
 	std::shared_ptr<IMake> ExchangeRateValueYahooDAO::Make(const Name &nm)
 	{
 		/// Construct ExchangeRateValueYahooDAO from given name and register with EntityManager
 		std::shared_ptr<ExchangeRateValueYahooDAO> dao = make_shared<ExchangeRateValueYahooDAO>(nm);
-		EntityMgrUtil::registerObject(nm, dao);
+		dao = dynamic_pointer_cast<ExchangeRateValueYahooDAO>(EntityMgrUtil::registerObject(nm, dao));
 		LOG(INFO) << " ExchangeRateValueYahooDAO  " << nm << " is constructed and registered with EntityManager" << endl;
 
 		/// return constructed object if no exception is thrown
@@ -98,12 +99,12 @@ namespace derivative
 		std::string foreign;
 		IExchangeRateValue::GetKeys(m_exchangeRateVal->GetName(), domestic, foreign);
 
-		utility::string_t symbol = utility::conversions::to_string_t(foreign + domestic + "=X");        
+		utility::string_t symbol = utility::conversions::to_string_t(domestic + foreign + "=X");
 		builder.append_query(L"s=" + symbol);
         
 		builder.append_query(U("f=d1t1l1ab"));
 
-		http_client client(U("http://finance.yahoo.com/d/"));
+		http_client client(U("http://finance.yahoo.com"));
 		client.request(methods::GET, builder.to_string()).then([=](http_response response)
 		{
 			Concurrency::streams::container_buffer<std::string> instringbuffer;
@@ -121,6 +122,8 @@ namespace derivative
 		}).wait();
 
 		/// now return m_exchangeRateVal
+		m_exchangeRateVal = dynamic_pointer_cast<IExchangeRateValue>(EntityMgrUtil::registerObject(m_exchangeRateVal->GetName(), m_exchangeRateVal));
+		m_exchangeRateVal->SetAccessTime(pt::second_clock::local_time());
 		return m_exchangeRateVal;
 	}	
 
@@ -147,12 +150,12 @@ namespace derivative
 		std::string foreign;
 		IExchangeRateValue::GetKeys(exchangeRateVal->GetName(), domestic, foreign);
 		
-		utility::string_t symbol = utility::conversions::to_string_t(foreign + domestic + "=X");        
+		utility::string_t symbol = utility::conversions::to_string_t(domestic + foreign + "=X");
 		builder.append_query(L"s=" + symbol);
         
 		builder.append_query(U("f=d1t1l1ab"));
 
-		http_client client(U("http://finance.yahoo.com/d/"));
+		http_client client(U("http://finance.yahoo.com"));
 		client.request(methods::GET, builder.to_string()).then([&](http_response response)
 		{
 			Concurrency::streams::container_buffer<std::string> instringbuffer;
@@ -168,7 +171,7 @@ namespace derivative
 			istringstream istr(line);
 			istr >> exchangeRateVal;	
 		}).wait();
-
+		m_exchangeRateVal->SetAccessTime(pt::second_clock::local_time());
 		return true;
 	}	
 

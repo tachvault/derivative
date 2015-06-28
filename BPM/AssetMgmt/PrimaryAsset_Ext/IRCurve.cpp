@@ -252,7 +252,6 @@ namespace derivative
 		_zcbs = 1.0;
 
 		/// Now extract rates from LIBORs	
-		int i = 1;
 		for (std::shared_ptr<IIBORValue> rate : rates)
 		{
 			dd::date maturityDate = Maturity::getNextDate(m_processDate, rate->GetRate()->GetMaturityType());
@@ -274,21 +273,21 @@ namespace derivative
 			LOG(INFO) << " Insert T, rate (" << tT << "," << rate->GetLastRate() << endl;
 		}
 
+		int i = 1;
 		for (auto &pr : rateMap)
 		{
 			double B_tT = PrimaryUtil::getSimpleRateToDF(pr.second, pr.first, 1);
 			_timeline(i) = pr.first;
-			_zcbs(i) = B_tT;
+			_zcbs(i) = (i > 1) ? B_tT / _zcbs(i - 1) : B_tT;
 			++i;
 		}
 
 		LOG(INFO) << " Time line " << _timeline << endl;
-		LOG(INFO) << " Z(0,T) " << _zcbs << endl;
+		LOG(INFO) << " Forward ZCBs " << _zcbs << endl;
 
 		/// construct a termstructure with number of maturies 
 		/// equal to number of valid LIBOR rates.
 		m_termStructure.reset(new TSLinear(_timeline, _zcbs));
-
 	}
 
 	void IRCurve::BuildIRCurveFromIR()
@@ -308,8 +307,7 @@ namespace derivative
 		_timeline = 0.0;
 		_zcbs = 1.0;
 
-		/// Now extract rates from LIBORs	
-		int i = 1;
+		/// Now extract rates from IRss	
 		for (std::shared_ptr<IIRValue> rate : rates)
 		{
 			dd::date maturityDate = Maturity::getNextDate(m_processDate, rate->GetRate()->GetMaturityType());
@@ -332,11 +330,12 @@ namespace derivative
 			LOG(INFO) << " Insert T, rate (" << tT << "," << rate->GetLastRate() << endl;
 		}
 
+		int i = 1;
 		for (auto &pr : rateMap)
 		{
-			double B_tT = PrimaryUtil::getSimpleRateToDF(pr.second, pr.first, 1);
+			double B_tT = PrimaryUtil::getSimpleRateToDF(pr.second, pr.first, 2);
 			_timeline(i) = pr.first;
-			_zcbs(i) = B_tT;
+			_zcbs(i) = (i > 1) ? B_tT / _zcbs(i - 1) : B_tT;
 			++i;
 		}
 

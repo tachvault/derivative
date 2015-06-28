@@ -39,12 +39,10 @@ namespace derivative
 
 	std::shared_ptr<IMake> ExchangeRate::Make(const Name &nm)
 	{
-		/// Construct ExchangeRate from given name and register with EntityManager
+		/// Construct ExchangeRate from given name
+		/// The caller required to register the constructed with object with EntityManager
 		std::shared_ptr<ExchangeRate> exchangeRate = make_shared<ExchangeRate>(nm);
 		
-		EntityMgrUtil::registerObject(nm, exchangeRate);		
-		LOG(INFO) << " ExchangeRate  " << nm << " is constructed and registered with EntityManager" << endl;
-
 		/// return constructed object if no exception is thrown
 		return exchangeRate;
 	}

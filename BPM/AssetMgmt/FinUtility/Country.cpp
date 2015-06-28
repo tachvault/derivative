@@ -36,21 +36,25 @@ namespace derivative
 	
 	const std::string& Country::GetCode() const
 	{
+		std::lock_guard<SpinLock> lock(m_lock);
 		return m_code;
 	}
 
 	const std::string& Country::GetCountryName() const
 	{
+		std::lock_guard<SpinLock> lock(m_lock);
 		return m_countryName;
 	}
         
 	const Currency& Country::GetCurrency() const
 	{
+		std::lock_guard<SpinLock> lock(m_lock);
 		return m_currency;
 	}
 
 	void Country::Clone(const Country& src)
 	{
+		std::lock_guard<SpinLock> lock(m_lock);
 		m_code = src.m_code;
 		m_countryName = src.m_countryName;
 		m_currency = src.m_currency;

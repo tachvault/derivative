@@ -4,6 +4,10 @@ include_directories(${Boost_INCLUDE_DIRS})
 # add Blitz includes
 include_directories(${BLITZ_ROOT})
 
+#POCO includes
+include_directories("${POCO_ROOT}/Foundation/include")
+include_directories("${POCO_ROOT}/Net/include")
+
 # add glog/gflag/gTest directories
 include_directories("${GLOG_ROOT}/src/windows")
 include_directories("${GFLAG_ROOT}/src/windows")
@@ -24,9 +28,9 @@ include_directories("${PROJECT_SOURCE_DIR}/AssetPricing/include")
 
 SET(CMEFILELOADER_SOURCES
 	CMEFileLoader.cpp
-        FuturesValueMySQLDAO.hpp
+    FuturesValueMySQLDAO.hpp
 	FuturesValueMySQLDAO.cpp
-        FuturesOptionValueMySQLDAO.hpp
+    FuturesOptionValueMySQLDAO.hpp
 	FuturesOptionValueMySQLDAO.cpp
 )
 
@@ -42,8 +46,10 @@ add_executable(CMEFILELOADER ${CMEFILELOADER_SOURCES})
 # Specify libraries or flags to use when linking a given target.
 # In VC++, it is # Properties->Linker->Input->Additional Dependencies
 target_link_libraries (CMEFILELOADER ${GLOG_LIBRARY})
-target_link_libraries (CMEFILELOADER ${GFLAG_LIBRARY})
-target_link_libraries (CMEFILELOADER ${RESTSDK_LIBRARY})
+target_link_libraries (CMEFILELOADER debug ${GFLAG_DEBUG_LIBRARY} optimized ${GFLAG_REL_LIBRARY})
+target_link_libraries (CMEFILELOADER debug ${RESTSDK_DEBUG_LIBRARY} optimized ${RESTSDK_REL_LIBRARY})
+target_link_libraries (CMEFILELOADER debug ${POCOFOUNDATION_DEBUG_LIBRARY} optimized ${POCOFOUNDATION_REL_LIBRARY})
+target_link_libraries (CMEFILELOADER debug ${POCONET_DEBUG_LIBRARY} optimized ${POCONET_REL_LIBRARY})
 target_link_libraries (CMEFILELOADER ENTITYMGMT)
 target_link_libraries (CMEFILELOADER SERVICEUTIL)
 target_link_libraries (CMEFILELOADER FINUTILITY)

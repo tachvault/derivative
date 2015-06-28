@@ -17,9 +17,9 @@ namespace derivative
 	}
 
 	/// clone this object
-    std::shared_ptr<DeterministicAssetVol> DeterministicAssetVolDiff::Clone()
+    std::shared_ptr<DeterministicAssetVol> DeterministicAssetVolDiff::Clone() const
 	{
-		std::shared_ptr<DeterministicAssetVol> obj =  std::make_shared<DeterministicAssetVolDiff>(v1, v2);
+		std::shared_ptr<DeterministicAssetVol> obj =  std::make_shared<DeterministicAssetVolDiff>(v1.Clone(), v2.Clone());
 		return obj;
 	}
 

@@ -107,10 +107,13 @@ namespace derivative
 		/// Calibrate to a given set of caplets or other compatible instruments. Returns remaining pricing error.
 		double calibrate(std::vector<std::shared_ptr<TSEuropeanInstrument> > instruments);
 
+		/// Create full term structures in each node by backward iteration through the lattice.
 		void rollbackTermstructures();
 
+		/// Test function for lattice.
 		bool verify() const;
 
+		/// Apply payoff f in period i
 		inline void apply_payoff(int i,std::function<double (const TermStructure&)> f);    
 
 		void rollback(int from,int to);
@@ -121,12 +124,27 @@ namespace derivative
 		/// Rollback with early exercise (or similar) condition.
 		void rollback(int from,int to,std::function<double (double,const TermStructure&)> f);
 
+		/// Access the calculated (rolled-back) price in node 0;
 		inline double result() const
 		{ 
 			return gridslice(0); 
 		};
 
+		/// Price a European payoff
 		double price(TSEuropeanInstrument& instrument);
+
+		/// Price a Bermudan (or similarly path-dependent) payoff.
+		double price(TSBermudanInstrument& instrument);
+		/// Access short rates
+		inline double short_rate(int time, int state) const 
+		{ 
+			return node(time, state).short_rate(); 
+		};
+		/// Access state prices
+		inline double state_price(int time, int state) const 
+		{ 
+			return node(time, state).state_price(); 
+		};
 
 	private:
 

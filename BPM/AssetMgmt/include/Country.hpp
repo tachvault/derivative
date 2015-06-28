@@ -12,10 +12,13 @@
 #include <memory>
 #include <string>
 #include <iostream>
+#include <mutex>
+
 #include "IObject.hpp"
 #include "ClassType.hpp"
 #include "Name.hpp"
 #include "Currency.hpp"
+#include "SpinLock.hpp"
 
 #if defined _WIN32 || defined __CYGWIN__
   #ifdef FINUTILITY_EXPORTS
@@ -65,13 +68,13 @@ namespace derivative
         Country& operator=(const Country& rhs);
 
 		/// return iso country code
-        const std::string& GetCode() const;
+        inline const std::string& GetCode() const;
 
         /// return country Name
-        const std::string& GetCountryName() const;
+        inline const std::string& GetCountryName() const;
         
 		/// return currency used by the exchange
-        const Currency& GetCurrency() const;
+        inline const Currency& GetCurrency() const;
 		
 	private:
 		
@@ -86,9 +89,10 @@ namespace derivative
 
 		/// Currency used by the country
 		Currency m_currency;
+
+		mutable SpinLock m_lock;
 					
 		friend std::ostream& operator<<(std::ostream& os, const Country& ex);
-
     };
 
 	/// compares two exchanges

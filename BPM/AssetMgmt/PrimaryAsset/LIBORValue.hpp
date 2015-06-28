@@ -43,6 +43,7 @@ namespace derivative
 
 		const Name& GetName()
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_name;
 		}
 
@@ -55,6 +56,7 @@ namespace derivative
 		/// Return the date this stock was last traded.
 		dd::date   GetReportedDate() const
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_date;
 		}
 
@@ -70,22 +72,25 @@ namespace derivative
 
 		void SetReportedDate(const dd::date& d)
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			m_date = d;
 		}
 
 		virtual std::shared_ptr<IIBOR> GetRate() const
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_libor;
 		}
 
 		virtual void SetRate(const std::shared_ptr<IIBOR>& ir)
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			m_libor = ir;
 		}
 		
 	private:
 
-		double m_rate;
+		std::atomic<double> m_rate;
 
 		dd::date m_date;
 
@@ -97,6 +102,8 @@ namespace derivative
 		Name m_name;
 
 		std::shared_ptr<IIBOR> m_libor;
+
+		mutable SpinLock m_lock;
 	};
 }
 

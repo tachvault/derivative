@@ -7,8 +7,6 @@ Copyright (c) 2013 - 2014, Nathan Muruganantha. All rights reserved.
 
 namespace derivative
 {
-	std::atomic<int> EquityVanillaOptMessage::extMsgId = 0;
-
 	json::value EquityVanillaOptMessage::AsJSON()
 	{
 		EquityVanillaOptJSONVisitor visitor;

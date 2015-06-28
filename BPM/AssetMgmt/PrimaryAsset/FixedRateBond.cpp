@@ -49,11 +49,12 @@ namespace derivative
 
 	std::shared_ptr<IMake> FixedRateBond::Make(const Name &nm)
 	{
-		/// Construct FixedRateBond from given name and register with EntityManager
-		std::shared_ptr<FixedRateBond> bond = make_shared<FixedRateBond>(nm);
-		EntityMgrUtil::registerObject(nm, bond);		
-		LOG(INFO) << " FixedRateBond  " << nm << " is constructed and registered with EntityManager" << endl;
+		std::lock_guard<SpinLock> lock(m_lock);
 
+		/// Construct FixedRateBond from given name
+		/// The caller required to register the constructed with object with EntityManager
+		std::shared_ptr<FixedRateBond> bond = make_shared<FixedRateBond>(nm);
+		
 		/// return constructed object if no exception is thrown
 		return bond;
 	}

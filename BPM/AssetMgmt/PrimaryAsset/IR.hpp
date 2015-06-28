@@ -42,6 +42,7 @@ namespace derivative
 
 		const Name& GetName()
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_name;
 		}
 
@@ -52,12 +53,14 @@ namespace derivative
 
 		Maturity::MaturityType GetMaturityType() const
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_maturityType;
 		}
 
 		/// return type of rate. Influenced by Xignite rate API.
 		const std::string& GetRateType() const
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			return m_type;
 		}
 
@@ -68,11 +71,13 @@ namespace derivative
 		
 		void SetMaturityType(Maturity::MaturityType type)
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			m_maturityType = type;
 		}
 
 	    void SetRateType(const std::string& type)
 		{
+			std::lock_guard<SpinLock> lock(m_lock);
 			m_type = type;
 		}
 							
@@ -88,6 +93,9 @@ namespace derivative
 		Maturity::MaturityType m_maturityType;
 
 		std::string m_type;
+
+		mutable SpinLock m_lock;
+
 	};
 }
 

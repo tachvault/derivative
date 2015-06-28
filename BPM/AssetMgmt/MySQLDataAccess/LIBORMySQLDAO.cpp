@@ -18,11 +18,12 @@ namespace derivative
 	GROUP_REGISTER(LIBORMySQLDAO);
 	DAO_REGISTER(IIBOR, MYSQL, LIBORMySQLDAO);
 
+	const int LIBORMySQLDAO::MaxCount = 100;
 	std::shared_ptr<IMake> LIBORMySQLDAO::Make(const Name &nm)
 	{
 		/// Construct LIBORMySQLDAO from given name and register with EntityManager
 		std::shared_ptr<LIBORMySQLDAO> dao = make_shared<LIBORMySQLDAO>(nm);
-		EntityMgrUtil::registerObject(nm, dao);
+		dao = dynamic_pointer_cast<LIBORMySQLDAO>(EntityMgrUtil::registerObject(nm, dao));
 		LOG(INFO) << " LIBORMySQLDAO  " << nm << " is constructed and registered with EntityManager" << endl;
 
 		/// return constructed object if no exception is thrown
@@ -85,6 +86,7 @@ namespace derivative
 
 				size_t id = res->getInt("liborId");
 				std::string code = res->getString("currencyCode").asStdString();
+				std::string rateType = res->getString("type").asStdString();
 				int maturity = res->getInt("maturityType");
 
 				/// get country for the given code
@@ -94,7 +96,9 @@ namespace derivative
 				Name nm(IIBOR::TYPEID, id);
 				std::shared_ptr<IIBOR> rate = PrimaryUtil::ConstructEntity<IIBOR>(nm);
 				rate->SetCurrency(curr);
+				rate->SetRateType(rateType);
 				rate->SetMaturityType(static_cast<Maturity::MaturityType>(maturity));
+				rate = dynamic_pointer_cast<IIBOR>(EntityMgrUtil::registerObject(rate->GetName(), rate));
 
 				LOG(INFO) << " New InterestRate bject created with Country(" << code \
 					<< ", Maturity " << static_cast<Maturity::MaturityType>(maturity) << endl;
@@ -158,6 +162,7 @@ namespace derivative
 				rate->SetCurrency(curr);
 				rate->SetRateType(rateType);
 				rate->SetMaturityType(static_cast<Maturity::MaturityType>(maturity));
+				rate = dynamic_pointer_cast<IIBOR>(EntityMgrUtil::registerObject(rate->GetName(), rate));
 
 				LOG(INFO) << " New LIBORRate bject created with Currency(" << code \
 					<< ", Rate Type " << rateType \
@@ -165,6 +170,7 @@ namespace derivative
 
 				entities.push_back(rate);
 			}
+			res->close();
 		}
 		catch (sql::SQLException &e)
 		{
@@ -172,5 +178,7 @@ namespace derivative
 			LOG(ERROR) << "# ERR: " << e.what();
 			throw e;
 		};
+
+		m_con = nullptr;
 	}
 } /* namespace derivative */

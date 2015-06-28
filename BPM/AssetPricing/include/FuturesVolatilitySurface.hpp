@@ -3,16 +3,8 @@
 #ifndef _DERIVATIVE_FUTURESVOLATILITYSURFACE_H_
 #define _DERIVATIVE_FUTURESVOLATILITYSURFACE_H_
 
-#include <memory>
-#include <string>
-#include <algorithm>
+#include "VolatilitySurface.hpp"
 
-#include "ClassType.hpp"
-#include "Global.hpp"
-#include "DeterministicVol.hpp"
-#include "Name.hpp"
-#include "VolatilitySmile.hpp"
- 
 #if defined _WIN32 || defined __CYGWIN__
 #ifdef PRICINGENGINE_EXPORTS
 #ifdef __GNUC__
@@ -42,14 +34,13 @@ namespace derivative
 {
 	class IDailyFuturesOptionValue;
 
-	class PRICINGENGINE_DLL_API FuturesVolatilitySurface
-		: virtual public IObject
+	class PRICINGENGINE_DLL_API FuturesVolatilitySurface : public VolatilitySurface
 	{
-      public:
-       	  
-		  enum { TYPEID = CLASS_FUTURESVOLATILITYSURFACE_TYPE };
+	public:
 
-		  static Name ConstructName(const string& symbol, const dd::date& processDate, const dd::date& deliveryDate)
+		enum { TYPEID = CLASS_FUTURESVOLATILITYSURFACE_TYPE };
+
+		static Name ConstructName(const string& symbol, const dd::date& processDate, const dd::date& deliveryDate)
 		{
 			Name nm(TYPEID, std::hash<std::string>()(symbol + dd::to_simple_string(processDate) + dd::to_simple_string(deliveryDate)));
 			nm.AppendKey(string("symbol"), boost::any_cast<string>(symbol));
@@ -58,7 +49,7 @@ namespace derivative
 			return nm;
 		}
 
-		  inline static void GetKeys(const Name& nm, string& symbol, dd::date& processDate, dd::date& deliveryDate)
+		inline static void GetKeys(const Name& nm, string& symbol, dd::date& processDate, dd::date& deliveryDate)
 		{
 			Name::KeyMapType keys = nm.GetKeyMap();
 			auto i = keys.find("symbol");
@@ -72,7 +63,7 @@ namespace derivative
 		/// Constructor with Exemplar 
 		FuturesVolatilitySurface(const Exemplar &ex);
 
-		FuturesVolatilitySurface(const string& symbol, const dd::date& processDate, const dd::date& deliveryDate);
+		FuturesVolatilitySurface(const string& symbol, const std::shared_ptr<IAssetValue>& asset, const dd::date& processDate, const dd::date& deliveryDate);
 
 		///destructor
 		~FuturesVolatilitySurface()
@@ -85,55 +76,27 @@ namespace derivative
 			return m_name;
 		}
 
-		/// returns underlying asset symbol
-		std::string GetUnderlyingSymbol() const
-		{
-			return m_symbol;
-		}
-
-		dd::date GetProcessedDate() const
-		{
-			return m_processedDate;
-		}
-
 		dd::date GetdeliveryDate() const
 		{
 			return m_deliveryDate;
 		}
 
-		/// return the DeterministicAssetVol given strike price
-		std::shared_ptr<DeterministicAssetVol> GetVolByStrike(double strike);
-
-		/// return <strike, vol> pairs for the given maturity
-		std::unique_ptr<VolatilitySmile> GetVolByMaturity(double mat) const;
+		/// return constant vol by CramCharlier (bootstrapped from adjacent maturities
+		std::shared_ptr<DeterministicAssetVol> GetConstVol(const dd::date& mat, double strike) const;
 
 		/// load options data from external source
 		void LoadOptions();
 
-		/// build vol surface for the given underlying
-		void Build(double strike);
-
 	private:
-		
+
 		Name m_name;
-
-		std::map<double, std::shared_ptr<DeterministicAssetVol> > m_vol;
-
-		/// underlying symbol
-		std::string m_symbol;
-
-		/// processed date
-		dd::date m_processedDate;
 
 		/// delivery date
 		dd::date m_deliveryDate;
 
-		/// options for the underlying for the given processed date
-		std::vector<std::shared_ptr<IDailyFuturesOptionValue> > m_options;
-
 		/// disallow the copy constructor and operator= functions
 		DISALLOW_COPY_AND_ASSIGN(FuturesVolatilitySurface);
-    };	
+	};
 
 	/// utility function to build Volatility Surface given
 	/// underlying ticker symbol and and effective date

@@ -19,10 +19,42 @@ include_directories("${PROJECT_SOURCE_DIR}/BPM/AssetMgmt/include")
 include_directories("${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include")
 
 SET(FACADES_SOURCES
-	    EquityVanillaOption.hpp
-            EquityVanillaOption.cpp
-            FuturesVanillaOption.hpp
-            FuturesVanillaOption.cpp
+	EquityOption.hpp
+        EquityOption.cpp
+        FuturesOption.hpp
+        FuturesOption.cpp
+        EquityVanillaOption.hpp
+        EquityVanillaOption.cpp
+        FuturesVanillaOption.hpp
+        ExchangeRateVanillaOption.cpp
+        ExchangeRateVanillaOption.hpp
+        FuturesVanillaOption.cpp
+        EquityOptionSpread.hpp
+        EquityOptionSpread.cpp
+        FuturesOptionSpread.hpp
+        FuturesOptionSpread.cpp
+        ExchangeRateOptionSpread.hpp
+        ExchangeRateOptionSpread.cpp
+        EquityBarrierOption.hpp
+        EquityBarrierOption.cpp
+        EquityAverageOption.hpp
+        EquityAverageOption.cpp
+        EquityLookBackOption.hpp
+        EquityLookBackOption.cpp
+        EquityChooserOption.hpp
+        EquityChooserOption.cpp
+        EquityMargrabeOption.hpp
+        EquityMargrabeOption.cpp
+        FuturesBarrierOption.hpp
+        FuturesBarrierOption.cpp
+        FuturesAverageOption.hpp
+        FuturesAverageOption.cpp
+        ExchangeRateOption.hpp
+        ExchangeRateOption.cpp
+        ExchangeRateBarrierOption.hpp
+        ExchangeRateBarrierOption.cpp
+        ExchangeRateAverageOption.hpp
+        ExchangeRateAverageOption.cpp                     
 )
 
 # Link shared library paths (Note: This should be added before Add_library !!!)
@@ -37,8 +69,7 @@ ADD_LIBRARY(FACADES SHARED ${FACADES_SOURCES})
 # Specify libraries or flags to use when linking a given target.
 # In VC++, it is # Properties->Linker->Input->Additional Dependencies
 target_link_libraries (FACADES ${GLOG_LIBRARY})
-target_link_libraries (FACADES ${GFLAG_LIBRARY})
-target_link_libraries (FACADES ${RESTSDK_LIBRARY})
+target_link_libraries (FACADES debug ${GFLAG_DEBUG_LIBRARY} optimized ${GFLAG_REL_LIBRARY})
 target_link_libraries (FACADES ENTITYMGMT)
 target_link_libraries (FACADES SERVICEUTIL)
 target_link_libraries (FACADES MESSAGEDISPATCHER)

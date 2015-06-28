@@ -34,9 +34,19 @@ SET(PRICINGENGINE_SOURCE
 	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/TSInstruments.hpp
 	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/GeometricBrownianMotion.hpp	
 	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/GaussMarkovTermStructure.hpp
+        ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/VolatilitySurface.hpp
 	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/EquityVolatilitySurface.hpp
 	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/FuturesVolatilitySurface.hpp
-	Binomial.cpp
+	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/CIRprocess.hpp
+	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/HestonAsset.hpp
+        ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/EquityAssetPricer.hpp
+        ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/FuturesAssetPricer.hpp
+        ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/ExchangeRateAssetPricer.hpp
+        ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/GARCH.hpp
+        ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/EquityGARCH.hpp
+	${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/ExchangeRateGARCH.hpp
+        ${PROJECT_SOURCE_DIR}/BPM/AssetPricing/include/MCAssetPricer.hpp
+        Binomial.cpp
 	FiniteDifference.cpp
 	GaussMarkovWorld.cpp
 	GaussMarkovWorldAdapter.cpp
@@ -54,9 +64,18 @@ SET(PRICINGENGINE_SOURCE
 	TSInstruments.cpp
 	TSPayoff.cpp
 	GeometricBrownianMotion.cpp
-	GaussMarkovTermStructure.cpp	
+	GaussMarkovTermStructure.cpp
+        VolatilitySurface.cpp
+        GARCH.cpp
+        EquityGARCH.cpp
+        ExchangeRateGARCH.cpp
 	EquityVolatilitySurface.cpp
 	FuturesVolatilitySurface.cpp
+	HestonAsset.cpp
+        EquityAssetPricer.cpp
+        FuturesAssetPricer.cpp
+        ExchangeRateAssetPricer.cpp
+        MCAssetPricer.cpp
 )
 
 # Link shared library paths
@@ -71,7 +90,7 @@ ADD_LIBRARY(PRICINGENGINE SHARED ${PRICINGENGINE_SOURCE})
 # Specify libraries or flags to use when linking a given target.
 # In VC++, it is # Properties->Linker->Input->Additional Dependencies
 target_link_libraries (PRICINGENGINE ${GLOG_LIBRARY})
-target_link_libraries (PRICINGENGINE ${GFLAG_LIBRARY})
+target_link_libraries (PRICINGENGINE debug ${GFLAG_DEBUG_LIBRARY} optimized ${GFLAG_REL_LIBRARY})
 target_link_libraries (PRICINGENGINE ENTITYMGMT)
 target_link_libraries (PRICINGENGINE FINUTILITY)
 target_link_libraries (PRICINGENGINE SERVICEUTIL)

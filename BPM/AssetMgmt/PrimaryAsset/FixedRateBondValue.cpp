@@ -5,7 +5,7 @@ Copyright (c) 2013-2014 Nathan Muruganantha. All rights reserved.
 #include "FixedRateBondValue.hpp"
 #include "GroupRegister.hpp"
 #include "EntityMgrUtil.hpp"
-#include "RESTConnectionUtil.hpp"
+#include "QFUtil.hpp"
 #include "DException.hpp"
 
 namespace derivative
@@ -30,11 +30,11 @@ namespace derivative
 
 	std::shared_ptr<IMake> FixedRateBondValue::Make(const Name &nm)
 	{
-		/// Construct FixedRateBond from given name and register with EntityManager
+		std::lock_guard<SpinLock> lock(m_lock);
+		/// Construct FixedRateBond from given name
+		/// The caller required to register the constructed with object with EntityManager
 		std::shared_ptr<FixedRateBondValue> FixedRateBondVal = make_shared<FixedRateBondValue>(nm);
-		EntityMgrUtil::registerObject(nm, FixedRateBondVal);		
-		LOG(INFO) << " FixedRateBond  " << nm << " is constructed and registered with EntityManager" << endl;
-
+		
 		/// return constructed object if no exception is thrown
 		return FixedRateBondVal;
 	}
@@ -51,6 +51,8 @@ namespace derivative
 
 	void FixedRateBondValue::generateCashFlow()
 	{
+		std::lock_guard<SpinLock> lock(m_lock);
+
 		auto period = static_cast<int>(m_bond->GetCouponPeriod());
 		auto frequency = 12.0/period;
 		if (!period) throw std::logic_error("This is not a coupon bond");

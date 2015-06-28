@@ -48,10 +48,6 @@ namespace derivative
 
 		enum { MSGID = EQUITY_VANILLA_OPTION };
 
-		EquityVanillaOptMessage()
-			:VanillaOptMessage(extMsgId)
-		{}
-
 		virtual ~EquityVanillaOptMessage()
 		{}
 
@@ -67,9 +63,6 @@ namespace derivative
 
 		json::value AsJSON();
 
-	private:
-
-		static std::atomic<int> extMsgId;
 	};
 }
 /* namespace derivative */
