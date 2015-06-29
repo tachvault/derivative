@@ -65,9 +65,9 @@ namespace derivative
 		derivativeLibs.insert(std::pair<runModeEnum, std::string>(LOAD_BALANCER, "WebService"));
 	}
 
-	inline WebAddress getEquityOptionJSONAddr(const std::string& addr)
+	inline WebAddress getEquityOptionJSONAddr(const std::string& addr, int port)
 	{
-		WebAddress waddr(string("http://") + addr + string(":"), 34568, string("JSON"));
+		WebAddress waddr(string("http://") + addr + string(":"), port, string("JSON"));
 		return waddr;
 	}
 

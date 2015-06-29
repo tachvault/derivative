@@ -52,7 +52,7 @@ int main(int argc, char** argv)
 {
 	if (argc < 3)
 	{
-		std::cout << "Usage: loader <run mode> address" << std::endl;
+		std::cout << "Usage: loader <run mode> " << std::endl;
 		return -1;
 	}
 
@@ -63,7 +63,6 @@ int main(int argc, char** argv)
 	/// get the mode (STANDALONE, APP_SERVER, LOAD_BALANCER)
 	/// and load the required libraries for each mode
 	runModeEnum mode = static_cast<runModeEnum>(atoi(argv[1]));
-	std::string addr = argv[2];
 
 	/// define a map to hold all the library info per run mode.
 	LibMapType derivativeLibs;
@@ -74,23 +73,35 @@ int main(int argc, char** argv)
 
 	/// load required libraries by run mode.
 	LoadLibraries(derivativeLibs, mode);
-
-	/// start the web interceptors
-	WebAddress equiOptJson = getEquityOptionJSONAddr(addr);
-	Name nm = IRESTJSONRequestInterceptor::ConstructName(equiOptJson.address, equiOptJson.port, equiOptJson.path);
-	std::shared_ptr<IRESTJSONRequestInterceptor> interceptorJSON = EntityMgrUtil::ConstructEntity<IRESTJSONRequestInterceptor>(nm);
-
-	/// Start processing the message asynchronously in a new thread
-	try
+	if (mode == STANDALONE || mode == LOAD_BALANCER)
 	{
-		auto future = std::async(std::launch::async, &IRESTJSONRequestInterceptor::StartInterceptor, interceptorJSON);
-	}
-	catch (std::exception & e)
-	{
-		LOG(ERROR) << " Error starting Casablanca web services " << e.what() << endl;
-		throw e;
-	}
+		if (argc < 4)
+		{
+			std::cout << "Usage: loader <run mode> " << std::endl;
+			return -1;
+		}
+		else
+		{
+			std::string addr = argv[2];
+			int port = atoi(argv[3]);
+			/// start the web interceptors
+			WebAddress equiOptJson = getEquityOptionJSONAddr(addr, port);
+			Name nm = IRESTJSONRequestInterceptor::ConstructName(equiOptJson.address, equiOptJson.port, equiOptJson.path);
+			std::shared_ptr<IRESTJSONRequestInterceptor> interceptorJSON = EntityMgrUtil::ConstructEntity<IRESTJSONRequestInterceptor>(nm);
 
+			/// Start processing the message asynchronously in a new thread
+			try
+			{
+				auto future = std::async(std::launch::async, &IRESTJSONRequestInterceptor::StartInterceptor, interceptorJSON);
+			}
+			catch (std::exception & e)
+			{
+				LOG(ERROR) << " Error starting Casablanca web services " << e.what() << endl;
+				throw e;
+			}
+		}
+	}
+	
 	/// Now set the run mode so that rest of the modules can be loaded
 	/// and executed conditionally based on the runmode
 	SystemManager& sysMgr = SystemManager::getInstance();
