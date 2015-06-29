@@ -50,9 +50,9 @@ void StartDispatcher()
 
 int main(int argc, char** argv)
 {
-	if (argc < 2)
+	if (argc < 3)
 	{
-		std::cout << "Usage: loader <run mode> " << std::endl;
+		std::cout << "Usage: systemloader <run mode> " << std::endl;
 		return -1;
 	}
 
@@ -73,23 +73,35 @@ int main(int argc, char** argv)
 
 	/// load required libraries by run mode.
 	LoadLibraries(derivativeLibs, mode);
-
-	/// start the web interceptors
-	WebAddress equiOptJson = getEquityOptionJSONAddr();
-	Name nm = IRESTJSONRequestInterceptor::ConstructName(equiOptJson.address, equiOptJson.port, equiOptJson.path);
-	std::shared_ptr<IRESTJSONRequestInterceptor> interceptorJSON = EntityMgrUtil::ConstructEntity<IRESTJSONRequestInterceptor>(nm);
-
-	/// Start processing the message asynchronously in a new thread
-	try
+	if (mode == STANDALONE || mode == LOAD_BALANCER)
 	{
-		auto future = std::async(std::launch::async, &IRESTJSONRequestInterceptor::StartInterceptor, interceptorJSON);
-	}
-	catch (std::exception & e)
-	{
-		LOG(ERROR) << " Error starting Casablanca web services " << e.what() << endl;
-		throw e;
-	}
+		if (argc < 4)
+		{
+			std::cout << "Usage: systemloader <run mode> <hostname> <port>" << std::endl;
+			return -1;
+		}
+		else
+		{
+			std::string addr = argv[2];
+			int port = atoi(argv[3]);
+			/// start the web interceptors
+			WebAddress equiOptJson = getEquityOptionJSONAddr(addr, port);
+			Name nm = IRESTJSONRequestInterceptor::ConstructName(equiOptJson.address, equiOptJson.port, equiOptJson.path);
+			std::shared_ptr<IRESTJSONRequestInterceptor> interceptorJSON = EntityMgrUtil::ConstructEntity<IRESTJSONRequestInterceptor>(nm);
 
+			/// Start processing the message asynchronously in a new thread
+			try
+			{
+				auto future = std::async(std::launch::async, &IRESTJSONRequestInterceptor::StartInterceptor, interceptorJSON);
+			}
+			catch (std::exception & e)
+			{
+				LOG(ERROR) << " Error starting Casablanca web services " << e.what() << endl;
+				throw e;
+			}
+		}
+	}
+	
 	/// Now set the run mode so that rest of the modules can be loaded
 	/// and executed conditionally based on the runmode
 	SystemManager& sysMgr = SystemManager::getInstance();

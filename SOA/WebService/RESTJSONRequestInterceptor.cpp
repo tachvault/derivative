@@ -170,16 +170,25 @@ namespace derivative
 
 	void RESTJSONRequestInterceptor::handle_post(http_request message)
 	{
-
+		json::value out;
+		out[L"outcome"] = json::value::number(IMessage::RequestError);
+		out[L"Message"] = json::value::string(utility::conversions::to_string_t("POST requests are not supported"));
+		message.reply(status_codes::InternalError, out);
 	};
 
 	void RESTJSONRequestInterceptor::handle_delete(http_request message)
 	{
-
+		json::value out;
+		out[L"outcome"] = json::value::number(IMessage::RequestError);
+		out[L"Message"] = json::value::string(utility::conversions::to_string_t("DELETE requests are not supported"));
+		message.reply(status_codes::InternalError, out);
 	};
 
 	void RESTJSONRequestInterceptor::handle_put(http_request message)
 	{
-
+		json::value out;
+		out[L"outcome"] = json::value::number(IMessage::RequestError);
+		out[L"Message"] = json::value::string(utility::conversions::to_string_t("PUT requests are not supported"));
+		message.reply(status_codes::InternalError, out);
 	};
 } /* namespace derivative */
