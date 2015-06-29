@@ -50,9 +50,9 @@ void StartDispatcher()
 
 int main(int argc, char** argv)
 {
-	if (argc < 2)
+	if (argc < 3)
 	{
-		std::cout << "Usage: loader <run mode> " << std::endl;
+		std::cout << "Usage: loader <run mode> address" << std::endl;
 		return -1;
 	}
 
@@ -63,6 +63,7 @@ int main(int argc, char** argv)
 	/// get the mode (STANDALONE, APP_SERVER, LOAD_BALANCER)
 	/// and load the required libraries for each mode
 	runModeEnum mode = static_cast<runModeEnum>(atoi(argv[1]));
+	std::string addr = argv[2];
 
 	/// define a map to hold all the library info per run mode.
 	LibMapType derivativeLibs;
@@ -75,7 +76,7 @@ int main(int argc, char** argv)
 	LoadLibraries(derivativeLibs, mode);
 
 	/// start the web interceptors
-	WebAddress equiOptJson = getEquityOptionJSONAddr();
+	WebAddress equiOptJson = getEquityOptionJSONAddr(addr);
 	Name nm = IRESTJSONRequestInterceptor::ConstructName(equiOptJson.address, equiOptJson.port, equiOptJson.path);
 	std::shared_ptr<IRESTJSONRequestInterceptor> interceptorJSON = EntityMgrUtil::ConstructEntity<IRESTJSONRequestInterceptor>(nm);
 
