@@ -52,7 +52,7 @@ int main(int argc, char** argv)
 {
 	if (argc < 3)
 	{
-		std::cout << "Usage: loader <run mode> " << std::endl;
+		std::cout << "Usage: systemloader <run mode> " << std::endl;
 		return -1;
 	}
 
@@ -77,7 +77,7 @@ int main(int argc, char** argv)
 	{
 		if (argc < 4)
 		{
-			std::cout << "Usage: loader <run mode> " << std::endl;
+			std::cout << "Usage: systemloader <run mode> <hostname> <port>" << std::endl;
 			return -1;
 		}
 		else
