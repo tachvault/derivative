@@ -35,7 +35,7 @@ namespace derivative
 			/* Create a connection */
 			driver = get_driver_instance();
 			/// mysql-instance1.cmtulbltpl82.us-east-1.rds.amazonaws.com:3306
-			con.reset(driver->connect("tcp://localhost:3306", "root", "root"));
+			con.reset(driver->connect("tcp://cp.saas-tachvault.com:3306", "anmuruga", "home@33526"));
 			/* Connect to the MySQL derivative database */
 			con->setSchema("customerdirectory");
 		}
