@@ -95,9 +95,10 @@ namespace derivative
 
 	void RESTJSONRequestInterceptor::handle_get(http_request message)
 	{
-		LOG(INFO) << "Received message " << message.to_string().c_str() << endl;
 		try
 		{
+			LOG(INFO) << "Received message: " << utility::conversions::to_utf8string(message.relative_uri().to_string()) << endl;
+
 			/// get the path components. The Message type will be derived from path
 			auto paths = http::uri::split_path(http::uri::decode(message.relative_uri().path()));
 
@@ -172,7 +173,7 @@ namespace derivative
 	{
 		json::value out;
 		out[L"outcome"] = json::value::number(IMessage::RequestError);
-		out[L"Message"] = json::value::string(utility::conversions::to_string_t("POST requests are not supported"));
+		out[L"Message"] = json::value::string(utility::conversions::to_string_t("POST method is not supported for this request"));
 		message.reply(status_codes::InternalError, out);
 	};
 
@@ -180,7 +181,7 @@ namespace derivative
 	{
 		json::value out;
 		out[L"outcome"] = json::value::number(IMessage::RequestError);
-		out[L"Message"] = json::value::string(utility::conversions::to_string_t("DELETE requests are not supported"));
+		out[L"Message"] = json::value::string(utility::conversions::to_string_t("DELETE method is not supported for this request"));
 		message.reply(status_codes::InternalError, out);
 	};
 
@@ -188,7 +189,7 @@ namespace derivative
 	{
 		json::value out;
 		out[L"outcome"] = json::value::number(IMessage::RequestError);
-		out[L"Message"] = json::value::string(utility::conversions::to_string_t("PUT requests are not supported"));
+		out[L"Message"] = json::value::string(utility::conversions::to_string_t("PUT method is not supported for this request"));
 		message.reply(status_codes::InternalError, out);
 	};
 } /* namespace derivative */

@@ -21,7 +21,7 @@ namespace derivative
 		ret = derivativeLibs.equal_range(mode);
 		for (LibMapType::iterator it = ret.first; it != ret.second; ++it)
 		{
-			cout << "Loading " << it->second << " in " << it->first << " mode " << endl;
+			cout << "Loading " << it->second << " in " << mode << " mode " << endl;
 			bool retValue = SystemUtil::LoadSharedLibrary(it->second.c_str());
 			assert(retValue == true);
 		}
@@ -55,10 +55,6 @@ int main(int argc, char** argv)
 		std::cout << "Usage: systemloader <run mode> " << std::endl;
 		return -1;
 	}
-
-	// start logging
-	FLAGS_log_dir = "C://Temp/glog";
-	google::InitGoogleLogging("Derivative");
 
 	/// get the mode (STANDALONE, APP_SERVER, LOAD_BALANCER)
 	/// and load the required libraries for each mode

@@ -21,6 +21,18 @@ using namespace derivative;
 
 ATTACH_PREFIX attach()
 {
+	// start logging
+	if (const char* env_p = std::getenv("LOG_DIR"))
+	{
+		std::string log_dir = std::string(env_p);
+		FLAGS_log_dir = log_dir.c_str();
+		google::InitGoogleLogging("Derivative");
+	}
+	else
+	{
+		throw std::runtime_error("Log directory is not defined in environment variables");
+	}
+	
 	/// load all the currency data from database
 	CurrencyHolder& currHolder = CurrencyHolder::getInstance();
 	currHolder.Init(MYSQL);
@@ -42,18 +54,18 @@ DETACH_PREFIX detach()
 {}
 
 #if defined _WIN32
-BOOL APIENTRY DllMain( HMODULE hModule,
-					  DWORD  ul_reason_for_call,
-					  LPVOID lpReserved
-					  )
+BOOL APIENTRY DllMain(HMODULE hModule,
+	DWORD  ul_reason_for_call,
+	LPVOID lpReserved
+	)
 {
 	switch (ul_reason_for_call)
 	{
 	case DLL_PROCESS_ATTACH:
-		{
-			attach();
-		}
-		break;
+	{
+		attach();
+	}
+	break;
 	case DLL_THREAD_ATTACH:
 	case DLL_THREAD_DETACH:
 	case DLL_PROCESS_DETACH:
