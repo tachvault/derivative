@@ -7,12 +7,12 @@ Copyright (c) 2015, Nathan Muruganantha. All rights reserved.
 
 #pragma once
 
-#include "cpprest/basic_types.h"
-#ifdef _MS_WINDOWS
+#include "cpprest/details/basic_types.h"
+#if defined _WIN32
 #define NOMINMAX
 #include <Windows.h>
 #else
-# include <sys/time.h>
+#include <sys/time.h>
 #endif
 
 #include "cpprest/json.h"
