@@ -21,21 +21,26 @@ using namespace derivative;
 
 int main(int argc, char *args[])
 {
-
-	if (argc < 2)
+	// start logging
+	std::string log_dir;
+	if (const char* env_p = std::getenv("LOG_DIR"))
 	{
-		printf("Usage: XigniteOptionLoader.exe output_folder date\n");
-		printf("Ex: XigniteOptionLoader.exe C:\Temp\ 2015/03/05 \n");
-		return -1;
+		log_dir = std::string(env_p);
+		FLAGS_log_dir = log_dir.c_str();
+		google::InitGoogleLogging("Derivative");
+	}
+	else
+	{
+		exit(1);
 	}
 
 	/// Get today's date
 	dd::date date = dd::day_clock::local_day();
-	if (argc == 3)
+	if (argc == 2)
 	{
-		date = dd::from_string(args[2]);
+		date = dd::from_string(args[1]);
 	}
-	string outputFileName = args[1] + dd::to_iso_string(date) + ".zip";
+	string outputFileName = log_dir + std::string("\\") + dd::to_iso_string(date) + ".zip";
 	
 	/// define set of exchanges supported
 	std::set<string_t> exchanges = { U("OPRA") };
@@ -54,7 +59,15 @@ int main(int argc, char *args[])
 		OptionXigniteDAO optXigniteDAO(optFile);
 
 		/// call to get the file URL
-		optXigniteDAO.RetriveOptFileName();
+		try
+		{
+			optXigniteDAO.RetriveOptFileName();
+		}
+		catch (std::exception& e)
+		{
+			LOG(ERROR) << "No Option file found for " << outputFileName << endl;
+			exit(1);
+		}
 
 		/// now download file
 		optXigniteDAO.RetriveOptFile();
@@ -64,7 +77,7 @@ int main(int argc, char *args[])
 		MySQLDAO.Connect();
 
 		/// delete existing data
-		MySQLDAO.DeleteOption();
+		//MySQLDAO.DeleteOption();
 
 		/// Now load data;
 		MySQLDAO.UploadOptions();
