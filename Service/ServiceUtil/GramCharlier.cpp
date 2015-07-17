@@ -146,7 +146,7 @@ namespace derivative
 	{
 		int i;
 		dim = std::max(2,2*(dim/2));
-		std::cout << "Commence calibration... Highest moment: " << dim << std::endl;
+		//std::cout << "Commence calibration... Highest moment: " << dim << std::endl;
 		for (i=highest_moment()+1;i<=dim;i++) set_coefficient(i,0.0);
 		for (i=dim+1;i<=highest_moment();i++) set_coefficient(i,0.0); 
 		GCcalibration_class cal(*this,objective_function);
@@ -157,7 +157,7 @@ namespace derivative
 		currpos(0) = sgm;
 		map.inverse(currpos(0));
 		if (dim>3) currpos(Range(1,dim-2)) = coeff(Range(3,dim));
-		std::cout << "Start Powell optimisation..." << std::endl;
+	//	std::cout << "Start Powell optimisation..." << std::endl;
 		double result = powell.solve(currpos);
 		return result;
 	}

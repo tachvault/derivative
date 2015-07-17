@@ -2,9 +2,6 @@
 Copyright (c) 2013, Nathan Muruganantha. All rights reserved.
 */
 
-// MonteCarlo_unittest.cpp : Defines the entry point for the console application.
-//
-
 #include <iostream>
 #include <cstdlib>
 #include <stdlib.h>
@@ -31,6 +28,7 @@ int main(int argc, char *args[])
 	}
 	else
 	{
+		std::cout << "LOG_DIR not defined" << std::endl;
 		exit(1);
 	}
 
@@ -39,6 +37,7 @@ int main(int argc, char *args[])
 	if (argc == 2)
 	{
 		date = dd::from_string(args[1]);
+		LOG(INFO) << "Option file for " << date << endl;
 	}
 	string outputFileName = log_dir + std::string("\\") + dd::to_iso_string(date) + ".zip";
 	
