@@ -87,6 +87,7 @@ namespace derivative
 								/// Volume(7)	OpenInterest(8)	Bid(9)	Ask(10)	Last(11)
 		/// 2015-01-23,2017-01-20,AAPLA20173115000,AAPL,AAPL170120C00115000,Call,115,148,11140,17.9,18.25,18.1
 		
+		LOG(INFO) << line << endl;
 		std::vector<std::string> vec;
 		splitLine(line, vec);
 

@@ -40,6 +40,7 @@ int main(int argc, char *args[])
 		LOG(INFO) << "Option file for " << date << endl;
 	}
 	string outputFileName = log_dir + std::string("\\") + dd::to_iso_string(date) + ".zip";
+	LOG(INFO) << " File to write " << outputFileName << endl;
 	
 	/// define set of exchanges supported
 	std::set<string_t> exchanges = { U("OPRA") };
@@ -67,13 +68,16 @@ int main(int argc, char *args[])
 			LOG(ERROR) << "No Option file found for " << outputFileName << endl;
 			exit(1);
 		}
+		LOG(INFO) << "Xignite returned the option file name " << endl;
 
 		/// now download file
 		optXigniteDAO.RetriveOptFile();
+		LOG(INFO) << "Option file downloaded from Xignite " << endl;
 
 		/// Get The MySQLDAO to insert downloaded data into Option table
 		OptionFileMySQLDAO MySQLDAO(optFile);
 		MySQLDAO.Connect();
+		LOG(INFO) << "Connected with MySQL " << endl;
 
 		/// delete existing data
 		//MySQLDAO.DeleteOption();

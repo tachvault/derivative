@@ -52,6 +52,13 @@ namespace derivative
 			return m_name;
 		}
 
+		/// The time, data accessed from external system
+		virtual pt::ptime GetAccessTime() const
+		{
+			std::lock_guard<SpinLock> lock(m_lock);
+			return m_accessTime;
+		}
+
 		double GetHighPrice() const
 		{
 			return m_priceHigh;
@@ -118,6 +125,12 @@ namespace derivative
 			return m_futures;
 		}
 
+		virtual void SetAccessTime(const pt::ptime& t)
+		{
+			std::lock_guard<SpinLock> lock(m_lock);
+			m_accessTime = t;
+		}
+
 		virtual void SetHighPrice(double high)
 		{
 			m_priceHigh = high;
@@ -180,6 +193,8 @@ namespace derivative
 		}
 				
 	private:
+		
+		pt::ptime m_accessTime;
 
 		std::atomic<double> m_priceHigh;
 

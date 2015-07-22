@@ -82,17 +82,23 @@ namespace derivative
 		/// IDataSource function.
 		virtual void insert(const std::shared_ptr<IObject>& obj);
 
-		bool refreshObject(std::shared_ptr<IObject>& obj, unsigned int source = MYSQL)
-		{
-			throw std::logic_error("Not applicable for MySQL now");
-		}
+		bool refreshObject(std::shared_ptr<IObject>& obj, unsigned int source = MYSQL);
 
 	private:
 
 		/// disallow copy and assignment
 		DISALLOW_COPY_AND_ASSIGN(MySQLDataSource);
 
-		std::shared_ptr<IDAO> getDAO(const Name& nm);
+		/// get the DAO type id for given Name (Ex: Name(IStockValue::TYPEID, 2010303))
+		/// and delegate to getDAO(grpType) for actually getting DAO
+		std::shared_ptr<IDAO> getDAO(const Name& nm, unsigned int source);
+
+		/// get the DAO type id for given object
+		/// and delegate to getDAO(grpType) for actually getting DAO
+		std::shared_ptr<IDAO> getDAO(const std::shared_ptr<IObject>& obj, unsigned int source);
+
+		/// implements the retrieval of DAO
+		std::shared_ptr<IDAO> getDAO(grpType daoTypeId);
 
 		Name m_name;
 
