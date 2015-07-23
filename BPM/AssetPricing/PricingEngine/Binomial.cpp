@@ -12,7 +12,8 @@ namespace derivative
 		: S(xS),r(xr),T(xT),N(xN),gridslice(xN),tmpslice(xN)
 	{
 		// precompute constants
-		dt = T / (N-1);
+		dt = (double)(long long((T / (N-1)) * std::pow(10, 15))) / std::pow(10, 15);
+		//dt = T / (N-1);
 		discount = std::exp(-r*dt);
 		set_CoxRossRubinstein();
 	}
