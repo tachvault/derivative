@@ -120,7 +120,7 @@ namespace derivative
 		}
 	
 		Array<double, 1> merged_T = unique_merge(timeline, dynamic_pointer_cast<PiecewiseConstVol>(neibor)->timeline);
-		Array<double, 2> merged_v(merged_T.extent(firstDim), v.extent(secondDim));
+		Array<double, 2> merged_v(merged_T.extent(firstDim) -1, v.extent(secondDim));
 		for (int i = 0; i < merged_T.size() - 1; ++i)
 		{
 			Array<double, 1> vol_lvl_this(v.extent(secondDim));
@@ -169,7 +169,7 @@ namespace derivative
 
 		timeline.resize(merged_T.extent(firstDim));
 		timeline = merged_T.copy();
-		v.resize(merged_v.extent(firstDim) -1, merged_v.extent(secondDim));
+		v.resize(merged_v.extent(firstDim), merged_v.extent(secondDim));
 		v = merged_v.copy();
 		vol_sq.resize(merged_v.extent(firstDim));
 		int i, j;
