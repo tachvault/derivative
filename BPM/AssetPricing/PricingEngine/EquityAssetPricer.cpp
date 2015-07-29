@@ -129,7 +129,7 @@ namespace derivative
 				int numeraire_index = -1;
 				Array<double, 1> T(N + 1);
 				firstIndex idx;
-				double dt = mat / N;
+				double dt = (double)(long long((mat / N) * std::pow(10, 15))) / std::pow(10, 15);
 				T = idx*dt;
 				GeometricBrownianMotion gbm(underlying);
 				gbm.set_timeline(T);
@@ -192,7 +192,7 @@ namespace derivative
 			// set up timeline
 			Array<double, 1> T(N + 1);
 			firstIndex idx;
-			double dt = mat / N;
+			double dt = (double)(long long((mat / N) * std::pow(10, 15))) / std::pow(10, 15);
 			T = idx*dt;
 
 			std::shared_ptr<MCPayoff> barrierOption;
@@ -234,7 +234,7 @@ namespace derivative
 			// set up timeline
 			Array<double, 1> T(N + 1);
 			firstIndex idx;
-			double dt = mat / N;
+			double dt = (double)(long long((mat / N) * std::pow(10, 15))) / std::pow(10, 15);
 			T = idx*dt;
 			std::shared_ptr<MCPayoff> avgpayoff;
 			if (averageType == FIXED_STRIKE)
@@ -268,7 +268,7 @@ namespace derivative
 			// set up timeline
 			Array<double, 1> T(N + 1);
 			firstIndex idx;
-			double dt = mat / N;
+			double dt = (double)(long long((mat / N) * std::pow(10, 15))) / std::pow(10, 15);
 			T = idx*dt;
 			std::shared_ptr<MCPayoff> lbpayoff;
 			if (lbType == FIXED_STRIKE)
@@ -325,7 +325,7 @@ namespace derivative
 				int numeraire_index = -1;
 				Array<double, 1> T(N + 1);
 				firstIndex idx;
-				double dt = mat / N;
+				double dt = (double)(long long((mat / N) * std::pow(10, 15))) / std::pow(10, 15);
 				T = idx*dt;
 
 				TermStructure& ts = *term;

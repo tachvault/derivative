@@ -97,6 +97,7 @@ namespace derivative
 		/// volume(15), open_int(18), tradedate(19)
 
 		/// remove \r
+		LOG(INFO) << line << endl;
 		line.erase(std::remove(line.begin(), line.end(), '\r'), line.end());
 		std::vector<std::string> vec;
 		splitLine(line, vec);

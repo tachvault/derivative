@@ -6,6 +6,8 @@ Copyright (c) 2013 - 2014, Nathan Muruganantha. All rights reserved.
 #define _DERIVATIVE_USERINFOMYSQLDAO_H_
 
 #include <memory>
+#include <mutex>
+
 #include "MySqlUserInfoConnection.hpp"
 #include "Global.hpp"
 
@@ -27,11 +29,19 @@ namespace derivative
 		/// Get all the UserInfo objects
 		void GetTokens(std::vector<string> &tokens);
 
+		bool GetToken(const std::string& token);
+
+		void insertReq(const std::string& token, const std::string& datetime, const std::string& url);
+
 	private:
 		
 		sql::Driver *m_driver;
 
 		std::unique_ptr<sql::Connection> m_con;
+
+		std::unique_ptr<sql::Connection> m_logCon;
+
+		std::mutex m_lock;
 	};
 }
 

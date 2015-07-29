@@ -35,9 +35,6 @@ namespace derivative
 
 	void ESBManager::HandleRequest(std::shared_ptr<IMessage> msg)
 	{
-		/// log the request
-		m_logger->LogMessage(msg);
-
 		/// execute the request if authorization succeeds. 
 		/// If failed then security manager would raise exception.
 		m_router->RouteMessage(msg);
@@ -46,6 +43,11 @@ namespace derivative
 	inline bool ESBManager::Authorize(const std::string& token)
 	{
 		return m_security->AuthorizeRequest(token);
+	}
+
+	void ESBManager::LogRequest(const std::string& token, const std::string& datetime, const std::string& url)
+	{
+		m_logger->LogMessage(token, datetime, url);
 	}
 
 	ESBManager::ESBManager()

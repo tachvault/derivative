@@ -9,6 +9,7 @@ Copyright (c) 2015, Nathan Muruganantha. All rights reserved.
 
 #include "Global.hpp"
 #include "IMessage.hpp"
+#include "ThreadSafeQueue.hpp"
 
 namespace derivative
 {
@@ -18,18 +19,34 @@ namespace derivative
 	{
 	public:	
 
+		struct request
+		{
+			const std::string token;
+			const std::string datetime;
+			const std::string url;
+
+			request(const std::string& t, const std::string& dt, const std::string& u)
+				:token(t), datetime(dt), url(u)
+			{}
+		};
+
 		/// constructor
 		ServiceLogger();
 
 		 /// destructor
 		~ServiceLogger();
 		
-		void LogMessage(const std::shared_ptr<IMessage>& msg);
+		void LogMessage(const std::string& token, const std::string& datetime, const std::string& url);
+
+		void WriteRequest();
 
 	private:
 
 		/// use copy and assignment
 		DISALLOW_COPY_AND_ASSIGN(ServiceLogger);
+
+		/// A thread safe queue push request
+		threadsafe_queue<request> m_reqQueue;
 	};
 
 } /* namespace derivative */

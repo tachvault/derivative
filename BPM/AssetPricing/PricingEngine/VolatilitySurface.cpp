@@ -247,7 +247,7 @@ namespace derivative
 			if ((*it)->GetStrikePrice() == strike)
 			{
 				auto numDays = ((*it)->GetMaturityDate() - (*it)->GetTradeDate()).days();
-				timeline(i + 1) = double(numDays) / 365;
+				timeline(i + 1) = (double)(long long(double(numDays) / 365 * std::pow(10, 15))) / std::pow(10, 15);
 				double r = PrimaryUtil::FindInterestRate(m_cntry.GetCode(), timeline(i + 1), IRCurve::LIBOR);
 				auto sign = ((*it)->GetOptionType() == IDailyOptionValue::VANILLA_CALL) ? 1 : -1;
 				futures.push_back(std::move(std::async(&BlackScholesAssetAdapter::CalculateImpliedVolatility, m_bsasset, (*it)->GetTradePrice(), timeline(i + 1), (*it)->GetStrikePrice(), r, sign)));

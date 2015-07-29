@@ -46,7 +46,10 @@ namespace derivative
 		int i = find_segment(t, timeline);
 		if (t == timeline(i + 1)) i++;
 		int j = find_segment(T, timeline);
-		if ((i != j) && (t != T)) return false;
+		if ((i != j) && (t != T))
+		{
+			return false;
+		}
 		vol_lvl = v(i, blitz::Range::all());
 		return true;
 	}
@@ -115,24 +118,65 @@ namespace derivative
 		{
 			throw std::logic_error("mismatch factors");
 		}
-
-		for (int i = 0; i < timeline.size() - 1; ++i)
+	
+		Array<double, 1> merged_T = unique_merge(timeline, dynamic_pointer_cast<PiecewiseConstVol>(neibor)->timeline);
+		Array<double, 2> merged_v(merged_T.extent(firstDim) -1, v.extent(secondDim));
+		for (int i = 0; i < merged_T.size() - 1; ++i)
 		{
-			Array<double, 1> vol_lvl(1);
-			for (int j = 0; j < factors(); ++j)
+			Array<double, 1> vol_lvl_this(v.extent(secondDim));
+			Array<double, 1> vol_lvl_neibor(v.extent(secondDim));
+			
+			bool status_this = false;
+			bool status_neibor = false;
+			try
 			{
-				bool status = neibor->get_volatility_level(timeline(i), timeline(i + 1), vol_lvl);
-				if (status)
+				status_this = get_volatility_level(merged_T(i), merged_T(i + 1), vol_lvl_this);
+			}
+			catch (std::out_of_range& e)
+			{}
+			try
+			{
+				status_neibor = neibor->get_volatility_level(merged_T(i), merged_T(i + 1), vol_lvl_neibor);
+			}
+			catch (std::out_of_range& e)
+			{}
+			if (status_this && status_neibor)
+			{
+				for (int j = 0; j < factors(); ++j)
 				{
-					//cout << " v(j, i) + (vol_lvl(0) - v(j, i))*factor " << v(j, i) << ", " << vol_lvl(0) << "," \
-																//<< (vol_lvl(0) - v(j, i)) << "," << factor << endl;
-					v(j, i) = v(j, i) + (vol_lvl(0) - v(j, i))*factor;
-				}
-				else
-				{
-					cout << " returned false " << endl;
+					merged_v(j, i) = (1-factor)*vol_lvl_this(j) + factor*vol_lvl_neibor(j);
 				}
 			}
+			else if (status_this)
+			{
+				for (int j = 0; j < factors(); ++j)
+				{
+					merged_v(j, i) = vol_lvl_this(j);
+				}
+		    }
+			else if (status_neibor)
+			{
+				for (int j = 0; j < factors(); ++j)
+				{
+					merged_v(j, i) = vol_lvl_neibor(j);
+				}
+			}
+			else
+			{
+				throw std::logic_error("Cannot extrapolate");
+			}
+		}
+
+		timeline.resize(merged_T.extent(firstDim));
+		timeline = merged_T.copy();
+		v.resize(merged_v.extent(firstDim), merged_v.extent(secondDim));
+		v = merged_v.copy();
+		vol_sq.resize(merged_v.extent(firstDim));
+		int i, j;
+		for (i = 0; i < v.extent(firstDim); i++)
+		{
+			vol_sq(i) = 0.0;
+			for (j = 0; j < v.extent(secondDim); j++) vol_sq(i) += v(i, j)*v(i, j);
 		}
 	}
 

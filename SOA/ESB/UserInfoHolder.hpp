@@ -14,7 +14,9 @@ Copyright (c) 2013 - 2014, Nathan Muruganantha. All rights reserved.
 #define _DERIVATIVE_USERINFOHOLDER_H_
 
 #include <memory>
+#include <mutex>
 
+#include "SpinLock.hpp"
 #include "ClassType.hpp"
 #include "Global.hpp"
 
@@ -44,6 +46,8 @@ namespace derivative
 		DISALLOW_COPY_AND_ASSIGN(UserInfoHolder);
 
 		std::vector<string> m_tokens;
+
+		mutable SpinLock m_lock;
 	};
 
 } /* namespace derivative */

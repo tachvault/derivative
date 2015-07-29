@@ -98,7 +98,7 @@ namespace derivative
 
 		/// output: future_id(0), tradedate(21), contract_date(2,1,3), maturity_date(2,1,3), opt_type(4),strike(5), open(8),high(9),
 		/// low(11),last_price(13),settle(15), volume(17),open_int(20)
-
+		LOG(INFO) << line << endl;
 		line.erase(std::remove(line.begin(), line.end(), '\r'), line.end());
 		std::vector<std::string> vec;
 		splitLine(line, vec);

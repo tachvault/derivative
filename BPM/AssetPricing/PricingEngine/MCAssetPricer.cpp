@@ -41,7 +41,7 @@ namespace derivative
 			int numeraire_index = -1;
 			Array<double, 1> T(N + 1);
 			firstIndex idx;
-			double dt = tenor / N;
+			double dt = (double)(long long((tenor / N) * std::pow(10, 15))) / std::pow(10, 15);
 			T = idx*dt;
 			TermStructure& ts = *term;
 
@@ -87,7 +87,7 @@ namespace derivative
 		{
 			Array<double, 1> T(N + 1);
 			firstIndex idx;
-			double dt = tenor / N;
+			double dt = (double)(long long((tenor / N) * std::pow(10, 15))) / std::pow(10, 15);
 			T = idx*dt;
 			TermStructure& ts = *term;
 
@@ -136,7 +136,7 @@ namespace derivative
 		{
 			Array<double, 1> T(N + 1);
 			firstIndex idx;
-			double dt = tenor / N;
+			double dt = (double)(long long((tenor / N) * std::pow(10, 15))) / std::pow(10, 15);
 			T = idx*dt;
 			TermStructure& ts = *term;
 

@@ -75,6 +75,8 @@ namespace derivative
 
 		std::shared_ptr<IFuturesValue> getFuturesValue(const std::string& symbol, const dd::date& tdate, const dd::date& deliverydate)
 		{
+			/// in milliseconds
+			static long long g_accessDur = 30000;
 			std::shared_ptr<IFutures> futures;
 			std::shared_ptr<IFuturesValue> futuresVal;
 
@@ -82,10 +84,17 @@ namespace derivative
 			Name futName = IFutures::ConstructName(symbol);
 			futures = dynamic_pointer_cast<IFutures>(EntityMgrUtil::findObject(futName));
 
-			/// find current stock value from YAHOO data source
+			/// find current futuresvalue from MySQL data source again
 			Name futValName = IFuturesValue::ConstructName(symbol, tdate, deliverydate);
 			futuresVal = dynamic_pointer_cast<IFuturesValue>(EntityMgrUtil::findObject(futValName, MYSQL));
-		    futuresVal->SetFutures(futures);
+
+			pt::ptime now = pt::second_clock::local_time();
+			pt::time_duration diff = now - futuresVal->GetAccessTime();
+			if (diff.total_milliseconds() > g_accessDur)
+			{
+				EntityMgrUtil::refreshObject(futuresVal, MYSQL);
+			}
+			futuresVal->SetFutures(futures);
 			return futuresVal;
 		}
 
@@ -104,7 +113,7 @@ namespace derivative
 			/// find current exchange rate value from YAHOO data source
 			Name exchangeRateValName = IExchangeRateValue::ConstructName(domestic, foreign);
 			exchangeRateVal = dynamic_pointer_cast<IExchangeRateValue>(EntityMgrUtil::findObject(exchangeRateValName, YAHOO));
-			
+
 			pt::ptime now = pt::second_clock::local_time();
 			pt::time_duration diff = now - exchangeRateVal->GetAccessTime();
 			if (diff.total_milliseconds() > g_accessDur)
@@ -153,7 +162,7 @@ namespace derivative
 			double Bt = term(tenor);
 			return PrimaryUtil::getDFToSimpleRate(Bt, tenor, 1);
 		}
-		
+
 		std::string GetTickerSymbol(unsigned short src, std::shared_ptr<IStock> stock)
 		{
 			/// get the exchange corresponding to the ticker symbol

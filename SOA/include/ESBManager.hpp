@@ -73,6 +73,8 @@ namespace derivative
 		/// to authorize request
 		bool Authorize(const std::string& token);
 
+		void LogRequest(const std::string& token, const std::string& datetime, const std::string& url);
+
 	private:
 
 		/// constructor

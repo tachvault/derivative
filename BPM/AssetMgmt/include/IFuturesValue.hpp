@@ -45,6 +45,9 @@ namespace derivative
 			deliverydate = boost::any_cast<dd::date>(k->second);
 		}
 
+		/// The time, data accessed from external system
+		virtual pt::ptime GetAccessTime() const = 0;
+
 		virtual double GetHighPrice() const = 0;
 
 		virtual double GetLowPrice() const = 0;
@@ -66,7 +69,9 @@ namespace derivative
 		virtual int GetOpenInterest() const = 0;
 
 		virtual std::shared_ptr<IFutures> GetFutures() const = 0;
-
+		
+		virtual void SetAccessTime(const pt::ptime& t) = 0;
+		
 		virtual void SetHighPrice(double ask) = 0;
 
 		virtual void SetLowPrice(double bid) = 0;

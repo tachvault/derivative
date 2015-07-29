@@ -77,11 +77,7 @@ namespace derivative
 		}
 
 		/// refresh the given object from yahoo
-		virtual bool refresh(shared_ptr<IObject>& obj)
-		{
-			LOG(WARNING) << " IDAO::update(..) not applicable for FuturesValue entity" << endl;
-			throw DataSourceException("IDAO::update(..) not applicable for FuturesValue entity");
-		}
+		virtual bool refresh(shared_ptr<IObject>& obj);
 
 		/// IDAO method for updating data source with FuturesValue values
 		virtual bool update()

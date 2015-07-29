@@ -55,7 +55,7 @@ namespace derivative
 		/// if we are here then the Entity is not registered in the in-memory
 		/// registry. That means DAO of the entity is also not in not 
 		/// in the memory. Try to get the entity from the database.
-		std::shared_ptr<IDAO>& entityDAO = getDAO(nm);
+		std::shared_ptr<IDAO>& entityDAO = getDAO(nm, source);
 
 		/// Now we have the DAO for the entity.
 		/// Call on the DAO to to retrieve entity object from database
@@ -82,7 +82,7 @@ namespace derivative
 		/// if we are here then the Entity is not registered in the in-memory
 		/// registry. That means DAO of the entity is also not in not 
 		/// in the memory. Try to get the entity from the database.
-		std::shared_ptr<IDAO>& entityDAO = getDAO(nm);
+		std::shared_ptr<IDAO>& entityDAO = getDAO(nm, source);
 
 		/// Now we have the DAO for the entity.
 		/// Call on the DAO to to retrieve entity object from database
@@ -112,13 +112,41 @@ namespace derivative
 			return;
 		}
 
-		std::shared_ptr<IDAO>& entityDAO = getDAO(obj->GetName());
+		std::shared_ptr<IDAO>& entityDAO = getDAO(obj, MYSQL);
 
 		/// Now we have the DAO for the entity.
 		/// Call on the DAO to to retrieve entity object from database
 		try
 		{
 			entityDAO->update();
+			entityDAO->Passivate();
+			std::unique_lock<SpinLock> lock(m_lock);
+			m_pool.at(dynamic_pointer_cast<IObject>(entityDAO)->GetName().GetGrpId())->push(entityDAO);
+		}
+		catch (exception& e)
+		{
+			entityDAO->Passivate();
+			std::unique_lock<SpinLock> lock(m_lock);
+			m_pool.at(dynamic_pointer_cast<IObject>(entityDAO)->GetName().GetGrpId())->push(entityDAO);
+			throw e;
+		}
+	}
+	
+	bool MySQLDataSource::refreshObject(std::shared_ptr<IObject>& obj, unsigned int source)
+	{
+		/// if we are here then the Entity is not registered in the in-memory
+		/// registry. That means DAO of the entity is also not in not 
+		/// in the memory. Try to get the entity from the database.
+		std::shared_ptr<IDAO>& entityDAO = getDAO(obj, source);
+		EntityManager& entMgr = EntityManager::getInstance();
+		grpType daoTypeId = entMgr.findDAO(source, obj);
+
+		/// Now we have the DAO for the entity.
+		/// Call on the DAO to to retrieve entity object from database
+		LOG(INFO) << " Got MySQL DAO " << entityDAO << " for " << obj->GetName() << endl;
+		try
+		{
+			entityDAO->refresh(obj);
 			entityDAO->Passivate();
 			std::unique_lock<SpinLock> lock(m_lock);
 			m_pool.at(dynamic_pointer_cast<IObject>(entityDAO)->GetName().GetGrpId())->push(entityDAO);
@@ -140,7 +168,7 @@ namespace derivative
 			return;
 		}
 
-		std::shared_ptr<IDAO>& entityDAO = getDAO(obj->GetName());
+		std::shared_ptr<IDAO>& entityDAO = getDAO(obj, MYSQL);
 
 		/// Now we have the DAO for the entity.
 		/// Call on the DAO to to retrieve entity object from database
@@ -160,17 +188,35 @@ namespace derivative
 		}
 	}
 
-	std::shared_ptr<IDAO> MySQLDataSource::getDAO(const Name& nm)
+	std::shared_ptr<IDAO> MySQLDataSource::getDAO(const Name& nm, unsigned int source)
 	{
-		/// Get the EntityManager instance
-		EntityManager& entMgr = EntityManager::getInstance();
-
 		/// Get the DAO group ID for the given Entity type
-		/// in this case the source is MYSQL		
+		/// in this case the source is YAHOO		
 		/// if DAO type is not registered for the entity interface ID
 		/// it is an unrecoverable error. The caller need to handle
-		grpType daoGrpId = entMgr.findDAO(MYSQL, nm.GetGrpId());
+		/// thrown exception
+		/// Get the EntityManager instance
+		EntityManager& entMgr = EntityManager::getInstance();
+		grpType daoTypeId = entMgr.findDAO(source, nm.GetGrpId());
+		return getDAO(daoTypeId);
+	}
 
+	std::shared_ptr<IDAO> MySQLDataSource::getDAO(const std::shared_ptr<IObject>& obj, unsigned int source)
+	{
+		/// Get the DAO group ID for the given Entity type
+		/// in this case the source is YAHOO		
+		/// if DAO type is not registered for the entity interface ID
+		/// it is an unrecoverable error. The caller need to handle
+		/// thrown exception
+
+		/// Get the EntityManager instance
+		EntityManager& entMgr = EntityManager::getInstance();
+		grpType daoTypeId = entMgr.findDAO(source, obj);
+		return getDAO(daoTypeId);
+	}
+
+	std::shared_ptr<IDAO> MySQLDataSource::getDAO(grpType daoGrpId)
+	{
 		/// if no Object pool created for the DAO then insert an ObjectPool
 		/// instance that is associated with the given group ID
 		std::unique_lock<SpinLock> lock(m_lock);
@@ -182,6 +228,7 @@ namespace derivative
 			m_pool.insert(std::pair<grpType, std::shared_ptr<ObjectPool<IDAO> > >(daoGrpId, pool));
 		}
 		lock.unlock();
+
 		/// now check if there is a passive processor in the resource pool
 		std::shared_ptr<IDAO> dao;
 		lock.lock();
@@ -189,8 +236,8 @@ namespace derivative
 		{
 			return dao;
 		}
-
 		lock.unlock();
+
 		/// Otherwise We need to construct DAO from DAO exemplar; get the examplar object for the DAO
 		/// Exemplar objects should be initialized during global initialization time.
 		try
@@ -208,9 +255,9 @@ namespace derivative
 			lock.lock();
 			auto objId = m_pool.at(daoGrpId)->increment();
 			lock.unlock();
+			assert(objId < dynamic_pointer_cast<IDAO>(exemplar)->GetMaxDAOCount());
 			std::shared_ptr<IMake> obj = (dynamic_pointer_cast<IMake>(exemplar))->Make(Name(daoGrpId, objId));
 			std::shared_ptr<IDAO>  entityDAO = dynamic_pointer_cast<IDAO>(obj);
-			assert(m_pool.at(daoGrpId)->GetObjCount() <= entityDAO->GetMaxDAOCount());
 			return entityDAO;
 		}
 		catch (RegistryException& e)

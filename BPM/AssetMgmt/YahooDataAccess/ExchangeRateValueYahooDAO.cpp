@@ -171,7 +171,7 @@ namespace derivative
 			istringstream istr(line);
 			istr >> exchangeRateVal;	
 		}).wait();
-		m_exchangeRateVal->SetAccessTime(pt::second_clock::local_time());
+		exchangeRateVal->SetAccessTime(pt::second_clock::local_time());
 		return true;
 	}	
 
