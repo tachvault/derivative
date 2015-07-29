@@ -6,6 +6,8 @@ Copyright (c) 2013 - 2014, Nathan Muruganantha. All rights reserved.
 #define _DERIVATIVE_USERINFOMYSQLDAO_H_
 
 #include <memory>
+#include <mutex>
+
 #include "MySqlUserInfoConnection.hpp"
 #include "Global.hpp"
 
@@ -36,6 +38,10 @@ namespace derivative
 		sql::Driver *m_driver;
 
 		std::unique_ptr<sql::Connection> m_con;
+
+		std::unique_ptr<sql::Connection> m_logCon;
+
+		std::mutex m_lock;
 	};
 }
 
