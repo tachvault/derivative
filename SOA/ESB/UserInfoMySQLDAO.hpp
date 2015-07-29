@@ -27,6 +27,10 @@ namespace derivative
 		/// Get all the UserInfo objects
 		void GetTokens(std::vector<string> &tokens);
 
+		bool GetToken(const std::string& token);
+
+		void insertReq(const std::string& token, const std::string& datetime, const std::string& url);
+
 	private:
 		
 		sql::Driver *m_driver;

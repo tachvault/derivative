@@ -97,8 +97,6 @@ namespace derivative
 	{
 		try
 		{
-			LOG(INFO) << "Received message: " << utility::conversions::to_utf8string(message.relative_uri().to_string()) << endl;
-
 			/// get the path components. The Message type will be derived from path
 			auto paths = http::uri::split_path(http::uri::decode(message.relative_uri().path()));
 
@@ -118,6 +116,11 @@ namespace derivative
 			{
 				throw std::invalid_argument("Request is not authorized");
 			}
+
+			/// log the request
+			ESBManager& esb = ESBManager::getInstance();
+			string datetime = pt::to_iso_extended_string(pt::second_clock::local_time());
+			esb.LogRequest(conversions::to_utf8string(query_strings.at(U("_token"))), datetime, utility::conversions::to_utf8string(message.relative_uri().to_string()));
 
 			/// JSON message for output
 			if (!paths[0].empty() && paths[0].compare(U("EquityOption")) == 0)
