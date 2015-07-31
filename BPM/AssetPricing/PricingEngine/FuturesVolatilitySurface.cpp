@@ -66,6 +66,13 @@ namespace derivative
 				m_vol.insert(std::make_pair(opt->GetStrikePrice(), nullptr));
 			}
 		}
+
+		/// sort the options by maturity date so that they can easily used in Graham Charlier.
+		sort(m_options.begin(), m_options.end(),
+			[](const std::shared_ptr<IDailyOptionValue> & a, const std::shared_ptr<IDailyOptionValue> & b)
+		{
+			return a->GetMaturityDate() < b->GetMaturityDate();
+		});
 	}
 	
 	std::shared_ptr<FuturesVolatilitySurface> BuildFuturesVolSurface(const std::string& symbol, const dd::date& edate, const dd::date& ddate)

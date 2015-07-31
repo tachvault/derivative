@@ -226,11 +226,17 @@ namespace derivative
 		/// count the number of options for the given strike
 		/// it is required to initialize Array
 		int count = 0;
+		int lastMat = 0;
 		for (auto& option : m_options)
 		{
 			if (option->GetStrikePrice() == strike)
 			{
-				++count;
+				auto numDays = (option->GetMaturityDate() - option->GetTradeDate()).days();
+				if (lastMat != numDays)
+				{
+					lastMat = numDays;
+					++count;
+				}
 			}
 		}
 
@@ -242,11 +248,13 @@ namespace derivative
 		int i = 0;
 		std::vector<std::future<double>> futures;
 		futures.reserve(count);
+		lastMat = 0;
 		for (auto it = m_options.begin(); it < m_options.end(); ++it)
 		{
 			if ((*it)->GetStrikePrice() == strike)
 			{
 				auto numDays = ((*it)->GetMaturityDate() - (*it)->GetTradeDate()).days();
+				if (lastMat == numDays) continue; else lastMat = numDays;
 				timeline(i + 1) = (double)(long long(double(numDays) / 365 * std::pow(10, 15))) / std::pow(10, 15);
 				double r = PrimaryUtil::FindInterestRate(m_cntry.GetCode(), timeline(i + 1), IRCurve::LIBOR);
 				auto sign = ((*it)->GetOptionType() == IDailyOptionValue::VANILLA_CALL) ? 1 : -1;
