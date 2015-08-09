@@ -126,9 +126,10 @@ namespace derivative
 
 		auto trade_date = dd::from_us_string(vec[21]);
 		/// now load data
+		std::unique_ptr<sql::PreparedStatement> pstmt;
 		try
 		{
-			auto pstmt = m_con->prepareStatement("CALL insert_dailyfuturesoptionvalue(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			pstmt.reset(m_con->prepareStatement("CALL insert_dailyfuturesoptionvalue(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
 			pstmt->setUInt64(1, fur_id);
 			pstmt->setString(2, dd::to_iso_extended_string(trade_date));
 			pstmt->setString(3, dd::to_iso_extended_string(contract_date));
@@ -144,10 +145,10 @@ namespace derivative
 			pstmt->setInt(13, openInt);
 			pstmt->execute();
 			pstmt->close();
-			delete pstmt;
 		}
 		catch (sql::SQLException &e)
 		{
+			pstmt->close();
 			LOG(ERROR) << "Error loading data " << line << endl;
 			LOG(ERROR) << "# ERR: " << e.what();
 		}

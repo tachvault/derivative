@@ -111,9 +111,10 @@ namespace derivative
 		auto bidPrice = vec[9].empty() ? 0.0 : std::atof(vec[9].c_str());
 		auto openInterest = vec[8].empty() ? 0 : std::atoi(vec[8].c_str());
 		/// now load data
+		std::unique_ptr<sql::PreparedStatement> pstmt;
 		try
 		{
-			auto pstmt = m_con->prepareStatement("CALL insert_DailyOptionValue(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			pstmt.reset(m_con->prepareStatement("CALL insert_DailyOptionValue(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
 			pstmt->setUInt64(1, stock_id);
 			pstmt->setInt(2, opt);
 			pstmt->setString(3, tdate);
@@ -126,10 +127,10 @@ namespace derivative
 			pstmt->setInt(10, openInterest);
 			pstmt->execute();
 			pstmt->close();
-			delete pstmt;
 		}
 		catch (sql::SQLException &e)
 		{
+			pstmt->close();
 			LOG(ERROR) << "Error loading data " << line << endl;
 			LOG(ERROR) << "# ERR: " << e.what();
 		}
