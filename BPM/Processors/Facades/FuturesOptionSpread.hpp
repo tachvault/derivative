@@ -102,7 +102,9 @@ namespace derivative
 		virtual void Dispatch(std::shared_ptr<IMessage>& msg);
 
 		void ProcessSpreadLeg(FuturesOptionSpreadMessage::ResponseLeg& res, const FuturesOptionSpreadMessage::Leg&, \
-			FuturesOptionSpreadMessage::PricingMethodEnum, FuturesOptionSpreadMessage::OptionStyleEnum);
+			FuturesOptionSpreadMessage::PricingMethodEnum, FuturesOptionSpreadMessage::OptionStyleEnum, FuturesOptionSpreadMessage::RateTypeEnum);
+
+		std::shared_ptr<FuturesVolatilitySurface> ProcessVol(const dd::date& delivery);
 
 	private:
 
@@ -111,22 +113,9 @@ namespace derivative
 
 		/// futures symbol
 		std::string m_symbol;
-		
-		dd::date m_delivery;
 
 		/// underlying value
 		std::shared_ptr<IFuturesValue> m_futuresVal;
-
-		/// BlackScholesAssetAdapter class
-		std::shared_ptr<BlackScholesAssetAdapter> m_futures;
-
-		std::shared_ptr<DeterministicAssetVol>  m_vol;
-
-		/// term strucure corresponding to the
-		/// country of underlying.
-		std::shared_ptr<TermStructure> m_term;
-
-		std::shared_ptr<FuturesVolatilitySurface> m_volSurface;
 	};
 }
 

@@ -47,10 +47,7 @@ namespace derivative
 
 	FuturesOptionSpread::FuturesOptionSpread(const Name& nm)
 		: m_name(nm),
-		m_futuresVal(nullptr),
-		m_futures(nullptr),
-		m_vol(nullptr),
-		m_term(nullptr)
+		m_futuresVal(nullptr)
 	{}
 
 	std::shared_ptr<IMake> FuturesOptionSpread::Make(const Name &nm)
@@ -76,56 +73,22 @@ namespace derivative
 	void FuturesOptionSpread::Passivate()
 	{
 		m_futuresVal = nullptr;
-		m_futures = nullptr;
-		m_vol = nullptr;
-		m_term = nullptr;
 	}
 
 	void FuturesOptionSpread::Dispatch(std::shared_ptr<IMessage>& msg)
 	{
 		std::shared_ptr<FuturesOptionSpreadMessage> optMsg = std::dynamic_pointer_cast<FuturesOptionSpreadMessage>(msg);
-		m_delivery = optMsg->GetRequest().deliveryDate;
+		m_symbol = optMsg->GetRequest().underlying;
 
-		/// transfer request inputs to member variables 
-		/// get futures value.
-		dd::date today = dd::day_clock::local_day();
-		m_futuresVal = PrimaryUtil::getFuturesValue(optMsg->GetRequest().underlying, today, m_delivery);
-				
-		/// get the volatility. If greater than zero then use this const vol
-		if (optMsg->GetRequest().vol > 0)
-		{
-			m_vol = std::make_shared<ConstVol>(optMsg->GetRequest().vol);
-		}
-		else
-		{
-			m_volSurface = BuildFuturesVolSurface(optMsg->GetRequest().underlying, today, m_delivery);
-		}
-
-		/// get the interest rate
-		if (optMsg->GetRequest().rateType == FuturesOptionSpreadMessage::LIBOR)
-		{
-			/// Get domestic interest rate of the futures
-			auto exchange = m_futuresVal->GetFutures()->GetExchange();
-			std::shared_ptr<IRCurve> irCurve = BuildIRCurve(IRCurve::LIBOR, exchange.GetCountry().GetCode(), today);
-			m_term = irCurve->GetTermStructure();
-		}
-		else
-		{
-			/// Get domestic interest rate of the futures
-			auto exchange = m_futuresVal->GetFutures()->GetExchange();
-			std::shared_ptr<IRCurve> irCurve = BuildIRCurve(IRCurve::YIELD, exchange.GetCountry().GetCode(), today);
-			m_term = irCurve->GetTermStructure();
-		}
-		
 		/// get the pricing method and run for each leg of the spread
 		FuturesOptionSpreadMessage::Response res;
 		FuturesOptionSpreadMessage::ResponseLeg resLeg;
 		for (auto &req : optMsg->GetRequest().legs)
 		{
-			ProcessSpreadLeg(resLeg, req, optMsg->GetRequest().method, optMsg->GetRequest().style);
+			ProcessSpreadLeg(resLeg, req, optMsg->GetRequest().method, optMsg->GetRequest().style, optMsg->GetRequest().rateType);
 			res.legs.push_back(resLeg);
 			if (req.pos == FuturesOptionSpreadMessage::PositionTypeEnum::LONG)
-			{ 
+			{
 				res.spreadPrice += resLeg.optPrice*req.units;
 				res.greeks.delta += resLeg.greeks.delta*req.units;
 				res.greeks.gamma += resLeg.greeks.gamma*req.units;
@@ -146,18 +109,29 @@ namespace derivative
 			}
 		}
 
-		/// set the futures info
-		res.underlyingTradeDate = m_futuresVal->GetTradeDate();
-		res.underlyingTradePrice = m_futuresVal->GetTradePrice();
-
-		/// add Naked position price
 		if (optMsg->GetRequest().equityPos.pos == FuturesOptionSpreadMessage::PositionTypeEnum::LONG)
 		{
+			/// add Naked position price
+			dd::date today = dd::day_clock::local_day();
+			m_futuresVal = PrimaryUtil::getFuturesValue(m_symbol, today, optMsg->GetRequest().deliveryDate);
+
+			/// set the futures info
+			res.underlyingTradeDate = m_futuresVal->GetTradeDate();
+			res.underlyingTradePrice = m_futuresVal->GetTradePrice();
+
 			res.spreadPrice += optMsg->GetRequest().equityPos.units*m_futuresVal->GetTradePrice();
 			res.greeks.delta += optMsg->GetRequest().equityPos.units;
 		}
 		else if (optMsg->GetRequest().equityPos.pos == FuturesOptionSpreadMessage::PositionTypeEnum::SHORT)
 		{
+			/// add Naked position price
+			dd::date today = dd::day_clock::local_day();
+			m_futuresVal = PrimaryUtil::getFuturesValue(m_symbol, today, optMsg->GetRequest().deliveryDate);
+
+			/// set the futures info
+			res.underlyingTradeDate = m_futuresVal->GetTradeDate();
+			res.underlyingTradePrice = m_futuresVal->GetTradePrice();
+
 			res.spreadPrice -= optMsg->GetRequest().equityPos.units*m_futuresVal->GetTradePrice();
 			res.greeks.delta -= optMsg->GetRequest().equityPos.units;
 		}
@@ -168,63 +142,84 @@ namespace derivative
 
 	void FuturesOptionSpread::ProcessSpreadLeg(FuturesOptionSpreadMessage::ResponseLeg& res, \
 		const FuturesOptionSpreadMessage::Leg& req, FuturesOptionSpreadMessage::PricingMethodEnum method, \
-		FuturesOptionSpreadMessage::OptionStyleEnum style)
+		FuturesOptionSpreadMessage::OptionStyleEnum style, FuturesOptionSpreadMessage::RateTypeEnum rateType)
 	{
-		auto t = double((req.maturity - dd::day_clock::local_day()).days()) / 365;
-		auto rate = m_term->simple_rate(0, t);
+		dd::date today = dd::day_clock::local_day();
 		int optType = (req.option == FuturesOptionSpreadMessage::CALL) ? 1 : -1;
+		std::shared_ptr<IFuturesValue> futuresVal = PrimaryUtil::getFuturesValue(m_symbol, today, req.delivery);
 
-		if (m_vol == nullptr)
+		/// first try Vol surface
+		std::shared_ptr<TermStructure> term;
+		/// get the interest rate
+		if (rateType == FuturesOptionSpreadMessage::LIBOR)
 		{
-			try
-			{
-				/// first try Vol surface
-				m_vol = m_volSurface->GetVolatility(m_delivery, req.strike);
-			}
-			catch (std::domain_error& e)
-			{
-				/// means for the maturity not enough data in historic vol
-				/// we use GramCharlier to construct constant vol for the given maturity and strike
-				m_vol = m_volSurface->GetConstVol(m_delivery, req.strike);
-			}
-		}
-
-		/// now construct the BlackScholesAdapter from the futures value.
-		if (m_futures == nullptr)
-		{
-			m_futures = std::make_shared<BlackScholesAssetAdapter>(m_futuresVal, m_vol);
-			/// for futures, the yield is the same as interest rate in black scholes world.
-			m_futures->SetDivYield(rate);
+			/// Get domestic interest rate of the futures
+			auto exchange = futuresVal->GetFutures()->GetExchange();
+			std::shared_ptr<IRCurve> irCurve = BuildIRCurve(IRCurve::LIBOR, exchange.GetCountry().GetCode(), today);
+			term = irCurve->GetTermStructure();
 		}
 		else
 		{
-			m_futures->SetDivYield(rate);
+			/// Get domestic interest rate of the futures
+			auto exchange = futuresVal->GetFutures()->GetExchange();
+			std::shared_ptr<IRCurve> irCurve = BuildIRCurve(IRCurve::YIELD, exchange.GetCountry().GetCode(), today);
+			term = irCurve->GetTermStructure();
+		}
+		auto t = double((req.maturity - dd::day_clock::local_day()).days()) / 365;
+		auto rate = term->simple_rate(0, t);
+
+		std::shared_ptr<FuturesVolatilitySurface> volSurface = BuildFuturesVolSurface(m_symbol, today, req.delivery);
+		std::shared_ptr<DeterministicAssetVol>  vol;
+		try
+		{
+			vol = volSurface->GetVolatility(req.delivery, req.strike);
+		}
+		catch (std::domain_error& e)
+		{
+			/// means for the maturity not enough data in historic vol
+			/// we use GramCharlier to construct constant vol for the given maturity and strike
+			vol = volSurface->GetConstVol(req.delivery, req.strike);
+		}
+
+		/// now construct the BlackScholesAdapter from the futures value.
+		std::shared_ptr<BlackScholesAssetAdapter> futures = std::make_shared<BlackScholesAssetAdapter>(futuresVal, vol);
+		/// for futures, the yield is the same as interest rate in black scholes world.
+		futures->SetDivYield(rate);
+
+		/// get strike price
+		if (req.strike == std::numeric_limits<double>::max())
+		{
+			req.strike = futuresVal->GetTradePrice();
 		}
 
 		if (method == FuturesOptionSpreadMessage::CLOSED)
 		{
-			res.optPrice = m_futures->option(t, req.strike, rate, optType);
+			res.optPrice = futures->option(t, req.strike, rate, optType);
 		}
 		else
 		{
 			if (style == FuturesOptionSpreadMessage::EUROPEAN)
 			{
-				res.optPrice = FuturesVanillaOptionPricer::ValueEuropeanWithBinomial(m_futures, rate, req.maturity, \
+				res.optPrice = FuturesVanillaOptionPricer::ValueEuropeanWithBinomial(futures, rate, req.maturity, \
 					req.strike, static_cast<FuturesVanillaOptionPricer::VanillaOptionType>(optType));
 			}
 			else
 			{
-				res.optPrice = FuturesVanillaOptionPricer::ValueAmericanWithBinomial(m_futures, rate, req.maturity, \
+				res.optPrice = FuturesVanillaOptionPricer::ValueAmericanWithBinomial(futures, rate, req.maturity, \
 					req.strike, static_cast<FuturesVanillaOptionPricer::VanillaOptionType>(optType));
 			}
 		}
 
 		/// now get the greeks
 		double mat = (double((req.maturity - dd::day_clock::local_day()).days())) / 365;
-		res.greeks.delta = m_futures->delta(mat, req.strike, rate, optType);
-		res.greeks.gamma = m_futures->gamma(mat, req.strike, rate, optType);
-		res.greeks.vega = m_futures->vega(mat, req.strike, rate, optType);
-		res.greeks.theta = m_futures->theta(mat, req.strike, rate, optType);
-		res.greeks.vega = m_futures->vega(mat, req.strike, rate, optType);	
+		res.greeks.delta = futures->delta(mat, req.strike, rate, optType);
+		res.greeks.gamma = futures->gamma(mat, req.strike, rate, optType);
+		res.greeks.vega = futures->vega(mat, req.strike, rate, optType);
+		res.greeks.theta = futures->theta(mat, req.strike, rate, optType);
+		res.greeks.vega = futures->vega(mat, req.strike, rate, optType);
+
+		/// set the futures info
+		res.underlyingTradeDate = futuresVal->GetTradeDate();
+		res.underlyingTradePrice = futuresVal->GetTradePrice();
 	}
 }

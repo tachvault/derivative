@@ -27,8 +27,7 @@ namespace derivative
 		json::value resObj;
 		json::value greekObj;
 
-		reqObj[L"equity symbol"] = json::value::string(utility::conversions::to_string_t(req.underlying));
-		reqObj[L"delivery date"] = json::value::string(utility::conversions::to_string_t(dd::to_simple_string(req.deliveryDate)));
+		reqObj[L"futures symbol"] = json::value::string(utility::conversions::to_string_t(req.underlying));
 		reqObj[L"style"] = (req.style == FuturesOptionSpreadMessage::EUROPEAN) ? json::value::string(U("european")) : json::value::string(U("american"));
 		if (fabs(req.vol - 0.0) > std::numeric_limits<int>::epsilon())
 		{
@@ -36,6 +35,7 @@ namespace derivative
 		}
 		if (req.equityPos.validate())
 		{
+			reqObj[L"delivery date"] = json::value::string(utility::conversions::to_string_t(dd::to_simple_string(req.deliveryDate)));
 			reqObj[L"naked position"] = (req.equityPos.pos == FuturesOptionSpreadMessage::LONG) ? json::value::string(U("long")) : json::value::string(U("short"));
 			reqObj[L"naked position units"] = req.equityPos.units;
 		}
@@ -48,7 +48,8 @@ namespace derivative
 			legObj[L"option"] = (leg.option == FuturesOptionSpreadMessage::CALL) ? json::value::string(U("call")) : json::value::string(U("put"));
 			legObj[L"naked position"] = (leg.pos == FuturesOptionSpreadMessage::LONG) ? json::value::string(U("long")) : json::value::string(U("short"));
 			legObj[L"strike"] = json::value::number(leg.strike);
-			legObj[L"maturityDate"] = json::value::string(utility::conversions::to_string_t(dd::to_simple_string(leg.maturity)));
+			legObj[L"delivery date"] = json::value::string(utility::conversions::to_string_t(dd::to_simple_string(leg.delivery)));
+			legObj[L"maturity date"] = json::value::string(utility::conversions::to_string_t(dd::to_simple_string(leg.maturity)));
 			legObj[L"units"] = leg.units;
 			reqLegArray[i] = legObj;
 			++i;
@@ -57,8 +58,11 @@ namespace derivative
 
 		/// adding greeks and response parameters
 		auto res = msg->GetResponse();
-		resObj[L"underlying trade date"] = json::value::string(utility::conversions::to_string_t(dd::to_simple_string(res.underlyingTradeDate)));
-		resObj[L"last underlying price"] = json::value::number(res.underlyingTradePrice);
+		if (req.equityPos.validate())
+		{
+			resObj[L"naked underlying trade date"] = json::value::string(utility::conversions::to_string_t(dd::to_simple_string(res.underlyingTradeDate)));
+			resObj[L"naked last underlying price"] = json::value::number(res.underlyingTradePrice);
+		}
 		resObj[L"spread price"] = json::value::number(res.spreadPrice);
 		i = 0;
 		json::value resLegArray = json::value::array();
@@ -67,6 +71,8 @@ namespace derivative
 			json::value legGreekObj;
 			json::value legObj = json::value::object();
 			legObj[L"leg"] = json::value::number(i + 1);
+			legObj[L"underlying trade date"] = json::value::string(utility::conversions::to_string_t(dd::to_simple_string(leg.underlyingTradeDate)));
+			legObj[L"last underlying price"] = json::value::number(leg.underlyingTradePrice);
 			legObj[L"option price"] = json::value::number(leg.optPrice);
 			legGreekObj[L"delta"] = json::value::number(leg.greeks.delta);
 			legGreekObj[L"gamma"] = json::value::number(leg.greeks.gamma);

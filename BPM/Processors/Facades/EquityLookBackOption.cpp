@@ -76,9 +76,14 @@ namespace derivative
 		m_optType = (optMsg->GetRequest().option == EquityLookBackOptMessage::CALL) ? 1 : -1;
 		m_lookBackType = optMsg->GetRequest().lookBackType;
 		m_maturity = optMsg->GetRequest().maturity;
-		m_strike = optMsg->GetRequest().strike;
 		/// get stock value.
 		m_stockVal = PrimaryUtil::getStockValue(optMsg->GetRequest().underlying);
+		/// get strike price
+		if (optMsg->GetRequest().strike == std::numeric_limits<double>::max())
+		{
+			optMsg->GetRequest().strike = m_stockVal->GetTradePrice();
+		}
+		m_strike = optMsg->GetRequest().strike;
 
 		ProcessVol(optMsg);
 		ProcessRate(optMsg);

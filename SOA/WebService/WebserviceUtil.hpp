@@ -26,12 +26,10 @@ namespace derivative
 	class IMessage;
 	namespace WebServiceUtil
 	{
-		void decodeLegs(const std::string& line, std::vector<EquityOptionSpreadMessage::Leg>& legs);
+		void decodeLegs(const std::string& line, std::vector<OptionSpreadMessage::Leg>& legs);
 
-		void decodeOption(const std::string& opt, EquityOptionSpreadMessage::Leg& leg);
+		void decodeOption(const std::string& opt, OptionSpreadMessage::Leg& leg);
 		
-		void HandleEquityOptionLegs(EquityVanillaOptMessage::Request &req, std::string& legs);
-
 		web::json::value HandleEquityOption(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings);
 
 		web::json::value HandleFuturesOption(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings);

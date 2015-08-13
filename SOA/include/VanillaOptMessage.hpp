@@ -115,7 +115,7 @@ namespace derivative
 			/// This is specific to Futures.
 			dd::date deliveryDate;
 
-			double strike;
+			mutable double strike;
 
 			double vol;
 

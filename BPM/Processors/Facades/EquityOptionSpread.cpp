@@ -201,6 +201,11 @@ namespace derivative
 				}
 			}
 		}
+		
+		if (req.strike == std::numeric_limits<double>::max())
+		{
+			req.strike = m_stockVal->GetTradePrice();
+		}
 
 		/// now construct the BlackScholesAdapter from the stock value.
 		if (m_stock == nullptr)

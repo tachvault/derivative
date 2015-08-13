@@ -76,13 +76,18 @@ namespace derivative
 		m_optType = (optMsg->GetRequest().option == ExchangeRateBarrierOptMessage::CALL) ? 1 : -1;
 		m_barrierType = optMsg->GetRequest().barrierType;
 		m_maturity = optMsg->GetRequest().maturity;
-		m_strike = optMsg->GetRequest().strike;
 		m_barrier = optMsg->GetRequest().barrier;
 		m_domestic = optMsg->GetRequest().domestic;
 		m_foreign = optMsg->GetRequest().foreign;
 
 		/// get exchangeRate value.
 		m_exchangeRateVal = PrimaryUtil::getExchangeRateValue(m_domestic, m_foreign);
+		/// get strike price
+		if (optMsg->GetRequest().strike == std::numeric_limits<double>::max())
+		{
+			optMsg->GetRequest().strike = m_exchangeRateVal->GetTradePrice();
+		}
+		m_strike = optMsg->GetRequest().strike;
 		
 		ProcessVol(optMsg);
 		ProcessRate(optMsg);
