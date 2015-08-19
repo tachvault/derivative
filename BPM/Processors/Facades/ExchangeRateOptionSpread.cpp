@@ -238,6 +238,11 @@ namespace derivative
 			}
 		}
 
+		if (res.optPrice != res.optPrice)
+		{
+			throw std::exception("Unable to price this option");
+		}
+
 		/// now get the greeks
 		double mat = (double((req.maturity - dd::day_clock::local_day()).days())) / 365;
 		res.greeks.delta = m_exchangeRate->delta(mat, req.strike, rateLocal, optType);

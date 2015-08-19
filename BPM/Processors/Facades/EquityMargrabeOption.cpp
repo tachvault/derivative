@@ -68,6 +68,15 @@ namespace derivative
 	void EquityMargrabeOption::ProcessVol(const std::shared_ptr<VanillaOptMessage>& msg)
 	{
 		std::shared_ptr<EquityMargrabeOptMessage> optMsg = std::dynamic_pointer_cast<EquityMargrabeOptMessage>(msg);
+		int rateType;
+		if (optMsg->GetRequest().rateType == EquityMargrabeOptMessage::LIBOR)
+		{
+			rateType = IRCurve::LIBOR;
+		}
+		else
+		{
+			rateType = IRCurve::YIELD;
+		}
 
 		dd::date today = dd::day_clock::local_day();
 		if (optMsg->GetRequest().volType == VanillaOptMessage::IV)
@@ -76,26 +85,26 @@ namespace derivative
 			try
 			{
 				// first try Vol surface
-				m_vol = volSurface->GetVolatility(m_maturity, m_strike);
+				m_vol = volSurface->GetVolatility(m_maturity, m_strike, rateType);
 			}
 			catch (std::domain_error& e)
 			{
 				/// means for the maturity not enough data in historic vol
 				/// we use GramCharlier to construct constant vol for the given maturity and strike
-				m_vol = volSurface->GetConstVol(m_maturity, m_strike);
+				m_vol = volSurface->GetConstVol(m_maturity, m_strike, rateType);
 			}
 
 			std::shared_ptr<EquityVolatilitySurface> volNumeraireSurface = BuildEquityVolSurface(optMsg->GetRequest().numeraire, today);
 			try
 			{
 				// first try Vol surface
-				m_numeraireVol = volNumeraireSurface->GetVolatility(m_maturity, m_strike);
+				m_numeraireVol = volNumeraireSurface->GetVolatility(m_maturity, m_strike, rateType);
 			}
 			catch (std::domain_error& e)
 			{
 				/// means for the maturity not enough data in historic vol
 				/// we use GramCharlier to construct constant vol for the given maturity and strike
-				m_numeraireVol = volNumeraireSurface->GetConstVol(m_maturity, m_strike);
+				m_numeraireVol = volNumeraireSurface->GetConstVol(m_maturity, m_strike, rateType);
 			}
 		}
 		else
@@ -173,5 +182,6 @@ namespace derivative
 
 		/// set the message;
 		optMsg->SetResponse(res);
+		ValidateResponse(optMsg);
 	}
 }

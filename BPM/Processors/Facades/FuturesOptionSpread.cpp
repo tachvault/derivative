@@ -167,18 +167,18 @@ namespace derivative
 		}
 		auto t = double((req.maturity - dd::day_clock::local_day()).days()) / 365;
 		auto rate = term->simple_rate(0, t);
-
+		
 		std::shared_ptr<FuturesVolatilitySurface> volSurface = BuildFuturesVolSurface(m_symbol, today, req.delivery);
 		std::shared_ptr<DeterministicAssetVol>  vol;
 		try
 		{
-			vol = volSurface->GetVolatility(req.delivery, req.strike);
+			vol = volSurface->GetVolatility(req.delivery, req.strike, rateType);
 		}
 		catch (std::domain_error& e)
 		{
 			/// means for the maturity not enough data in historic vol
 			/// we use GramCharlier to construct constant vol for the given maturity and strike
-			vol = volSurface->GetConstVol(req.delivery, req.strike);
+			vol = volSurface->GetConstVol(req.delivery, req.strike, rateType);
 		}
 
 		/// now construct the BlackScholesAdapter from the futures value.
@@ -208,6 +208,11 @@ namespace derivative
 				res.optPrice = FuturesVanillaOptionPricer::ValueAmericanWithBinomial(futures, rate, req.maturity, \
 					req.strike, static_cast<FuturesVanillaOptionPricer::VanillaOptionType>(optType));
 			}
+		}
+
+		if (res.optPrice != res.optPrice)
+		{
+			throw std::exception("Unable to price this option");
 		}
 
 		/// now get the greeks

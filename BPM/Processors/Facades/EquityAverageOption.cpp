@@ -115,5 +115,6 @@ namespace derivative
 
 		/// set the message;
 		optMsg->SetResponse(res);
+		ValidateResponse(optMsg);
 	}
 }

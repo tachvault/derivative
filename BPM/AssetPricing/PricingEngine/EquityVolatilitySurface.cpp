@@ -31,18 +31,18 @@ namespace derivative
 	{			
 	}
 
-	std::shared_ptr<DeterministicAssetVol> EquityVolatilitySurface::GetConstVol(const dd::date& mat, double strike) const
+	std::shared_ptr<DeterministicAssetVol> EquityVolatilitySurface::GetConstVol(const dd::date& mat, double strike, int rateType) const
 	{
 		if (m_options.empty()) throw std::domain_error("No historical option data found");
 
 		dd::date today(dd::day_clock::local_day());
 		int maturity = (mat - today).days();
-		double r = PrimaryUtil::FindInterestRate(m_cntry.GetCode(), (double)maturity / 365, IRCurve::LIBOR);
+		double r = PrimaryUtil::FindInterestRate(m_cntry.GetCode(), (double)maturity / 365, static_cast<IRCurve::DataSourceType>(rateType));
 
 		double domestic_discount = exp(-r*((double)maturity / 365));
 		double foreign_discount = 1.0;
 
-		return VolatilitySurface::GetConstVol(mat, strike, domestic_discount, foreign_discount);
+		return VolatilitySurface::GetConstVol(mat, strike, domestic_discount, foreign_discount, rateType);
 	}
 
 	void EquityVolatilitySurface::LoadOptions()

@@ -191,6 +191,7 @@ namespace derivative
 				msg->ParseSymbol(req, query_strings);
 				msg->ParseMaturity(req, query_strings);
 				msg->ParseStrike(req, query_strings);
+				msg->ParseVolType(query_strings);
 				msg->ParseVol(req, query_strings);
 				req.option = msg->ParseOptionType(query_strings);
 				if (req.option == VanillaOptMessage::TYPE_UNKNOWN)

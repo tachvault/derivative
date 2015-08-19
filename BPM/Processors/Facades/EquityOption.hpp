@@ -70,6 +70,8 @@ namespace derivative
 
 		void ProcessRate(const std::shared_ptr<VanillaOptMessage>& optMsg);
 
+		void ValidateResponse(const std::shared_ptr<VanillaOptMessage>& optMsg);
+
 		/// stock symbol
 		std::string m_symbol;
 

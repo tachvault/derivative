@@ -28,7 +28,7 @@ namespace derivative
 		m_deliveryDate(deliveryDate)
 	{}
 
-	std::shared_ptr<DeterministicAssetVol> FuturesVolatilitySurface::GetConstVol(const dd::date& mat, double strike) const
+	std::shared_ptr<DeterministicAssetVol> FuturesVolatilitySurface::GetConstVol(const dd::date& mat, double strike, int rateType) const
 	{
 		if (m_options.empty()) throw std::domain_error("No historical option data found");
 
@@ -39,7 +39,7 @@ namespace derivative
 		double domestic_discount = exp(-r*((double)maturity / 365));
 		double foreign_discount = exp(-r*((double)maturity / 365));
 
-		return VolatilitySurface::GetConstVol(mat, strike, domestic_discount, foreign_discount);
+		return VolatilitySurface::GetConstVol(mat, strike, domestic_discount, foreign_discount, rateType);
 	}
 
 	void FuturesVolatilitySurface::LoadOptions()

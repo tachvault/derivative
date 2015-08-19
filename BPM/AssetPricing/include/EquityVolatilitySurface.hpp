@@ -80,7 +80,7 @@ namespace derivative
 		}
 
 		/// return constant vol by CramCharlier (bootstrapped from adjacent maturities
-		std::shared_ptr<DeterministicAssetVol> GetConstVol(const dd::date& mat, double strike) const;
+		std::shared_ptr<DeterministicAssetVol> GetConstVol(const dd::date& mat, double strike, int rateType) const;
 
 		/// load options data from external source
 		void LoadOptions();

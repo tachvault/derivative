@@ -77,6 +77,7 @@ namespace derivative
 			legGreekObj[L"delta"] = json::value::number(leg.greeks.delta);
 			legGreekObj[L"gamma"] = json::value::number(leg.greeks.gamma);
 			legGreekObj[L"vega"] = json::value::number(leg.greeks.vega);
+			legGreekObj[L"theta"] = json::value::number(leg.greeks.theta);
 			legObj[L"Greeks"] = legGreekObj;
 			resLegArray[i] = legObj;
 			++i;
@@ -85,6 +86,7 @@ namespace derivative
 		greekObj[L"delta"] = json::value::number(res.greeks.delta);
 		greekObj[L"gamma"] = json::value::number(res.greeks.gamma);
 		greekObj[L"vega"] = json::value::number(res.greeks.vega);
+		greekObj[L"theta"] = json::value::number(res.greeks.theta);
 		resObj[L"greeks"] = greekObj;
 		out[L"request"] = reqObj;
 		out[L"response"] = resObj;

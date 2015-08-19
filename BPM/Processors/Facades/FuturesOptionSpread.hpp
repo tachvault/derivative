@@ -102,7 +102,8 @@ namespace derivative
 		virtual void Dispatch(std::shared_ptr<IMessage>& msg);
 
 		void ProcessSpreadLeg(FuturesOptionSpreadMessage::ResponseLeg& res, const FuturesOptionSpreadMessage::Leg&, \
-			FuturesOptionSpreadMessage::PricingMethodEnum, FuturesOptionSpreadMessage::OptionStyleEnum, FuturesOptionSpreadMessage::RateTypeEnum);
+			FuturesOptionSpreadMessage::PricingMethodEnum, FuturesOptionSpreadMessage::OptionStyleEnum, \
+			FuturesOptionSpreadMessage::RateTypeEnum);
 
 		std::shared_ptr<FuturesVolatilitySurface> ProcessVol(const dd::date& delivery);
 
