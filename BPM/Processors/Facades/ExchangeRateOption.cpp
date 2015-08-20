@@ -115,4 +115,13 @@ namespace derivative
 		m_termForeign = irCurve->GetTermStructure();
 		m_foreignRate = m_termForeign->simple_rate(0, t);
 	}
+
+	void ExchangeRateOption::ValidateResponse(const std::shared_ptr<VanillaOptMessage>& optMsg)
+	{
+		const VanillaOptMessage::Response& res = optMsg->GetResponse();
+		if (res.optPrice != res.optPrice)
+		{
+			throw std::exception("Unable to price this option");
+		}
+	}
 }

@@ -81,11 +81,17 @@ namespace derivative
 
 			PositionTypeEnum pos;	
 
-			double strike;
+			mutable double strike;
 
 			dd::date maturity;
 
+			dd::date delivery;
+
 			int units;
+
+			dd::date underlyingTradeDate;
+
+			double underlyingTradePrice;
 
 			Leg()
 				:strike(0.0), units(1), option(OptionTypeEnum::TYPE_UNKNOWN), 

@@ -71,8 +71,9 @@ namespace derivative
 
 		void ProcessRate(const std::shared_ptr<VanillaOptMessage>& optMsg);
 
-		void GetRates(const std::shared_ptr<VanillaOptMessage>& optMsg, IRCurve::DataSourceType src);
+		void ValidateResponse(const std::shared_ptr<VanillaOptMessage>& optMsg);
 
+		void GetRates(const std::shared_ptr<VanillaOptMessage>& optMsg, IRCurve::DataSourceType src);
 
 		/// domestic currency symbol
 		std::string m_domestic;

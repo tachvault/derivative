@@ -102,7 +102,7 @@ namespace derivative
 
 		void ProcessSpreadLeg(EquityOptionSpreadMessage::ResponseLeg& res, const EquityOptionSpreadMessage::Leg&, \
 			EquityOptionSpreadMessage::PricingMethodEnum, EquityOptionSpreadMessage::OptionStyleEnum, \
-			EquityOptionSpreadMessage::VolatilityTypeEnum volType);
+			EquityOptionSpreadMessage::VolatilityTypeEnum volType, EquityOptionSpreadMessage::RateTypeEnum rateTypeIn);
 
 	private:
 

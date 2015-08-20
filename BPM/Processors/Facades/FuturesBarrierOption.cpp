@@ -77,12 +77,18 @@ namespace derivative
 		m_optType = (optMsg->GetRequest().option == FuturesBarrierOptMessage::CALL) ? 1 : -1;
 		m_barrierType = optMsg->GetRequest().barrierType;
 		m_maturity = optMsg->GetRequest().maturity;
-		m_strike = optMsg->GetRequest().strike;
 		m_barrier = optMsg->GetRequest().barrier;
 		m_delivery = optMsg->GetRequest().deliveryDate;
 
 		/// get futures value.
 		m_futuresVal = PrimaryUtil::getFuturesValue(optMsg->GetRequest().underlying, today, m_delivery);
+
+		/// get strike price
+		if (optMsg->GetRequest().strike == std::numeric_limits<double>::max())
+		{
+			optMsg->GetRequest().strike = m_futuresVal->GetTradePrice();
+		}
+		m_strike = optMsg->GetRequest().strike;
 
 		ProcessVol(optMsg);
 		ProcessRate(optMsg);

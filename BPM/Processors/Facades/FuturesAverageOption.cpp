@@ -76,11 +76,17 @@ namespace derivative
 		m_averageType = optMsg->GetRequest().averageType;
 		m_maturity = optMsg->GetRequest().maturity;
 		m_delivery = optMsg->GetRequest().deliveryDate;
-		m_strike = optMsg->GetRequest().strike;
 
 		/// get futures value.
 		dd::date today = dd::day_clock::local_day();
 		m_futuresVal = PrimaryUtil::getFuturesValue(optMsg->GetRequest().underlying, today, m_delivery);
+
+		/// get strike price
+		if (optMsg->GetRequest().strike == std::numeric_limits<double>::max())
+		{
+			optMsg->GetRequest().strike = m_futuresVal->GetTradePrice();
+		}
+		m_strike = optMsg->GetRequest().strike;
 
 		ProcessVol(optMsg);
 		ProcessRate(optMsg);

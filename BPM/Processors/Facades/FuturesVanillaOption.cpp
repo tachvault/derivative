@@ -76,16 +76,22 @@ namespace derivative
 		m_maturity = optMsg->GetRequest().maturity;
 		m_delivery = optMsg->GetRequest().deliveryDate;
 		m_strike = optMsg->GetRequest().strike;
-		
+
 		/// get futures value.
 		m_futuresVal = PrimaryUtil::getFuturesValue(optMsg->GetRequest().underlying, today, m_delivery);
+		/// get strike price
+		if (optMsg->GetRequest().strike == std::numeric_limits<double>::max())
+		{
+			optMsg->GetRequest().strike = m_futuresVal->GetTradePrice();
+		}
+		m_strike = optMsg->GetRequest().strike;
 
 		ProcessVol(optMsg);
 		ProcessRate(optMsg);
 
 		/// now construct the BlackScholesAdapter from the futures value.
 		m_futures = std::make_shared<BlackScholesAssetAdapter>(m_futuresVal, m_vol);
-		
+
 		/// for futures, the yield is the same as interest rate in black scholes world.
 		m_futures->SetDivYield(m_termRate);
 

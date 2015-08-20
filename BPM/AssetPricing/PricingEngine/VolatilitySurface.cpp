@@ -34,7 +34,7 @@ namespace derivative
 		m_bsasset = std::make_shared<BlackScholesAssetAdapter>(m_asset, v);
 	}
 
-	std::shared_ptr<DeterministicAssetVol> VolatilitySurface::GetVolatility(const dd::date& mat, double strike, bool exactMatch)
+	std::shared_ptr<DeterministicAssetVol> VolatilitySurface::GetVolatility(const dd::date& mat, double strike, int rateType, bool exactMatch)
 	{
 		if (m_vol.empty())
 		{
@@ -47,7 +47,7 @@ namespace derivative
 		{
 			if (m_vol.find(strike)->second == nullptr)
 			{
-				Build(strike);
+				Build(strike, rateType);
 			}
 			if (m_vol.find(strike)->second->timeframe() < ((double)maturity / 365))
 			{
@@ -65,7 +65,7 @@ namespace derivative
 		{
 			if (m_vol.begin()->second == nullptr)
 			{
-				Build(m_vol.begin()->first);
+				Build(m_vol.begin()->first, rateType);
 			}
 			if (m_vol.begin()->second->timeframe() < ((double)maturity / 365))
 			{
@@ -90,7 +90,7 @@ namespace derivative
 			auto rit = m_vol.rbegin();
 			if (rit->second == nullptr)
 			{
-				Build(m_vol.rbegin()->first);
+				Build(m_vol.rbegin()->first, rateType);
 			}
 			if (m_vol.rbegin()->second->timeframe() < ((double)maturity / 365))
 			{
@@ -103,8 +103,8 @@ namespace derivative
 		auto rit = it;
 		--rit;
 		/// interpolate by taking the rit's timeline as the master
-		if (rit->second == nullptr)	Build(rit->first);
-		if (it->second == nullptr)	Build(it->first);
+		if (rit->second == nullptr)	Build(rit->first, rateType);
+		if (it->second == nullptr)	Build(it->first, rateType);
 
 		auto x = rit->second->timeframe();
 		auto y = it->second->timeframe();
@@ -133,7 +133,7 @@ namespace derivative
 		}
 	}
 
-	std::shared_ptr<DeterministicAssetVol> VolatilitySurface::GetConstVol(const dd::date& mat, double strike, double domestic_discount, double foreign_discount) const
+	std::shared_ptr<DeterministicAssetVol> VolatilitySurface::GetConstVol(const dd::date& mat, double strike, double domestic_discount, double foreign_discount, int rateType) const
 	{
 		if (m_options.empty()) throw std::domain_error("No historical option data found");
 
@@ -220,17 +220,23 @@ namespace derivative
 		return m_bsasset->CalculateImpliedVolatility(price, double(maturity) / 365, strike, r, 1);
 	}
 
-	void VolatilitySurface::Build(double strike)
+	void VolatilitySurface::Build(double strike, int rateType)
 	{
 
 		/// count the number of options for the given strike
 		/// it is required to initialize Array
 		int count = 0;
+		int lastMat = 0;
 		for (auto& option : m_options)
 		{
 			if (option->GetStrikePrice() == strike)
 			{
-				++count;
+				auto numDays = (option->GetMaturityDate() - option->GetTradeDate()).days();
+				if (lastMat != numDays)
+				{
+					lastMat = numDays;
+					++count;
+				}
 			}
 		}
 
@@ -242,13 +248,15 @@ namespace derivative
 		int i = 0;
 		std::vector<std::future<double>> futures;
 		futures.reserve(count);
+		lastMat = 0;
 		for (auto it = m_options.begin(); it < m_options.end(); ++it)
 		{
 			if ((*it)->GetStrikePrice() == strike)
 			{
 				auto numDays = ((*it)->GetMaturityDate() - (*it)->GetTradeDate()).days();
+				if (lastMat == numDays) continue; else lastMat = numDays;
 				timeline(i + 1) = (double)(long long(double(numDays) / 365 * std::pow(10, 15))) / std::pow(10, 15);
-				double r = PrimaryUtil::FindInterestRate(m_cntry.GetCode(), timeline(i + 1), IRCurve::LIBOR);
+				double r = PrimaryUtil::FindInterestRate(m_cntry.GetCode(), timeline(i + 1), static_cast<IRCurve::DataSourceType>(rateType));
 				auto sign = ((*it)->GetOptionType() == IDailyOptionValue::VANILLA_CALL) ? 1 : -1;
 				futures.push_back(std::move(std::async(&BlackScholesAssetAdapter::CalculateImpliedVolatility, m_bsasset, (*it)->GetTradePrice(), timeline(i + 1), (*it)->GetStrikePrice(), r, sign)));
 				++i;

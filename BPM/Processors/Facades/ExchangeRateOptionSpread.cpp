@@ -211,7 +211,12 @@ namespace derivative
 		{
 			m_exchangeRate = std::make_shared<BlackScholesAssetAdapter>(m_exchangeRateVal, m_vol);
 		}
-		
+		/// get strike price
+		if (req.strike == std::numeric_limits<double>::max())
+		{
+			req.strike = m_exchangeRateVal->GetTradePrice();
+		}
+
 		/// for exchangeRate, the yield is the same as interest rate in black scholes world.
 		m_exchangeRate->SetDivYield(rateForeign);
 		
@@ -231,6 +236,11 @@ namespace derivative
 				res.optPrice = ExchangeRateVanillaOptionPricer::ValueAmericanWithBinomial(m_exchangeRate, rateLocal, req.maturity, \
 					req.strike, static_cast<ExchangeRateVanillaOptionPricer::VanillaOptionType>(optType));
 			}
+		}
+
+		if (res.optPrice != res.optPrice)
+		{
+			throw std::exception("Unable to price this option");
 		}
 
 		/// now get the greeks

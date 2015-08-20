@@ -56,7 +56,7 @@ namespace derivative
 			return jsonMsg;
 		}
 
-		void decodeOption(const std::string& opt, EquityOptionSpreadMessage::Leg& leg)
+		void decodeOption(const std::string& opt, OptionSpreadMessage::Leg& leg)
 		{
 			std::vector<std::string> vec;
 			splitLine(opt, vec, ',');
@@ -68,11 +68,11 @@ namespace derivative
 				{
 					if (p[1].compare("call") == 0)
 					{
-						leg.option = EquityOptionSpreadMessage::CALL;
+						leg.option = OptionSpreadMessage::CALL;
 					}
 					else if (p[1].compare("put") == 0)
 					{
-						leg.option = EquityOptionSpreadMessage::PUT;
+						leg.option = OptionSpreadMessage::PUT;
 					}
 					else
 					{
@@ -96,11 +96,23 @@ namespace derivative
 				}
 				else if (p[0].compare("_strike") == 0)
 				{
-					leg.strike = atof(p[1].c_str());
+					auto strike = p[1];
+					if (strike.compare("ATM") == 0)
+					{
+						leg.strike = std::numeric_limits<double>::max();
+					}
+					else
+					{
+						leg.strike = atof(p[1].c_str());
+					}
 				}
 				else if (p[0].compare("_maturity") == 0)
 				{
 					leg.maturity = dd::from_string(p[1]);
+				}
+				else if (p[0].compare("_delivery") == 0)
+				{
+					leg.delivery = dd::from_string(p[1]);
 				}
 				else if (p[0].compare("_units") == 0)
 				{
@@ -109,7 +121,7 @@ namespace derivative
 			}
 		}
 
-		void decodeLegs(const std::string& line, std::vector<EquityOptionSpreadMessage::Leg>& legs)
+		void decodeLegs(const std::string& line, std::vector<OptionSpreadMessage::Leg>& legs)
 		{
 			auto it = line.cbegin();
 			bool start = false;
@@ -179,6 +191,7 @@ namespace derivative
 				msg->ParseSymbol(req, query_strings);
 				msg->ParseMaturity(req, query_strings);
 				msg->ParseStrike(req, query_strings);
+				msg->ParseVolType(query_strings);
 				msg->ParseVol(req, query_strings);
 				req.option = msg->ParseOptionType(query_strings);
 				if (req.option == VanillaOptMessage::TYPE_UNKNOWN)
@@ -960,16 +973,6 @@ namespace derivative
 					throw std::invalid_argument("No underlying symbol");
 				}
 
-				if (query_strings.find(U("_delivery")) != query_strings.end())
-				{
-					auto ddate = conversions::to_utf8string(query_strings.at(U("_delivery")));
-					req.deliveryDate = dd::from_string(ddate);
-				}
-				else
-				{
-					throw std::invalid_argument("No delivery date");
-				}
-
 				if (query_strings.find(U("_vol")) != query_strings.end())
 				{
 					auto vol = conversions::to_utf8string(query_strings.at(U("_vol")));
@@ -980,6 +983,13 @@ namespace derivative
 				{
 					std::string legs = conversions::to_utf8string(query_strings.at(U("_legs")));
 					decodeLegs(legs, req.legs);
+					for (auto& leg : req.legs)
+					{
+						if (leg.delivery.is_not_a_date() || leg.maturity.is_not_a_date())
+						{
+							throw std::invalid_argument("Invalid dates ");
+						}
+					}
 				}
 
 				if (query_strings.find(U("_naked")) != query_strings.end())
@@ -1003,8 +1013,17 @@ namespace derivative
 					else
 					{
 						throw std::invalid_argument("Invalid Style parameter");
+					}	
+					if (query_strings.find(U("_delivery")) != query_strings.end())
+					{
+						auto ddate = conversions::to_utf8string(query_strings.at(U("_delivery")));
+						req.deliveryDate = dd::from_string(ddate);
 					}
-				}
+					else
+					{
+						throw std::invalid_argument("Invalid delivery date for naked position");
+					}
+				}				
 			}
 			catch (std::exception& e)
 			{

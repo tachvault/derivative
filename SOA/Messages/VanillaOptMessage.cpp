@@ -54,7 +54,14 @@ namespace derivative
 		if (query_strings.find(U("_strike")) != query_strings.end())
 		{
 			auto strike = conversions::to_utf8string(query_strings.at(U("_strike")));
-			req.strike = stod(strike);
+			if (strike.compare("ATM") == 0)
+			{
+				req.strike = std::numeric_limits<double>::max();
+			}
+			else
+			{
+				req.strike = stod(strike);
+			}
 		}
 		else
 		{

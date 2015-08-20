@@ -28,7 +28,7 @@ namespace derivative
 		m_deliveryDate(deliveryDate)
 	{}
 
-	std::shared_ptr<DeterministicAssetVol> FuturesVolatilitySurface::GetConstVol(const dd::date& mat, double strike) const
+	std::shared_ptr<DeterministicAssetVol> FuturesVolatilitySurface::GetConstVol(const dd::date& mat, double strike, int rateType) const
 	{
 		if (m_options.empty()) throw std::domain_error("No historical option data found");
 
@@ -39,7 +39,7 @@ namespace derivative
 		double domestic_discount = exp(-r*((double)maturity / 365));
 		double foreign_discount = exp(-r*((double)maturity / 365));
 
-		return VolatilitySurface::GetConstVol(mat, strike, domestic_discount, foreign_discount);
+		return VolatilitySurface::GetConstVol(mat, strike, domestic_discount, foreign_discount, rateType);
 	}
 
 	void FuturesVolatilitySurface::LoadOptions()
@@ -66,6 +66,13 @@ namespace derivative
 				m_vol.insert(std::make_pair(opt->GetStrikePrice(), nullptr));
 			}
 		}
+
+		/// sort the options by maturity date so that they can easily used in Graham Charlier.
+		sort(m_options.begin(), m_options.end(),
+			[](const std::shared_ptr<IDailyOptionValue> & a, const std::shared_ptr<IDailyOptionValue> & b)
+		{
+			return a->GetMaturityDate() < b->GetMaturityDate();
+		});
 	}
 	
 	std::shared_ptr<FuturesVolatilitySurface> BuildFuturesVolSurface(const std::string& symbol, const dd::date& edate, const dd::date& ddate)

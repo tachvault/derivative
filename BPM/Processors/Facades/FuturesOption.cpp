@@ -59,16 +59,25 @@ namespace derivative
 		else
 		{
 			std::shared_ptr<FuturesVolatilitySurface> volSurface = BuildFuturesVolSurface(optMsg->GetRequest().underlying, today, optMsg->GetRequest().deliveryDate);
+			int rateType;
+			if (optMsg->GetRequest().rateType == VanillaOptMessage::LIBOR)
+			{
+				rateType = IRCurve::LIBOR;
+			}
+			else
+			{
+				rateType = IRCurve::YIELD;
+			}
 			try
 			{
 				// first try Vol surface
-				m_vol = volSurface->GetVolatility(m_maturity, m_strike);
+				m_vol = volSurface->GetVolatility(m_maturity, m_strike, rateType);
 			}
 			catch (std::domain_error& e)
 			{
 				/// means for the maturity not enough data in historic vol
 				/// we use GramCharlier to construct constant vol for the given maturity and strike
-				m_vol = volSurface->GetConstVol(m_maturity, m_strike);
+				m_vol = volSurface->GetConstVol(m_maturity, m_strike,rateType);
 			}
 		}
 	}
@@ -93,6 +102,15 @@ namespace derivative
 			std::shared_ptr<IRCurve> irCurve = BuildIRCurve(IRCurve::YIELD, exchange.GetCountry().GetCode(), today);
 			m_term = irCurve->GetTermStructure();
 			m_termRate = m_term->simple_rate(0, t);
+		}
+	}
+
+	void FuturesOption::ValidateResponse(const std::shared_ptr<VanillaOptMessage>& optMsg)
+	{
+		const VanillaOptMessage::Response& res = optMsg->GetResponse();
+		if (res.optPrice != res.optPrice)
+		{
+			throw std::exception("Unable to price this option");
 		}
 	}
 }

@@ -116,7 +116,7 @@ namespace derivative
 		EquityOptionSpreadMessage::ResponseLeg resLeg;
 		for (auto &req : optMsg->GetRequest().legs)
 		{
-			ProcessSpreadLeg(resLeg, req, optMsg->GetRequest().method, optMsg->GetRequest().style, optMsg->GetRequest().volType);
+			ProcessSpreadLeg(resLeg, req, optMsg->GetRequest().method, optMsg->GetRequest().style, optMsg->GetRequest().volType, optMsg->GetRequest().rateType);
 			res.legs.push_back(resLeg);
 			if (req.pos == EquityOptionSpreadMessage::PositionTypeEnum::LONG)
 			{
@@ -162,11 +162,22 @@ namespace derivative
 
 	void EquityOptionSpread::ProcessSpreadLeg(EquityOptionSpreadMessage::ResponseLeg& res, \
 		const EquityOptionSpreadMessage::Leg& req, EquityOptionSpreadMessage::PricingMethodEnum method, \
-		EquityOptionSpreadMessage::OptionStyleEnum style, EquityOptionSpreadMessage::VolatilityTypeEnum volType)
+		EquityOptionSpreadMessage::OptionStyleEnum style, EquityOptionSpreadMessage::VolatilityTypeEnum volType, \
+		EquityOptionSpreadMessage::RateTypeEnum rateTypeIn)
 	{
 		auto t = double((req.maturity - dd::day_clock::local_day()).days()) / 365;
 		auto rate = m_term->simple_rate(0, t);
 		auto optType = (req.option == EquityOptionSpreadMessage::CALL) ? 1 : -1;
+
+		int rateType;
+		if (rateTypeIn == EquityOptionSpreadMessage::LIBOR)
+		{
+			rateType = IRCurve::LIBOR;
+		}
+		else
+		{
+			rateType = IRCurve::YIELD;
+		}
 
 		if (m_vol == nullptr)
 		{
@@ -177,13 +188,13 @@ namespace derivative
 				try
 				{
 					/// first try Vol surface
-					m_vol = m_volSurface->GetVolatility(req.maturity, req.strike);
+					m_vol = m_volSurface->GetVolatility(req.maturity, req.strike, rateType);
 				}
 				catch (std::domain_error& e)
 				{
 					/// means for the maturity not enough data in historic vol
 					/// we use GramCharlier to construct constant vol for the given maturity and strike
-					m_vol = m_volSurface->GetConstVol(req.maturity, req.strike);
+					m_vol = m_volSurface->GetConstVol(req.maturity, req.strike, rateType);
 				}
 			}
 			else
@@ -200,6 +211,11 @@ namespace derivative
 					throw e;
 				}
 			}
+		}
+		
+		if (req.strike == std::numeric_limits<double>::max())
+		{
+			req.strike = m_stockVal->GetTradePrice();
 		}
 
 		/// now construct the BlackScholesAdapter from the stock value.
@@ -243,6 +259,11 @@ namespace derivative
 			throw std::invalid_argument("Invalid pricing method");
 		}
 
+		if (res.optPrice != res.optPrice)
+		{
+			throw std::exception("Unable to price this option");
+		}
+		
 		/// now get the greeks
 		double mat = (double((req.maturity - dd::day_clock::local_day()).days())) / 365;
 		res.greeks.delta = m_stock->delta(mat, req.strike, rate, optType);

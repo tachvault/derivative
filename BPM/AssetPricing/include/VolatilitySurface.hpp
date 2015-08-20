@@ -76,10 +76,10 @@ namespace derivative
 		}
 
 		/// return the DeterministicAssetVol given strike price
-		std::shared_ptr<DeterministicAssetVol> GetVolatility(const dd::date& mat, double strike, bool exactMatch = false);
+		std::shared_ptr<DeterministicAssetVol> GetVolatility(const dd::date& mat, double strike, int rateType, bool exactMatch = false);
 
 		/// return constant vol by CramCharlier (bootstrapped from adjacent maturities
-		std::shared_ptr<DeterministicAssetVol> GetConstVol(const dd::date& mat, double strike, double domestic_discount, double foreign_discount) const;
+		std::shared_ptr<DeterministicAssetVol> GetConstVol(const dd::date& mat, double strike, double domestic_discount, double foreign_discount, int rateType) const;
 
 		/// return GramCharlier vol.
 		double GetVolByGramCharlier(const dd::date& mat, double strike, double domestic_discount, double foreign_discount) const;
@@ -88,7 +88,7 @@ namespace derivative
 		virtual void LoadOptions() = 0;
 
 		/// build vol surface for the given underlying
-		void Build(double strike);
+		void Build(double strike, int rateType);
 
 	protected:
 
