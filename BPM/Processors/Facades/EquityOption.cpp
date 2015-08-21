@@ -124,9 +124,10 @@ namespace derivative
 
 	void EquityOption::ValidateResponse(const std::shared_ptr<VanillaOptMessage>& optMsg)
 	{
-		const VanillaOptMessage::Response& res = optMsg->GetResponse();
+		VanillaOptMessage::Response& res = const_cast<VanillaOptMessage::Response&>(optMsg->GetResponse());
 		if (res.optPrice != res.optPrice)
 		{
+			res.optPrice = 0;
 			throw std::exception("Unable to price this option");
 		}
 	}

@@ -41,15 +41,15 @@ namespace derivative
 			throw std::domain_error("No historic option market data found");
 		}
 
-		dd::date today(dd::day_clock::local_day());
-		int maturity = (mat - today).days();
+		int numDays = (mat - m_processedDate).days();
+		double maturity = (double)(long long(double(numDays) / 365 * std::pow(10, 15))) / std::pow(10, 15);
 		if (m_vol.find(strike) != m_vol.end())
 		{
 			if (m_vol.find(strike)->second == nullptr)
 			{
 				Build(strike, rateType);
 			}
-			if (m_vol.find(strike)->second->timeframe() < ((double)maturity / 365))
+			if (m_vol.find(strike)->second->timeframe() < maturity)
 			{
 				throw std::domain_error("not enough option data with given maturity");
 			}
@@ -67,7 +67,7 @@ namespace derivative
 			{
 				Build(m_vol.begin()->first, rateType);
 			}
-			if (m_vol.begin()->second->timeframe() < ((double)maturity / 365))
+			if (m_vol.begin()->second->timeframe() < maturity)
 			{
 				throw std::domain_error("not enough option data with given maturity");
 			}
@@ -92,7 +92,7 @@ namespace derivative
 			{
 				Build(m_vol.rbegin()->first, rateType);
 			}
-			if (m_vol.rbegin()->second->timeframe() < ((double)maturity / 365))
+			if (m_vol.rbegin()->second->timeframe() < maturity)
 			{
 				throw std::domain_error("not enough option data with given maturity");
 			}
@@ -108,7 +108,7 @@ namespace derivative
 
 		auto x = rit->second->timeframe();
 		auto y = it->second->timeframe();
-		if ((rit->second->timeframe() < ((double)maturity / 365)) || (it->second->timeframe() < ((double)maturity / 365)))
+		if ((rit->second->timeframe() < maturity) || (it->second->timeframe() < maturity))
 		{
 			throw std::domain_error("not enough option data with given maturity");
 		}
@@ -144,7 +144,7 @@ namespace derivative
 		prev = (*it)->GetMaturityDate();
 		if (prev > mat)
 		{
-			double vol = GetVolByGramCharlier(prev, strike, domestic_discount, foreign_discount);
+			double vol = GetVolByGramCharlier(prev, strike, domestic_discount, foreign_discount, rateType);
 			std::shared_ptr<DeterministicAssetVol> v = std::make_shared<ConstVol>(vol);
 			return v;
 		}
@@ -168,31 +168,31 @@ namespace derivative
 
 		if (prev == next)
 		{
-			double vol = GetVolByGramCharlier(mat, strike, domestic_discount, foreign_discount);
+			double vol = GetVolByGramCharlier(mat, strike, domestic_discount, foreign_discount, rateType);
 			std::shared_ptr<DeterministicAssetVol> v = std::make_shared<ConstVol>(vol);
 			return v;
 		}
 		else if (next.is_not_a_date())
 		{
-			double vol = GetVolByGramCharlier(prev, strike, domestic_discount, foreign_discount);
+			double vol = GetVolByGramCharlier(prev, strike, domestic_discount, foreign_discount, rateType);
 			std::shared_ptr<DeterministicAssetVol> v = std::make_shared<ConstVol>(vol);
 			return v;
 		}
 		else
 		{
-			double prev_vol = GetVolByGramCharlier(prev, strike, domestic_discount, foreign_discount);
-			double next_vol = GetVolByGramCharlier(next, strike, domestic_discount, foreign_discount);
+			double prev_vol = GetVolByGramCharlier(prev, strike, domestic_discount, foreign_discount, rateType);
+			double next_vol = GetVolByGramCharlier(next, strike, domestic_discount, foreign_discount, rateType);
 			auto vol = (double)(next - mat).days() / (next - prev).days()*prev_vol + (double)(mat - prev).days() / (next - prev).days()*next_vol;
 			std::shared_ptr<DeterministicAssetVol> v = std::make_shared<ConstVol>(vol);
 			return v;
 		}
 	}
 
-	double VolatilitySurface::GetVolByGramCharlier(const dd::date& mat, double strike, double domestic_discount, double foreign_discount) const
+	double VolatilitySurface::GetVolByGramCharlier(const dd::date& mat, double strike, double domestic_discount, double foreign_discount, int rateType) const
 	{
-		dd::date today(dd::day_clock::local_day());
-		int maturity = (mat - today).days();
-		double r = PrimaryUtil::FindInterestRate(m_cntry.GetCode(), (double)maturity / 365, IRCurve::LIBOR);
+		int numDays = (mat - m_processedDate).days();
+		double maturity = (double)(long long(double(numDays) / 365 * std::pow(10, 15))) / std::pow(10, 15);
+		double r = PrimaryUtil::FindInterestRate(m_cntry.GetCode(), maturity, static_cast<IRCurve::DataSourceType>(rateType));
 
 		/// now find all the options with date close
 		std::vector<std::shared_ptr<IDailyOptionValue> > options;
@@ -210,14 +210,14 @@ namespace derivative
 		coeff = 0.0;
 		coeff(0) = 1.0;
 		GramCharlier gc(coeff);
-		std::shared_ptr<GramCharlierAssetAdapter> gcasset = GramCharlierAssetAdapter::Create(gc, m_asset, maturity, options);
+		std::shared_ptr<GramCharlierAssetAdapter> gcasset = GramCharlierAssetAdapter::Create(gc, m_asset, numDays, options);
 
 		gcasset->calibrate(domestic_discount, foreign_discount, highest_moment);
 		/// get the call option price using Gram Charlier 
 		auto price = gcasset->call(strike, domestic_discount, foreign_discount);
 
 		/// now use this option price with BlackScholes to get vol
-		return m_bsasset->CalculateImpliedVolatility(price, double(maturity) / 365, strike, r, 1);
+		return m_bsasset->CalculateImpliedVolatility(price, maturity, strike, r, 1);
 	}
 
 	void VolatilitySurface::Build(double strike, int rateType)
@@ -231,7 +231,7 @@ namespace derivative
 		{
 			if (option->GetStrikePrice() == strike)
 			{
-				auto numDays = (option->GetMaturityDate() - option->GetTradeDate()).days();
+				auto numDays = (option->GetMaturityDate() - m_processedDate).days();
 				if (lastMat != numDays)
 				{
 					lastMat = numDays;
@@ -253,7 +253,7 @@ namespace derivative
 		{
 			if ((*it)->GetStrikePrice() == strike)
 			{
-				auto numDays = ((*it)->GetMaturityDate() - (*it)->GetTradeDate()).days();
+				auto numDays = ((*it)->GetMaturityDate() - m_processedDate).days();
 				if (lastMat == numDays) continue; else lastMat = numDays;
 				timeline(i + 1) = (double)(long long(double(numDays) / 365 * std::pow(10, 15))) / std::pow(10, 15);
 				double r = PrimaryUtil::FindInterestRate(m_cntry.GetCode(), timeline(i + 1), static_cast<IRCurve::DataSourceType>(rateType));

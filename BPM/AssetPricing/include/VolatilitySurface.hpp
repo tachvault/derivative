@@ -82,7 +82,7 @@ namespace derivative
 		std::shared_ptr<DeterministicAssetVol> GetConstVol(const dd::date& mat, double strike, double domestic_discount, double foreign_discount, int rateType) const;
 
 		/// return GramCharlier vol.
-		double GetVolByGramCharlier(const dd::date& mat, double strike, double domestic_discount, double foreign_discount) const;
+		double GetVolByGramCharlier(const dd::date& mat, double strike, double domestic_discount, double foreign_discount, int rateType) const;
 
 		/// load options data from external source
 		virtual void LoadOptions() = 0;
