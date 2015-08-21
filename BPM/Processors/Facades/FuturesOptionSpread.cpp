@@ -149,22 +149,22 @@ namespace derivative
 		std::shared_ptr<IFuturesValue> futuresVal = PrimaryUtil::getFuturesValue(m_symbol, today, req.delivery);
 
 		/// first try Vol surface
-		std::shared_ptr<TermStructure> term;
-		/// get the interest rate
+		// get rate type
+		int rateSrc;
 		if (rateType == FuturesOptionSpreadMessage::LIBOR)
 		{
-			/// Get domestic interest rate of the futures
-			auto exchange = futuresVal->GetFutures()->GetExchange();
-			std::shared_ptr<IRCurve> irCurve = BuildIRCurve(IRCurve::LIBOR, exchange.GetCountry().GetCode(), today);
-			term = irCurve->GetTermStructure();
+			rateSrc = IRCurve::LIBOR;
 		}
 		else
 		{
-			/// Get domestic interest rate of the futures
-			auto exchange = futuresVal->GetFutures()->GetExchange();
-			std::shared_ptr<IRCurve> irCurve = BuildIRCurve(IRCurve::YIELD, exchange.GetCountry().GetCode(), today);
-			term = irCurve->GetTermStructure();
+			rateSrc = IRCurve::YIELD;
 		}
+
+		std::shared_ptr<TermStructure> term;
+		/// Get domestic interest rate of the futures
+		auto exchange = futuresVal->GetFutures()->GetExchange();
+		std::shared_ptr<IRCurve> irCurve = BuildIRCurve(static_cast<IRCurve::DataSourceType>(rateSrc), exchange.GetCountry().GetCode(), today);
+		term = irCurve->GetTermStructure();
 		auto t = double((req.maturity - dd::day_clock::local_day()).days()) / 365;
 		auto rate = term->simple_rate(0, t);
 		
@@ -172,13 +172,13 @@ namespace derivative
 		std::shared_ptr<DeterministicAssetVol>  vol;
 		try
 		{
-			vol = volSurface->GetVolatility(req.delivery, req.strike, rateType);
+			vol = volSurface->GetVolatility(req.delivery, req.strike, rateSrc);
 		}
 		catch (std::domain_error& e)
 		{
 			/// means for the maturity not enough data in historic vol
 			/// we use GramCharlier to construct constant vol for the given maturity and strike
-			vol = volSurface->GetConstVol(req.delivery, req.strike, rateType);
+			vol = volSurface->GetConstVol(req.delivery, req.strike, rateSrc);
 		}
 
 		/// now construct the BlackScholesAdapter from the futures value.

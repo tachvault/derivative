@@ -206,11 +206,14 @@ namespace derivative
 						option->SetOpenInterest(retopenInt);
 						option = std::dynamic_pointer_cast<IDailyFuturesOptionValue>(EntityMgrUtil::registerObject(option->GetName(), option));
 
-						LOG(INFO) << " DailyFuturesOptionValue " << symbol << " with trade date " << tradedate << " constructed with " \
-							<< "maturity date" << matDate \
-							<< "strike price" << strike \
-							<< "settled price" << settle \
-							<< "trade price date" << rettradePrice << endl;
+						LOG(INFO) << " DailyFuturesOptionValue " << option->GetAsset()->GetSymbol()
+							<< " with trade date " << dd::to_iso_extended_string(option->GetTradeDate())
+							<< " constructed with " \
+							<< " maturity date " << dd::to_iso_extended_string(option->GetMaturityDate()) \
+							<< " delivery date " << dd::to_iso_extended_string(option->GetDeliveryDate()) \
+							<< " strike price " << option->GetStrikePrice() \
+							<< " settled price " << option->GetSettledPrice() \
+							<< " trade price date " << option->GetTradePrice() << endl;
 
 						entities.push_back(option);
 					}
