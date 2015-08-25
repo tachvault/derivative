@@ -251,7 +251,7 @@ namespace derivative
 		lastMat = 0;
 		for (auto it = m_options.begin(); it < m_options.end(); ++it)
 		{
-			if ((*it)->GetStrikePrice() == strike)
+			if (((*it)->GetStrikePrice() == strike) && ((*it)->GetMaturityDate() > m_processedDate))
 			{
 				auto numDays = ((*it)->GetMaturityDate() - m_processedDate).days();
 				if (lastMat == numDays) continue; else lastMat = numDays;
