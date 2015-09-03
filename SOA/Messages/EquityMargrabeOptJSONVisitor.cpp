@@ -4,6 +4,7 @@ Copyright (c) 2015, Nathan Muruganantha. All rights reserved.
 
 #include "EquityMargrabeOptJSONVisitor.hpp"
 #include "EquityMargrabeOptMessage.hpp"
+#include "QFUtil.hpp"
 
 namespace derivative
 {
@@ -34,7 +35,8 @@ namespace derivative
 		/// adding greeks and response parameters
 		resObj[L"underlying trade date"] = json::value::string(utility::conversions::to_string_t(dd::to_simple_string(msg->GetResponse().underlyingTradeDate)));
 		resObj[L"last underlying price"] = json::value::number(msg->GetResponse().underlyingTradePrice);
-		resObj[L"option price"] = json::value::number(msg->GetResponse().optPrice);
+		resObj[L"option price"] = json::value::string(utility::conversions::to_string_t((to_money<double>(msg->GetResponse().optPrice))));
+		resObj[L"Volatility"] = json::value::number(msg->GetResponse().vol);
 		out[L"request"] = reqObj;
 		out[L"response"] = resObj;
 

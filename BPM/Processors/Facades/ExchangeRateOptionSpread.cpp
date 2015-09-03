@@ -245,6 +245,7 @@ namespace derivative
 
 		/// now get the greeks
 		double mat = (double((req.maturity - dd::day_clock::local_day()).days())) / 365;
+		res.vol = m_exchangeRate->GetVolatility(0, mat);
 		res.greeks.delta = m_exchangeRate->delta(mat, req.strike, rateLocal, optType);
 		res.greeks.gamma = m_exchangeRate->gamma(mat, req.strike, rateLocal, optType);
 		res.greeks.vega = m_exchangeRate->vega(mat, req.strike, rateLocal, optType);

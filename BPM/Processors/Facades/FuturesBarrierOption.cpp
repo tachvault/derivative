@@ -113,6 +113,8 @@ namespace derivative
 		}
 
 		/// set the futures info
+		double mat = (double((m_maturity - dd::day_clock::local_day()).days())) / 365;
+		res.vol = m_futures->GetVolatility(0, mat);
 		res.underlyingTradeDate = m_futuresVal->GetTradeDate();
 		res.underlyingTradePrice = m_futuresVal->GetTradePrice();
 

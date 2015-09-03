@@ -4,6 +4,7 @@ Copyright (c) 2015, Nathan Muruganantha. All rights reserved.
 
 #include "EquityBarrierOptJSONVisitor.hpp"
 #include "EquityBarrierOptMessage.hpp"
+#include "QFUtil.hpp"
 
 namespace derivative
 {
@@ -19,7 +20,7 @@ namespace derivative
 			/// if we are here then the message should be of type EquityBarrierOptMessage.
 			msg = dynamic_pointer_cast<EquityBarrierOptMessage>(message);
 		}
-		catch(std::bad_cast& e)
+		catch (std::bad_cast& e)
 		{
 			LOG(ERROR) << "This should not happen to..  " << message << endl;
 			assert(false);
@@ -51,8 +52,9 @@ namespace derivative
 		/// adding greeks and response parameters
 		resObj[L"underlying trade date"] = json::value::string(utility::conversions::to_string_t(dd::to_simple_string(msg->GetResponse().underlyingTradeDate)));
 		resObj[L"last underlying price"] = json::value::number(msg->GetResponse().underlyingTradePrice);
-		resObj[L"vanilla option price"] = json::value::number(msg->GetResponse().optPrice);
-		resObj[L"barrier price"] = json::value::number(msg->GetResponse().barierOptPrice);
+		resObj[L"vanilla option price"] = json::value::string(utility::conversions::to_string_t((to_money<double>(msg->GetResponse().optPrice))));
+		resObj[L"barrier price"] = json::value::string(utility::conversions::to_string_t((to_money<double>(msg->GetResponse().barierOptPrice))));
+		resObj[L"Volatility"] = json::value::number(msg->GetResponse().vol);
 		out[L"request"] = reqObj;
 		out[L"response"] = resObj;
 

@@ -126,6 +126,7 @@ namespace derivative
 
 		/// now get the greeks
 		double mat = (double((m_maturity - dd::day_clock::local_day()).days())) / 365;
+		res.vol = m_futures->GetVolatility(0, mat);
 		res.greeks.delta = m_futures->delta(mat, m_strike, m_termRate, m_optType);
 		res.greeks.gamma = m_futures->gamma(mat, m_strike, m_termRate, m_optType);
 		res.greeks.theta = m_futures->theta(mat, m_strike, m_termRate, m_optType);

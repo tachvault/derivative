@@ -14,5 +14,5 @@ namespace derivative
 		visitor.Visit(shared_from_this(), jsonMsg);
 		return jsonMsg;
 	}
-} 
+}
 /* namespace derivative */

@@ -66,7 +66,34 @@ namespace derivative
 		if (i==vec.size()) i = -1; // not found
 		return i;
 	}
-	
+
+	template <typename T>
+	std::string to_string_with_precision(const T a_value, const int n = 6)
+	{
+		std::ostringstream out;
+		out << std::setprecision(n) << a_value;
+		return out.str();
+	}
+
+	template <class T>
+	int numDigits(T number)
+	{
+		int digits = 0;
+		if (number < 0) digits = 1; // remove this line if '-' counts as a digit
+		while (number) {
+			number /= 10;
+			digits++;
+		}
+		return digits;
+	}
+
+	template <typename T>
+	std::string to_money(const T a_value)
+	{
+		auto non_dec_digits = numDigits<int>(static_cast<int>(a_value));
+		return to_string_with_precision(a_value, non_dec_digits + 3);
+	}
+		
 	SERVICE_UTIL_DLL_API void splitLine(const std::string& line, std::vector<std::string>& vec, char delim = ',');
 
 	SERVICE_UTIL_DLL_API pt::time_duration get_duration_from_string(std::string& str);

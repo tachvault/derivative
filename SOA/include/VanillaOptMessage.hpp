@@ -147,6 +147,8 @@ namespace derivative
 			double optPrice;
 
 			Greeks greeks;
+
+			double vol;
 		};
 
 		VanillaOptMessage()

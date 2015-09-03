@@ -4,6 +4,7 @@ Copyright (c) 2015, Nathan Muruganantha. All rights reserved.
 
 #include "EquityAverageOptJSONVisitor.hpp"
 #include "EquityAverageOptMessage.hpp"
+#include "QFUtil.hpp"
 
 namespace derivative
 {
@@ -19,7 +20,7 @@ namespace derivative
 			/// if we are here then the message should be of type EquityAverageOptMessage.
 			msg = dynamic_pointer_cast<EquityAverageOptMessage>(message);
 		}
-		catch(std::bad_cast& e)
+		catch (std::bad_cast& e)
 		{
 			LOG(ERROR) << "This should not happen to..  " << message << endl;
 			assert(false);
@@ -38,11 +39,12 @@ namespace derivative
 		/// adding greeks and response parameters
 		resObj[L"underlying trade date"] = json::value::string(utility::conversions::to_string_t(dd::to_simple_string(msg->GetResponse().underlyingTradeDate)));
 		resObj[L"last underlying price"] = json::value::number(msg->GetResponse().underlyingTradePrice);
-		resObj[L"average option price"] = json::value::number(msg->GetResponse().averageOptPrice);
+		resObj[L"average option price"] = json::value::string(utility::conversions::to_string_t((to_money<double>(msg->GetResponse().averageOptPrice))));
 		if (msg->GetRequest().averageType == EquityAverageOptMessage::FIXED_STRIKE)
 		{
-			resObj[L"vanilla option price"] = json::value::number(msg->GetResponse().optPrice);
+			resObj[L"vanilla option price"] = json::value::string(utility::conversions::to_string_t((to_money<double>(msg->GetResponse().optPrice))));
 		}
+		resObj[L"Volatility"] = json::value::number(msg->GetResponse().vol);
 		out[L"request"] = reqObj;
 		out[L"response"] = resObj;
 

@@ -37,6 +37,5 @@ namespace derivative
 			throw std::invalid_argument("Invalid LookBack type parameter");
 		}
 	}
-
-} 
+}
 /* namespace derivative */

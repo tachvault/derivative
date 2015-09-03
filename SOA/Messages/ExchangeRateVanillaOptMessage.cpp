@@ -6,7 +6,7 @@ Copyright (c) 2013 - 2014, Nathan Muruganantha. All rights reserved.
 #include "ExchangeRateVanillaOptJSONVisitor.hpp"
 
 namespace derivative
-{	
+{
 	json::value ExchangeRateVanillaOptMessage::AsJSON()
 	{
 		ExchangeRateVanillaOptJSONVisitor visitor;
@@ -14,5 +14,5 @@ namespace derivative
 		visitor.Visit(shared_from_this(), jsonMsg);
 		return jsonMsg;
 	}
-} 
+}
 /* namespace derivative */

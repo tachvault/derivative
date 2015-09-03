@@ -14,7 +14,7 @@ namespace derivative
 		visitor.Visit(shared_from_this(), jsonMsg);
 		return jsonMsg;
 	}
-	
+
 	EquityAverageOptMessage::AverageTypeEnum EquityAverageOptMessage::ParseAverageType(const std::map<string_t, string_t>& query_strings)
 	{
 		if (query_strings.find(U("_averageType")) != query_strings.end())
@@ -37,5 +37,5 @@ namespace derivative
 			throw std::invalid_argument("Invalid Average type parameter");
 		}
 	}
-} 
+}
 /* namespace derivative */

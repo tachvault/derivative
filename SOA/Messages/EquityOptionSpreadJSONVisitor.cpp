@@ -4,6 +4,7 @@ Copyright (c) 2015, Nathan Muruganantha. All rights reserved.
 
 #include "EquityOptionSpreadJSONVisitor.hpp"
 #include "EquityOptionSpreadMessage.hpp"
+#include "QFUtil.hpp"
 
 namespace derivative
 {
@@ -43,7 +44,7 @@ namespace derivative
 		for (auto &leg : req.legs)
 		{
 			json::value legObj = json::value::object();
-			legObj[L"leg"] = json::value::number(i+1);
+			legObj[L"leg"] = json::value::number(i + 1);
 			legObj[L"option"] = (leg.option == EquityOptionSpreadMessage::CALL) ? json::value::string(U("call")) : json::value::string(U("put"));
 			legObj[L"position"] = (leg.pos == EquityOptionSpreadMessage::LONG) ? json::value::string(U("long")) : json::value::string(U("short"));
 			legObj[L"strike"] = json::value::number(leg.strike);
@@ -58,7 +59,7 @@ namespace derivative
 		auto res = msg->GetResponse();
 		resObj[L"underlying trade date"] = json::value::string(utility::conversions::to_string_t(dd::to_simple_string(res.underlyingTradeDate)));
 		resObj[L"last underlying price"] = json::value::number(res.underlyingTradePrice);
-		resObj[L"spread price"] = json::value::number(res.spreadPrice);
+		resObj[L"spread price"] = json::value::string(utility::conversions::to_string_t((to_money(res.spreadPrice))));
 		i = 0;
 		json::value resLegArray = json::value::array();
 		for (auto &leg : res.legs)
@@ -66,7 +67,8 @@ namespace derivative
 			json::value legGreekObj;
 			json::value legObj = json::value::object();
 			legObj[L"leg"] = json::value::number(i + 1);
-			legObj[L"option price"] = json::value::number(leg.optPrice);
+			legObj[L"option price"] = json::value::string(utility::conversions::to_string_t((to_money(leg.optPrice))));
+			legObj[L"volatility"] = json::value::number(leg.vol);
 			legGreekObj[L"delta"] = json::value::number(leg.greeks.delta);
 			legGreekObj[L"gamma"] = json::value::number(leg.greeks.gamma);
 			legGreekObj[L"vega"] = json::value::number(leg.greeks.vega);

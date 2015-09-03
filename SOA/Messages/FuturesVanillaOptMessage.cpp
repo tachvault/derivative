@@ -6,7 +6,7 @@ Copyright (c) 2013 - 2014, Nathan Muruganantha. All rights reserved.
 #include "FuturesVanillaOptJSONVisitor.hpp"
 
 namespace derivative
-{	
+{
 	json::value FuturesVanillaOptMessage::AsJSON()
 	{
 		FuturesVanillaOptJSONVisitor visitor;
@@ -14,7 +14,6 @@ namespace derivative
 		visitor.Visit(shared_from_this(), jsonMsg);
 		return jsonMsg;
 	}
-
 
 	void FuturesVanillaOptMessage::ParseDeliveryDate(FuturesVanillaOptMessage::FuturesRequest &req, const std::map<string_t, string_t>& query_strings)
 	{
@@ -28,5 +27,5 @@ namespace derivative
 			throw std::invalid_argument("No delivery date");
 		}
 	}
-} 
+}
 /* namespace derivative */

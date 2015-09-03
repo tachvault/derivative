@@ -109,7 +109,7 @@ namespace derivative
 				ESBManager& esb = ESBManager::getInstance();
 				if (!esb.Authorize(conversions::to_utf8string(query_strings.at(U("_token")))))
 				{
-					throw std::invalid_argument("Invalid access token");
+					throw std::invalid_argument("Invalid access token. Please use the token emailed when you registered with TachVault. Please click the login button at the top of this page to register if you have not registered.");
 				}
 			}
 			else

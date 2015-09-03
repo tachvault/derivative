@@ -133,6 +133,7 @@ namespace derivative
 		res.underlyingTradePrice = m_stockVal->GetTradePrice();
 		/// now get the greeks
 		double mat = (double((m_maturity - dd::day_clock::local_day()).days())) / 365;
+		res.vol = m_stock->GetVolatility(0, mat);
 		res.greeks.delta = m_stock->delta(mat, m_strike, m_termRate, m_optType);
 		res.greeks.gamma = m_stock->gamma(mat, m_strike, m_termRate, m_optType);
 		res.greeks.vega = m_stock->vega(mat, m_strike, m_termRate, m_optType);

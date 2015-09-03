@@ -6,7 +6,7 @@ Copyright (c) 2013 - 2014, Nathan Muruganantha. All rights reserved.
 #include "EquityBarrierOptJSONVisitor.hpp"
 
 namespace derivative
-{	
+{
 	json::value EquityBarrierOptMessage::AsJSON()
 	{
 		EquityBarrierOptJSONVisitor visitor;
@@ -43,8 +43,7 @@ namespace derivative
 		else
 		{
 			throw std::invalid_argument("Invalid Barrier type parameter");
-		}		
+		}
 	}
-
-} 
+}
 /* namespace derivative */

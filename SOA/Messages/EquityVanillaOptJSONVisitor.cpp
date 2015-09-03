@@ -4,6 +4,7 @@ Copyright (c) 2015, Nathan Muruganantha. All rights reserved.
 
 #include "EquityVanillaOptJSONVisitor.hpp"
 #include "EquityVanillaOptMessage.hpp"
+#include "QFUtil.hpp"
 
 namespace derivative
 {
@@ -19,7 +20,7 @@ namespace derivative
 			/// if we are here then the message should be of type EquityVanillaOptMessage.
 			msg = dynamic_pointer_cast<EquityVanillaOptMessage>(message);
 		}
-		catch(std::bad_cast& e)
+		catch (std::bad_cast& e)
 		{
 			LOG(ERROR) << "This should not happen to..  " << message << endl;
 			assert(false);
@@ -35,7 +36,8 @@ namespace derivative
 		/// adding greeks and response parameters
 		resObj[L"underlying trade date"] = json::value::string(utility::conversions::to_string_t(dd::to_simple_string(msg->GetResponse().underlyingTradeDate)));
 		resObj[L"last underlying price"] = json::value::number(msg->GetResponse().underlyingTradePrice);
-		resObj[L"option price"] = json::value::number(msg->GetResponse().optPrice);
+		resObj[L"option price"] = json::value::string(utility::conversions::to_string_t((to_money<double>(msg->GetResponse().optPrice))));
+		resObj[L"Volatility"] = json::value::number(msg->GetResponse().vol);
 		greekObj[L"delta"] = json::value::number(msg->GetResponse().greeks.delta);
 		greekObj[L"gamma"] = json::value::number(msg->GetResponse().greeks.gamma);
 		greekObj[L"vega"] = json::value::number(msg->GetResponse().greeks.vega);

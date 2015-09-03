@@ -150,6 +150,8 @@ namespace derivative
 		{
 			double optPrice;
 
+			double vol;
+
 			Greeks greeks;
 
 			ResponseLeg()
@@ -169,7 +171,7 @@ namespace derivative
 			double underlyingTradePrice;
 
 			double spreadPrice;
-
+			
 			Greeks greeks;
 
 			std::vector<ResponseLeg> legs;
