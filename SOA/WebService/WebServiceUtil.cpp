@@ -149,31 +149,32 @@ namespace derivative
 			if (start || legs.empty()) throw std::invalid_argument("Invalid option data data");
 		}
 
-		web::json::value HandleEquityOption(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings)
+		bool HandleEquityOption(const std::vector<string_t>& paths,
+			const std::map<string_t, string_t>& query_strings, web::json::value& jvalue)
 		{
 			if (!paths[1].empty() && paths[1].compare(U("Vanilla")) == 0)
 			{
-				return HandleEquityVanillaOption(paths, query_strings);
+				return HandleEquityVanillaOption(paths, query_strings, jvalue);
 			}
 			else if (!paths[1].empty() && paths[1].compare(U("Barrier")) == 0)
 			{
-				return HandleEquityBarrierOption(paths, query_strings);
+				return HandleEquityBarrierOption(paths, query_strings, jvalue);
 			}
 			else if (!paths[1].empty() && paths[1].compare(U("Average")) == 0)
 			{
-				return HandleEquityAverageOption(paths, query_strings);
+				return HandleEquityAverageOption(paths, query_strings, jvalue);
 			}
 			else if (!paths[1].empty() && paths[1].compare(U("LookBack")) == 0)
 			{
-				return HandleEquityLookBackOption(paths, query_strings);
+				return HandleEquityLookBackOption(paths, query_strings, jvalue);
 			}
 			else if (!paths[1].empty() && paths[1].compare(U("Chooser")) == 0)
 			{
-				return HandleEquityChooserOption(paths, query_strings);
+				return HandleEquityChooserOption(paths, query_strings, jvalue);
 			}
 			else if (!paths[1].empty() && paths[1].compare(U("Margrabe")) == 0)
 			{
-				return HandleEquityMargrabeOption(paths, query_strings);
+				return HandleEquityMargrabeOption(paths, query_strings, jvalue);
 			}
 			else
 			{
@@ -181,13 +182,14 @@ namespace derivative
 			}
 		}
 
-		web::json::value HandleEquityVanillaOption(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings)
+		bool HandleEquityVanillaOption(const std::vector<string_t>& paths, \
+			const std::map<string_t, string_t>& query_strings, web::json::value& jvalue)
 		{
 			/// now add request parameters
 			std::shared_ptr<EquityVanillaOptMessage> msg = std::make_shared<EquityVanillaOptMessage>();
 			EquityVanillaOptMessage::Request req;
 			try
-			{	
+			{
 				msg->ParseSymbol(req, query_strings);
 				msg->ParseMaturity(req, query_strings);
 				msg->ParseStrike(req, query_strings);
@@ -215,13 +217,16 @@ namespace derivative
 			}
 			catch (std::exception& e)
 			{
-				return SendError<EquityVanillaOptMessage, VanillaOptMessage::Request>(msg, req, e.what());
+				jvalue = SendError<EquityVanillaOptMessage, VanillaOptMessage::Request>(msg, req, e.what());
+				return false;
 			}
 
-			return ProcessMsg<EquityVanillaOptMessage, VanillaOptMessage::Request>(msg, req);
+			jvalue = ProcessMsg<EquityVanillaOptMessage, VanillaOptMessage::Request>(msg, req);
+			return true;
 		}
-		
-		web::json::value HandleEquityBarrierOption(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings)
+
+		bool HandleEquityBarrierOption(const std::vector<string_t>& paths, \
+			const std::map<string_t, string_t>& query_strings, web::json::value& jvalue)
 		{
 			/// now add request parameters
 			std::shared_ptr<EquityBarrierOptMessage> msg = std::make_shared<EquityBarrierOptMessage>();
@@ -260,13 +265,16 @@ namespace derivative
 			}
 			catch (std::exception& e)
 			{
-				return SendError<EquityBarrierOptMessage, EquityBarrierOptMessage::BarrierRequest>(msg, req, e.what());
+				jvalue = SendError<EquityBarrierOptMessage, EquityBarrierOptMessage::BarrierRequest>(msg, req, e.what());
+				return false;
 			}
 
-			return ProcessMsg<EquityBarrierOptMessage, EquityBarrierOptMessage::BarrierRequest>(msg, req);
+			jvalue = ProcessMsg<EquityBarrierOptMessage, EquityBarrierOptMessage::BarrierRequest>(msg, req);
+			return true;
 		}
 
-   	    web::json::value HandleEquityAverageOption(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings)
+		bool HandleEquityAverageOption(const std::vector<string_t>& paths, \
+			const std::map<string_t, string_t>& query_strings, web::json::value& jvalue)
 		{
 			/// now add request parameters
 			std::shared_ptr<EquityAverageOptMessage> msg = std::make_shared<EquityAverageOptMessage>();
@@ -285,12 +293,12 @@ namespace derivative
 				{
 					msg->ParseStrike(req, query_strings);
 				}
-				msg->ParseVol(req, query_strings);				
+				msg->ParseVol(req, query_strings);
 				req.style = msg->ParseOptionStyle(query_strings);
 				if (req.style == VanillaOptMessage::STYLE_UNKNOWN)
 				{
 					req.style = VanillaOptMessage::EUROPEAN;
-				}			
+				}
 				req.method = msg->ParsePricingMethod(query_strings);
 				if (req.method == VanillaOptMessage::METHOD_UNKNOWN)
 				{
@@ -305,13 +313,16 @@ namespace derivative
 			}
 			catch (std::exception& e)
 			{
-				return SendError<EquityAverageOptMessage, EquityAverageOptMessage::AverageOptRequest>(msg, req, e.what());
+				jvalue = SendError<EquityAverageOptMessage, EquityAverageOptMessage::AverageOptRequest>(msg, req, e.what());
+				return false;
 			}
 
-			return ProcessMsg<EquityAverageOptMessage, EquityAverageOptMessage::AverageOptRequest>(msg, req);
+			jvalue = ProcessMsg<EquityAverageOptMessage, EquityAverageOptMessage::AverageOptRequest>(msg, req);
+			return true;
 		}
 
-		web::json::value HandleEquityLookBackOption(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings)
+		bool HandleEquityLookBackOption(const std::vector<string_t>& paths, \
+			const std::map<string_t, string_t>& query_strings, web::json::value& jvalue)
 		{
 			/// now add request parameters
 			std::shared_ptr<EquityLookBackOptMessage> msg = std::make_shared<EquityLookBackOptMessage>();
@@ -353,12 +364,16 @@ namespace derivative
 			}
 			catch (std::exception& e)
 			{
-				return SendError<EquityLookBackOptMessage, EquityLookBackOptMessage::LookBackOptRequest>(msg, req, e.what());
+				jvalue = SendError<EquityLookBackOptMessage, EquityLookBackOptMessage::LookBackOptRequest>(msg, req, e.what());
+				return false;
 			}
-			return ProcessMsg<EquityLookBackOptMessage, EquityLookBackOptMessage::LookBackOptRequest>(msg, req);
+
+			jvalue = ProcessMsg<EquityLookBackOptMessage, EquityLookBackOptMessage::LookBackOptRequest>(msg, req);
+			return true;
 		}
 
-		web::json::value HandleEquityChooserOption(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings)
+		bool HandleEquityChooserOption(const std::vector<string_t>& paths, \
+			const std::map<string_t, string_t>& query_strings, web::json::value& jvalue)
 		{
 			/// now add request parameters
 			std::shared_ptr<EquityChooserOptMessage> msg = std::make_shared<EquityChooserOptMessage>();
@@ -368,7 +383,7 @@ namespace derivative
 				msg->ParseSymbol(req, query_strings);
 				msg->ParseMaturity(req, query_strings);
 				msg->ParseStrike(req, query_strings);
-				msg->ParseVol(req, query_strings); 
+				msg->ParseVol(req, query_strings);
 				if (req.option == VanillaOptMessage::TYPE_UNKNOWN)
 				{
 					req.option = VanillaOptMessage::CALL;
@@ -385,13 +400,16 @@ namespace derivative
 			}
 			catch (std::exception& e)
 			{
-				return SendError<EquityChooserOptMessage, EquityChooserOptMessage::Request>(msg, req, e.what());
+				jvalue = SendError<EquityChooserOptMessage, EquityChooserOptMessage::Request>(msg, req, e.what());
+				return false;
 			}
 
-			return ProcessMsg<EquityChooserOptMessage, EquityChooserOptMessage::Request>(msg, req);
+			jvalue = ProcessMsg<EquityChooserOptMessage, EquityChooserOptMessage::Request>(msg, req);
+			return true;
 		}
 
-		web::json::value HandleEquityMargrabeOption(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings)
+		bool HandleEquityMargrabeOption(const std::vector<string_t>& paths, \
+			const std::map<string_t, string_t>& query_strings, web::json::value& jvalue)
 		{
 			/// now add request parameters
 			std::shared_ptr<EquityMargrabeOptMessage> msg = std::make_shared<EquityMargrabeOptMessage>();
@@ -437,33 +455,37 @@ namespace derivative
 			}
 			catch (std::exception& e)
 			{
-				return SendError<EquityMargrabeOptMessage, EquityMargrabeOptMessage::Request>(msg, req, e.what());
+				jvalue = SendError<EquityMargrabeOptMessage, EquityMargrabeOptMessage::Request>(msg, req, e.what());
+				return false;
 			}
 
-			return ProcessMsg<EquityMargrabeOptMessage, EquityMargrabeOptMessage::MargrabeOptRequest>(msg, req);
+			jvalue = ProcessMsg<EquityMargrabeOptMessage, EquityMargrabeOptMessage::MargrabeOptRequest>(msg, req);
+			return true;
 		}
 
-		web::json::value HandleFuturesOption(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings)
+		bool HandleFuturesOption(const std::vector<string_t>& paths, \
+			const std::map<string_t, string_t>& query_strings, web::json::value& jvalue)
 		{
 			if (!paths[1].empty() && paths[1].compare(U("Vanilla")) == 0)
 			{
-				return HandleFuturesVanillaOption(paths, query_strings);
+				return HandleFuturesVanillaOption(paths, query_strings, jvalue);
 			}
 			else if (!paths[1].empty() && paths[1].compare(U("Barrier")) == 0)
 			{
-				return HandleFuturesBarrierOption(paths, query_strings);
+				return HandleFuturesBarrierOption(paths, query_strings, jvalue);
 			}
 			else if (!paths[1].empty() && paths[1].compare(U("Average")) == 0)
 			{
-				return HandleFuturesAverageOption(paths, query_strings);
-			}			
+				return HandleFuturesAverageOption(paths, query_strings, jvalue);
+			}
 			else
 			{
 				throw std::invalid_argument("Invalid option type");
 			}
 		}
 
-		web::json::value HandleFuturesVanillaOption(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings)
+		bool HandleFuturesVanillaOption(const std::vector<string_t>& paths, \
+			const std::map<string_t, string_t>& query_strings, web::json::value& jvalue)
 		{
 			/// now add request parameters
 			std::shared_ptr<FuturesVanillaOptMessage> msg = std::make_shared<FuturesVanillaOptMessage>();
@@ -497,13 +519,16 @@ namespace derivative
 			}
 			catch (std::exception& e)
 			{
-				return SendError<FuturesVanillaOptMessage, VanillaOptMessage::Request>(msg, req, e.what());
+				jvalue = SendError<FuturesVanillaOptMessage, VanillaOptMessage::Request>(msg, req, e.what());
+				return false;
 			}
 
-			return ProcessMsg<FuturesVanillaOptMessage, FuturesVanillaOptMessage::FuturesRequest>(msg, req);
+			jvalue = ProcessMsg<FuturesVanillaOptMessage, FuturesVanillaOptMessage::FuturesRequest>(msg, req);
+			return true;
 		}
 
-		web::json::value HandleFuturesBarrierOption(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings)
+		bool HandleFuturesBarrierOption(const std::vector<string_t>& paths, \
+			const std::map<string_t, string_t>& query_strings, web::json::value& jvalue)
 		{
 			/// now add request parameters
 			std::shared_ptr<FuturesBarrierOptMessage> msg = std::make_shared<FuturesBarrierOptMessage>();
@@ -543,13 +568,16 @@ namespace derivative
 			}
 			catch (std::exception& e)
 			{
-				return SendError<FuturesBarrierOptMessage, FuturesBarrierOptMessage::BarrierRequest>(msg, req, e.what());
+				jvalue = SendError<FuturesBarrierOptMessage, FuturesBarrierOptMessage::BarrierRequest>(msg, req, e.what());
+				return false;
 			}
 
-			return ProcessMsg<FuturesBarrierOptMessage, FuturesBarrierOptMessage::BarrierRequest>(msg, req);
+			jvalue = ProcessMsg<FuturesBarrierOptMessage, FuturesBarrierOptMessage::BarrierRequest>(msg, req);
+			return false;
 		}
 
-		web::json::value HandleFuturesAverageOption(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings)
+		bool HandleFuturesAverageOption(const std::vector<string_t>& paths, \
+			const std::map<string_t, string_t>& query_strings, web::json::value& jvalue)
 		{
 			/// now add request parameters
 			std::shared_ptr<FuturesAverageOptMessage> msg = std::make_shared<FuturesAverageOptMessage>();
@@ -589,25 +617,28 @@ namespace derivative
 			}
 			catch (std::exception& e)
 			{
-				return SendError<FuturesAverageOptMessage, FuturesAverageOptMessage::AverageOptRequest>(msg, req, e.what());
+				jvalue = SendError<FuturesAverageOptMessage, FuturesAverageOptMessage::AverageOptRequest>(msg, req, e.what());
+				return false;
 			}
 
-			return ProcessMsg<FuturesAverageOptMessage, FuturesAverageOptMessage::AverageOptRequest>(msg, req);
+			jvalue = ProcessMsg<FuturesAverageOptMessage, FuturesAverageOptMessage::AverageOptRequest>(msg, req);
+			return true;
 		}
-	
-		web::json::value HandleFXOption(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings)
+
+		bool HandleFXOption(const std::vector<string_t>& paths, \
+			const std::map<string_t, string_t>& query_strings, web::json::value& jvalue)
 		{
 			if (!paths[1].empty() && paths[1].compare(U("Vanilla")) == 0)
 			{
-				return HandleFXVanillaOption(paths, query_strings);
+				return HandleFXVanillaOption(paths, query_strings, jvalue);
 			}
 			else if (!paths[1].empty() && paths[1].compare(U("Barrier")) == 0)
 			{
-				return HandleFXBarrierOption(paths, query_strings);
+				return HandleFXBarrierOption(paths, query_strings, jvalue);
 			}
 			else if (!paths[1].empty() && paths[1].compare(U("Average")) == 0)
 			{
-				return HandleFXAverageOption(paths, query_strings);
+				return HandleFXAverageOption(paths, query_strings, jvalue);
 			}
 			else
 			{
@@ -615,7 +646,8 @@ namespace derivative
 			}
 		}
 
-		web::json::value HandleFXVanillaOption(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings)
+		bool HandleFXVanillaOption(const std::vector<string_t>& paths, \
+			const std::map<string_t, string_t>& query_strings, web::json::value& jvalue)
 		{
 			/// now add request parameters
 			std::shared_ptr<ExchangeRateVanillaOptMessage> msg = std::make_shared<ExchangeRateVanillaOptMessage>();
@@ -649,13 +681,16 @@ namespace derivative
 			}
 			catch (std::exception& e)
 			{
-				return SendError<ExchangeRateVanillaOptMessage, VanillaOptMessage::Request>(msg, req, e.what());
+				jvalue = SendError<ExchangeRateVanillaOptMessage, VanillaOptMessage::Request>(msg, req, e.what());
+				return false;
 			}
 
-			return ProcessMsg<ExchangeRateVanillaOptMessage, ExchangeRateVanillaOptMessage::ExchangeRateRequest>(msg, req);
+			jvalue = ProcessMsg<ExchangeRateVanillaOptMessage, ExchangeRateVanillaOptMessage::ExchangeRateRequest>(msg, req);
+			return true;
 		}
 
-		web::json::value HandleFXBarrierOption(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings)
+		bool HandleFXBarrierOption(const std::vector<string_t>& paths, \
+			const std::map<string_t, string_t>& query_strings, web::json::value& jvalue)
 		{
 			/// now add request parameters
 			std::shared_ptr<ExchangeRateBarrierOptMessage> msg = std::make_shared<ExchangeRateBarrierOptMessage>();
@@ -695,13 +730,16 @@ namespace derivative
 			}
 			catch (std::exception& e)
 			{
-				return SendError<ExchangeRateBarrierOptMessage, ExchangeRateBarrierOptMessage::BarrierRequest>(msg, req, e.what());
+				jvalue = SendError<ExchangeRateBarrierOptMessage, ExchangeRateBarrierOptMessage::BarrierRequest>(msg, req, e.what());
+				return false;
 			}
 
-			return ProcessMsg<ExchangeRateBarrierOptMessage, ExchangeRateBarrierOptMessage::BarrierRequest>(msg, req);
+			jvalue = ProcessMsg<ExchangeRateBarrierOptMessage, ExchangeRateBarrierOptMessage::BarrierRequest>(msg, req);
+			return true;
 		}
 
-		web::json::value HandleFXAverageOption(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings)
+		bool HandleFXAverageOption(const std::vector<string_t>& paths, \
+			const std::map<string_t, string_t>& query_strings, web::json::value& jvalue)
 		{
 			/// now add request parameters
 			std::shared_ptr<ExchangeRateAverageOptMessage> msg = std::make_shared<ExchangeRateAverageOptMessage>();
@@ -741,13 +779,16 @@ namespace derivative
 			}
 			catch (std::exception& e)
 			{
-				return SendError<ExchangeRateAverageOptMessage, ExchangeRateAverageOptMessage::AverageOptRequest>(msg, req, e.what());
+				jvalue = SendError<ExchangeRateAverageOptMessage, ExchangeRateAverageOptMessage::AverageOptRequest>(msg, req, e.what());
+				return false;
 			}
 
-			return ProcessMsg<ExchangeRateAverageOptMessage, ExchangeRateAverageOptMessage::AverageOptRequest>(msg, req);
+			jvalue = ProcessMsg<ExchangeRateAverageOptMessage, ExchangeRateAverageOptMessage::AverageOptRequest>(msg, req);
+			return true;
 		}
 
-		web::json::value HandleEquityOptionSpread(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings)
+		bool HandleEquityOptionSpread(const std::vector<string_t>& paths, \
+			const std::map<string_t, string_t>& query_strings, web::json::value& jvalue)
 		{
 			/// now add request parameters
 			std::shared_ptr<EquityOptionSpreadMessage> msg = std::make_shared<EquityOptionSpreadMessage>();
@@ -886,13 +927,16 @@ namespace derivative
 			}
 			catch (std::exception& e)
 			{
-				return SendError<EquityOptionSpreadMessage, EquityOptionSpreadMessage::Request>(msg, req, e.what());
+				jvalue = SendError<EquityOptionSpreadMessage, EquityOptionSpreadMessage::Request>(msg, req, e.what());
+				return false;
 			}
 
-			return ProcessMsg<EquityOptionSpreadMessage, EquityOptionSpreadMessage::Request>(msg, req);
+			jvalue = ProcessMsg<EquityOptionSpreadMessage, EquityOptionSpreadMessage::Request>(msg, req);
+			return true;
 		}
 
-		web::json::value HandleFuturesOptionSpread(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings)
+		bool HandleFuturesOptionSpread(const std::vector<string_t>& paths, \
+			const std::map<string_t, string_t>& query_strings, web::json::value& jvalue)
 		{
 			/// now add request parameters
 			std::shared_ptr<FuturesOptionSpreadMessage> msg = std::make_shared<FuturesOptionSpreadMessage>();
@@ -1013,7 +1057,7 @@ namespace derivative
 					else
 					{
 						throw std::invalid_argument("Invalid Style parameter");
-					}	
+					}
 					if (query_strings.find(U("_delivery")) != query_strings.end())
 					{
 						auto ddate = conversions::to_utf8string(query_strings.at(U("_delivery")));
@@ -1023,17 +1067,20 @@ namespace derivative
 					{
 						throw std::invalid_argument("Invalid delivery date for naked position");
 					}
-				}				
+				}
 			}
 			catch (std::exception& e)
 			{
-				return SendError<FuturesOptionSpreadMessage, FuturesOptionSpreadMessage::FuturesRequest>(msg, req, e.what());
+				jvalue = SendError<FuturesOptionSpreadMessage, FuturesOptionSpreadMessage::FuturesRequest>(msg, req, e.what());
+				return false;
 			}
 
-			return ProcessMsg<FuturesOptionSpreadMessage, FuturesOptionSpreadMessage::FuturesRequest>(msg, req);
+			jvalue = ProcessMsg<FuturesOptionSpreadMessage, FuturesOptionSpreadMessage::FuturesRequest>(msg, req);
+			return true;
 		}
 
-		web::json::value HandleFXOptionSpread(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings)
+		bool HandleFXOptionSpread(const std::vector<string_t>& paths, \
+			const std::map<string_t, string_t>& query_strings, web::json::value& jvalue)
 		{
 			/// now add request parameters
 			std::shared_ptr<ExchangeRateOptionSpreadMessage> msg = std::make_shared<ExchangeRateOptionSpreadMessage>();
@@ -1076,7 +1123,7 @@ namespace derivative
 					else if (query_strings.at(U("_method")).compare(U("lattice")) == 0)
 					{
 						req.method = ExchangeRateOptionSpreadMessage::LATTICE;
-					}					
+					}
 					else
 					{
 						throw std::invalid_argument("Invalid pricing method parameter");
@@ -1177,10 +1224,12 @@ namespace derivative
 			}
 			catch (std::exception& e)
 			{
-				return SendError<ExchangeRateOptionSpreadMessage, ExchangeRateOptionSpreadMessage::ExchangeRateRequest>(msg, req, e.what());
+				jvalue = SendError<ExchangeRateOptionSpreadMessage, ExchangeRateOptionSpreadMessage::ExchangeRateRequest>(msg, req, e.what());
+				return false;
 			}
 
-			return ProcessMsg<ExchangeRateOptionSpreadMessage, ExchangeRateOptionSpreadMessage::ExchangeRateRequest>(msg, req);
+			jvalue = ProcessMsg<ExchangeRateOptionSpreadMessage, ExchangeRateOptionSpreadMessage::ExchangeRateRequest>(msg, req);
+			return true;
 		}
 	}
 }

@@ -123,20 +123,39 @@ namespace derivative
 			esb.LogRequest(conversions::to_utf8string(query_strings.at(U("_token"))), datetime, utility::conversions::to_utf8string(message.relative_uri().to_string()));
 
 			/// JSON message for output
+			web::json::value jvalue;
 			if (!paths[0].empty() && paths[0].compare(U("EquityOption")) == 0)
 			{
-				auto msg = WebServiceUtil::HandleEquityOption(paths, query_strings);
-				message.reply(status_codes::OK, msg);
+				if (WebServiceUtil::HandleEquityOption(paths, query_strings, jvalue))
+				{
+					message.reply(status_codes::OK, jvalue);
+				}
+				else
+				{
+					message.reply(status_codes::InternalError, jvalue);
+				}
 			}
 			else if (paths[0].compare(U("FuturesOption")) == 0)
 			{
-				auto msg = WebServiceUtil::HandleFuturesOption(paths, query_strings);
-				message.reply(status_codes::OK, msg);
+				if (WebServiceUtil::HandleFuturesOption(paths, query_strings, jvalue))
+				{
+					message.reply(status_codes::OK, jvalue);
+				}
+				else
+				{
+					message.reply(status_codes::InternalError, jvalue);
+				}
 			}
 			else if (paths[0].compare(U("FXOption")) == 0)
 			{
-				auto msg = WebServiceUtil::HandleFXOption(paths, query_strings);
-				message.reply(status_codes::OK, msg);
+				if (WebServiceUtil::HandleFXOption(paths, query_strings, jvalue))
+				{
+					message.reply(status_codes::OK, jvalue);
+				}
+				else
+				{
+					message.reply(status_codes::InternalError, jvalue);
+				}
 			}
 			else if (paths[0].compare(U("InterestrateOption")) == 0)
 			{
@@ -144,18 +163,36 @@ namespace derivative
 			}
 			else if (paths[0].compare(U("EquitySpread")) == 0)
 			{
-				auto msg = WebServiceUtil::HandleEquityOptionSpread(paths, query_strings);
-				message.reply(status_codes::OK, msg);
+				if (WebServiceUtil::HandleEquityOptionSpread(paths, query_strings, jvalue))
+				{
+					message.reply(status_codes::OK, jvalue);
+				}
+				else
+				{
+					message.reply(status_codes::InternalError, jvalue);
+				}
 			}
 			else if (paths[0].compare(U("FuturesSpread")) == 0)
 			{
-				auto msg = WebServiceUtil::HandleFuturesOptionSpread(paths, query_strings);
-				message.reply(status_codes::OK, msg);
+				if (WebServiceUtil::HandleFuturesOptionSpread(paths, query_strings, jvalue))
+				{
+					message.reply(status_codes::OK, jvalue);
+				}
+				else
+				{
+					message.reply(status_codes::InternalError, jvalue);
+				}
 			}
 			else if (paths[0].compare(U("FXSpread")) == 0)
 			{
-				auto msg = WebServiceUtil::HandleFXOptionSpread(paths, query_strings);
-				message.reply(status_codes::OK, msg);
+				if (WebServiceUtil::HandleFXOptionSpread(paths, query_strings, jvalue))
+				{
+					message.reply(status_codes::OK, jvalue);
+				}
+				else
+				{
+					message.reply(status_codes::InternalError, jvalue);
+				}
 			}
 			else
 			{

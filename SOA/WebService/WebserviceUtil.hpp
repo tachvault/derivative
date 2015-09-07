@@ -30,41 +30,59 @@ namespace derivative
 
 		void decodeOption(const std::string& opt, OptionSpreadMessage::Leg& leg);
 		
-		web::json::value HandleEquityOption(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings);
+		bool HandleEquityOption(const std::vector<string_t>& paths, \
+			const std::map<string_t, string_t>& query_strings, web::json::value& msg);
 
-		web::json::value HandleFuturesOption(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings);
+		bool HandleFuturesOption(const std::vector<string_t>& paths, \
+			const std::map<string_t, string_t>& query_strings, web::json::value& msg);
 
-		web::json::value HandleFXOption(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings);
+		bool HandleFXOption(const std::vector<string_t>& paths, \
+			const std::map<string_t, string_t>& query_strings, web::json::value& msg);
 
-		web::json::value HandleEquityOptionSpread(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings);
+		bool HandleEquityOptionSpread(const std::vector<string_t>& paths, \
+			const std::map<string_t, string_t>& query_strings, web::json::value& msg);
 
-		web::json::value HandleFuturesOptionSpread(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings);
+		bool HandleFuturesOptionSpread(const std::vector<string_t>& paths, \
+			const std::map<string_t, string_t>& query_strings, web::json::value& msg);
 
-		web::json::value HandleFXOptionSpread(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings);
+		bool HandleFXOptionSpread(const std::vector<string_t>& paths, \
+			const std::map<string_t, string_t>& query_strings, web::json::value& msg);
 
-		web::json::value HandleEquityVanillaOption(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings);
+		bool HandleEquityVanillaOption(const std::vector<string_t>& paths, \
+			const std::map<string_t, string_t>& query_strings, web::json::value& msg);
 
-		web::json::value HandleEquityBarrierOption(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings);
+		bool HandleEquityBarrierOption(const std::vector<string_t>& paths, \
+			const std::map<string_t, string_t>& query_strings, web::json::value& msg);
 
-		web::json::value HandleEquityAverageOption(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings);
+		bool HandleEquityAverageOption(const std::vector<string_t>& paths, \
+			const std::map<string_t, string_t>& query_strings, web::json::value& msg);
 
-		web::json::value HandleEquityLookBackOption(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings);
+		bool HandleEquityLookBackOption(const std::vector<string_t>& paths, \
+			const std::map<string_t, string_t>& query_strings, web::json::value& msg);
 
-		web::json::value HandleEquityChooserOption(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings);
+		bool HandleEquityChooserOption(const std::vector<string_t>& paths, \
+			const std::map<string_t, string_t>& query_strings, web::json::value& msg);
 
-		web::json::value HandleEquityMargrabeOption(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings);
+		bool HandleEquityMargrabeOption(const std::vector<string_t>& paths, \
+			const std::map<string_t, string_t>& query_strings, web::json::value& msg);
 
-		web::json::value HandleFuturesVanillaOption(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings);
+		bool HandleFuturesVanillaOption(const std::vector<string_t>& paths, \
+			const std::map<string_t, string_t>& query_strings, web::json::value& msg);
 
-		web::json::value HandleFuturesBarrierOption(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings);
+		bool HandleFuturesBarrierOption(const std::vector<string_t>& paths, \
+			const std::map<string_t, string_t>& query_strings, web::json::value& msg);
 
-		web::json::value HandleFuturesAverageOption(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings);
+		bool HandleFuturesAverageOption(const std::vector<string_t>& paths, \
+			const std::map<string_t, string_t>& query_strings, web::json::value& msg);
 
-		web::json::value HandleFXVanillaOption(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings);
+		bool HandleFXVanillaOption(const std::vector<string_t>& paths, \
+			const std::map<string_t, string_t>& query_strings, web::json::value& msg);
 	
-		web::json::value HandleFXBarrierOption(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings);
+		bool HandleFXBarrierOption(const std::vector<string_t>& paths, \
+			const std::map<string_t, string_t>& query_strings, web::json::value& msg);
 
-		web::json::value HandleFXAverageOption(const std::vector<string_t>& paths, const std::map<string_t, string_t>& query_strings);	
+		bool HandleFXAverageOption(const std::vector<string_t>& paths, \
+			const std::map<string_t, string_t>& query_strings, web::json::value& msg);
 	}
 }
 
